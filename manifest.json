@@ -1,0 +1,25 @@
+{
+  "name": "Angielski z Alą",
+  "short_name": "Angielski Ala",
+  "description": "Nauka angielskiego — słówka, piosenki, testy",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#7c3aed",
+  "background_color": "#f5f0ff",
+  "lang": "pl",
+  "icons": [
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
