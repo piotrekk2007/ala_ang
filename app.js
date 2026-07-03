@@ -1261,10 +1261,20 @@ function handleLoadAll(e) {
 // ===== KEYBOARD SHORTCUTS =====
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter') {
+    const learnView     = document.getElementById('view-learn');
+    const testView      = document.getElementById('view-test');
     const learnFeedback = document.getElementById('learn-feedback');
     const testFeedback  = document.getElementById('test-feedback');
-    if (learnFeedback && learnFeedback.style.display !== 'none') { nextLearnWord(); return; }
-    if (testFeedback  && testFeedback.style.display  !== 'none') { nextTestWord();  return; }
+    if (learnView && learnView.style.display !== 'none') {
+      if (learnFeedback && learnFeedback.style.display !== 'none') nextLearnWord();
+      else checkLearnAnswer();
+      return;
+    }
+    if (testView && testView.style.display !== 'none') {
+      if (testFeedback && testFeedback.style.display !== 'none') nextTestWord();
+      else checkTestAnswer();
+      return;
+    }
   }
 });
 
