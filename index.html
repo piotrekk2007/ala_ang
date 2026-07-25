@@ -22,9 +22,11 @@
     <button onclick="showView('home')" class="nav-btn">🏠 Dom</button>
     <button onclick="showView('sets-list')" class="nav-btn">📚 Słówka</button>
     <button onclick="showView('songs-list')" class="nav-btn">🎵 Piosenki</button>
+    <button onclick="showView('chat-setup')" class="nav-btn">💬 Pogadajmy</button>
     <button onclick="showView('progress')" class="nav-btn">🏆 Postępy</button>
     <button onclick="saveAll()" class="nav-btn nav-btn-save">💾 Zapisz wszystko</button>
     <button onclick="loadAll()" class="nav-btn">📂 Wczytaj</button>
+    <button onclick="openApiSettings()" class="nav-btn nav-btn-settings" title="Ustawienia API">⚙️</button>
   </div>
 </nav>
 <input type="file" id="load-all-file" accept=".json" style="display:none" onchange="handleLoadAll(event)" />
@@ -45,6 +47,11 @@
       <div class="tile-icon">🎵</div>
       <div class="tile-title">Piosenki</div>
       <div class="tile-desc">Ucz się z muzyki</div>
+    </div>
+    <div class="tile tile-green" onclick="showView('chat-setup')">
+      <div class="tile-icon">💬</div>
+      <div class="tile-title">Pogadajmy</div>
+      <div class="tile-desc">Ćwicz rozmowy z AI</div>
     </div>
     <div class="tile tile-yellow" onclick="showView('progress')">
       <div class="tile-icon">🏆</div>
@@ -349,6 +356,58 @@
       <input type="text" id="extract-set-name" class="big-input" placeholder="np. Słówka z Let It Go" />
     </div>
     <button class="btn btn-primary" onclick="saveExtractedWords()">💾 Zapisz jako zestaw</button>
+  </div>
+</div>
+
+<!-- ========== WIDOK: POGADAJMY — SETUP ========== -->
+<div id="view-chat-setup" class="view" style="display:none">
+  <div class="view-header">
+    <button class="btn btn-ghost" onclick="showView('home')">← Wróć</button>
+    <h1>💬 Pogadajmy</h1>
+  </div>
+  <div id="chat-setup-body"></div>
+</div>
+
+<!-- ========== WIDOK: POGADAJMY — CZAT ========== -->
+<div id="view-chat" class="view" style="display:none">
+  <div class="view-header">
+    <button class="btn btn-ghost" onclick="exitChat()">← Wróć</button>
+    <h1 id="chat-title">💬 Rozmowa</h1>
+    <button class="btn btn-danger" onclick="finishChat()">Zakończ rozmowę</button>
+  </div>
+  <div class="chat-info-bar" id="chat-info-bar"></div>
+  <div class="chat-window" id="chat-window"></div>
+  <div id="chat-error" class="chat-error" style="display:none"></div>
+  <div class="chat-input-row">
+    <input type="text" id="chat-input" class="big-input" placeholder="Napisz po angielsku..."
+      autocomplete="off" autocorrect="off" spellcheck="false" />
+    <button class="btn btn-primary" id="chat-send-btn" onclick="sendChatMessage()">Wyślij</button>
+  </div>
+</div>
+
+<!-- ========== WIDOK: POGADAJMY — PODSUMOWANIE ========== -->
+<div id="view-chat-summary" class="view" style="display:none">
+  <div class="view-header">
+    <h1>📋 Podsumowanie rozmowy</h1>
+  </div>
+  <div class="chat-summary-box" id="chat-summary-text"></div>
+  <div class="edit-actions" style="margin-bottom:18px">
+    <button class="btn btn-secondary" id="toggle-transcript-btn" onclick="toggleChatTranscript()">Pokaż całą rozmowę</button>
+    <button class="btn btn-purple" id="analyze-chat-btn" onclick="analyzeChatMistakes()">🔍 Popraw razem</button>
+  </div>
+  <div id="chat-summary-transcript" class="chat-window" style="display:none"></div>
+  <div id="chat-analysis" class="chat-analysis" style="display:none"></div>
+  <div class="extract-selected">
+    <h3>Nowe słówka z rozmowy:</h3>
+    <div id="chat-summary-words-list"></div>
+  </div>
+  <div class="edit-actions">
+    <div class="form-row" style="flex-basis:100%">
+      <label>Nazwa nowego zestawu</label>
+      <input type="text" id="chat-summary-set-name" class="big-input" placeholder="np. Pogadajmy: In a restaurant" />
+    </div>
+    <button class="btn btn-primary" onclick="saveChatSummaryWords()">💾 Zapisz jako zestaw</button>
+    <button class="btn btn-secondary" onclick="showView('chat-setup')">Nowa rozmowa</button>
   </div>
 </div>
 

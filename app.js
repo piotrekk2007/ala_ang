@@ -20,6 +20,298 @@ const BADGES_DEF = [
   { id:'improved',     icon:'📈', name:'Coraz lepiej!',     desc:'Popraw swój poprzedni wynik' },
 ];
 
+// ===== CHAT SCENARIOS (Pogadajmy) =====
+const CHAT_SCENARIOS = [
+  {
+    id: 'restaurant', icon: '🍽️', title: 'W restauracji',
+    roles: [
+      { user: 'Głodny klient', ai: 'Zabawny, gadatliwy kelner' },
+      { user: 'Wybredny klient ze specjalną dietą', ai: 'Znudzony, oschły kelner' },
+      { user: 'Celebryta incognito', ai: 'Kelner, który rozpoznał gwiazdę i traci głowę' },
+    ],
+  },
+  {
+    id: 'post', icon: '📮', title: 'Na poczcie',
+    roles: [
+      { user: 'Klient nadający paczkę za granicę', ai: 'Pomocny pracownik poczty' },
+      { user: 'Zdezorientowany klient, który zgubił awizo', ai: 'Zniecierpliwiony urzędnik' },
+      { user: 'Osoba nadająca tajemniczą, ciężką paczkę', ai: 'Podejrzliwy urzędnik przekonany, że to przemyt' },
+    ],
+  },
+  {
+    id: 'park', icon: '🌳', title: 'Small talk w parku',
+    roles: [
+      { user: 'Osoba wyprowadzająca psa', ai: 'Rozgadany sąsiad na spacerze' },
+      { user: 'Turysta pytający o drogę', ai: 'Uprzejmy miejscowy' },
+      { user: 'Amatorski poeta czytający wiersze na ławce', ai: 'Zdezorientowany przechodzień, który się na to natknął' },
+    ],
+  },
+  {
+    id: 'shop', icon: '🛒', title: 'Zakupy w sklepie',
+    roles: [
+      { user: 'Klient szukający konkretnego produktu', ai: 'Pomocny sprzedawca' },
+      { user: 'Klient reklamujący zepsuty towar', ai: 'Nieco zirytowany sprzedawca' },
+      { user: 'Klient kupujący prezent na ostatnią chwilę', ai: 'Sprzedawca, dla którego wszystko jest "idealnym prezentem"' },
+    ],
+  },
+  {
+    id: 'airport', icon: '✈️', title: 'Na lotnisku (odprawa)',
+    roles: [
+      { user: 'Pasażer z nadbagażem', ai: 'Sumienna pracownica odprawy' },
+      { user: 'Roztrzepany podróżnik, który nie może znaleźć paszportu', ai: 'Zniecierpliwiony strażnik graniczny' },
+    ],
+  },
+  {
+    id: 'hotel', icon: '🏨', title: 'W hotelu (recepcja)',
+    roles: [
+      { user: 'Gość zameldowujący się po długiej podróży', ai: 'Uprzejmy recepcjonista' },
+      { user: 'Gość reklamujący hałas z sąsiedniego pokoju', ai: 'Recepcjonista, który udaje, że nic nie słyszał' },
+    ],
+  },
+  {
+    id: 'pharmacy', icon: '💊', title: 'W aptece',
+    roles: [
+      { user: 'Pacjent z przeziębieniem', ai: 'Troskliwy farmaceuta' },
+      { user: 'Hipochondryk pytający o każdy możliwy lek', ai: 'Cierpliwy, ale już nieco zmęczony farmaceuta' },
+    ],
+  },
+  {
+    id: 'doctor', icon: '🩺', title: 'U lekarza',
+    roles: [
+      { user: 'Pacjent opisujący objawy bólu głowy', ai: 'Spokojny lekarz rodzinny' },
+      { user: 'Pacjent przekonany, że ma rzadką chorobę z internetu', ai: 'Lekarz o ograniczonej cierpliwości' },
+    ],
+  },
+  {
+    id: 'hairdresser', icon: '💇', title: 'U fryzjera',
+    roles: [
+      { user: 'Klient chcący drobną zmianę fryzury', ai: 'Gadatliwy fryzjer, który zna wszystkie plotki' },
+      { user: 'Klient, który boi się nowej fryzury', ai: 'Fryzjer-artysta z wielkimi ambicjami' },
+    ],
+  },
+  {
+    id: 'taxi', icon: '🚕', title: 'W taksówce',
+    roles: [
+      { user: 'Pasażer śpieszący się na pociąg', ai: 'Kierowca, który zna skróty, ale uwielbia opowiadać historie' },
+      { user: 'Turysta niepewny adresu', ai: 'Milczący, tajemniczy taksówkarz' },
+    ],
+  },
+  {
+    id: 'bank', icon: '🏦', title: 'W banku',
+    roles: [
+      { user: 'Klient zakładający konto', ai: 'Formalny doradca bankowy' },
+      { user: 'Klient reklamujący dziwną opłatę na koncie', ai: 'Doradca, który tylko recytuje regulamin' },
+    ],
+  },
+  {
+    id: 'office', icon: '🏢', title: 'W urzędzie',
+    roles: [
+      { user: 'Osoba meldująca nowy adres', ai: 'Rzeczowy urzędnik' },
+      { user: 'Osoba z niekompletnymi dokumentami', ai: 'Urzędnik uwielbiający stemple i procedury' },
+    ],
+  },
+  {
+    id: 'mechanic', icon: '🔧', title: 'U mechanika',
+    roles: [
+      { user: 'Kierowca z dziwnym dźwiękiem w silniku', ai: 'Doświadczony mechanik' },
+      { user: 'Kierowca, który nic nie wie o samochodach', ai: 'Mechanik próbujący sprzedać niepotrzebne naprawy' },
+    ],
+  },
+  {
+    id: 'gym', icon: '🏋️', title: 'Na siłowni',
+    roles: [
+      { user: 'Nowy członek pytający o sprzęt', ai: 'Entuzjastyczny trener personalny' },
+      { user: 'Osoba szukająca partnera do ćwiczeń', ai: 'Zbyt pewny siebie kulturysta' },
+    ],
+  },
+  {
+    id: 'party', icon: '🎉', title: 'Na imprezie urodzinowej',
+    roles: [
+      { user: 'Gość, który nikogo nie zna', ai: 'Towarzyski gospodarz imprezy' },
+      { user: 'Osoba próbująca uciec od nudnej rozmowy', ai: 'Gaduła opowiadający wyłącznie o swoim akwarium' },
+    ],
+  },
+  {
+    id: 'interview', icon: '💼', title: 'Rozmowa kwalifikacyjna',
+    roles: [
+      { user: 'Kandydat na stanowisko stażysty', ai: 'Uprzejma rekruterka' },
+      { user: 'Pewny siebie kandydat z małym doświadczeniem', ai: 'Sceptyczny, wymagający dyrektor HR' },
+    ],
+  },
+  {
+    id: 'neighbor', icon: '🏠', title: 'Rozmowa z sąsiadem',
+    roles: [
+      { user: 'Zirytowany sąsiad zza ściany skarżący się na hałas', ai: 'Zaskoczony sąsiad, który właśnie urządził imprezę' },
+      { user: 'Osoba proszące o pożyczenie cukru', ai: 'Podejrzliwy, samotny sąsiad, który uwielbia teorie spiskowe' },
+    ],
+  },
+  {
+    id: 'vet', icon: '🐶', title: 'U weterynarza',
+    roles: [
+      { user: 'Zaniepokojony właściciel psa', ai: 'Spokojna weterynarz' },
+      { user: 'Właściciel bardzo niegrzecznego kota', ai: 'Weterynarz, który szczerze boi się tego kota' },
+    ],
+  },
+  {
+    id: 'library', icon: '📚', title: 'W bibliotece',
+    roles: [
+      { user: 'Student szukający konkretnej książki', ai: 'Pomocna bibliotekarka' },
+      { user: 'Osoba oddająca książkę miesiąc po terminie', ai: 'Surowa bibliotekarka pilnująca ciszy' },
+    ],
+  },
+  {
+    id: 'cinema', icon: '🎬', title: 'W kinie (kasa biletowa)',
+    roles: [
+      { user: 'Widz kupujący bilety na wieczorny seans', ai: 'Znudzona kasjerka' },
+      { user: 'Osoba, która pomyliła godzinę seansu', ai: 'Kasjer-fanatyk kina, który zna każdy film na pamięć' },
+    ],
+  },
+  {
+    id: 'return', icon: '🛍️', title: 'Zwrot towaru w sklepie',
+    roles: [
+      { user: 'Klient zwracający buty w złym rozmiarze', ai: 'Wyrozumiały sprzedawca' },
+      { user: 'Klient reklamujący pizzę z za małą ilością salami', ai: 'Zdezorientowany kucharz broniący swojej pizzy' },
+    ],
+  },
+  {
+    id: 'luggage', icon: '🧳', title: 'Zgubiony bagaż na lotnisku',
+    roles: [
+      { user: 'Pasażer zgłaszający zaginiony bagaż', ai: 'Cierpliwy pracownik biura reklamacji' },
+      { user: 'Podróżnik w panice bez ubrań na wakacje', ai: 'Pracownik linii lotniczych, który akurat ma kiepski dzień' },
+    ],
+  },
+  {
+    id: 'carrental', icon: '🚗', title: 'Wypożyczalnia samochodów',
+    roles: [
+      { user: 'Klient wypożyczający samochód na weekend', ai: 'Rzeczowy pracownik wypożyczalni' },
+      { user: 'Klient chcący najtańszą opcję, ale z dużymi wymaganiami', ai: 'Sprzedawca usilnie dosprzedający ubezpieczenie' },
+    ],
+  },
+  {
+    id: 'office-smalltalk', icon: '☕', title: 'Small talk przy kawie w pracy',
+    roles: [
+      { user: 'Nowy pracownik poznający kolegów', ai: 'Wylewny współpracownik uwielbiający plotki z biura' },
+      { user: 'Osoba unikająca rozmowy o pogodzie', ai: 'Kolega, który potrafi rozmawiać wyłącznie o pogodzie' },
+    ],
+  },
+  {
+    id: 'beach', icon: '🏖️', title: 'Na plaży (wakacje)',
+    roles: [
+      { user: 'Turysta pytający o wypożyczenie leżaka', ai: 'Zrelaksowany ratownik' },
+      { user: 'Osoba broniąca swojego miejsca na plaży', ai: 'Sąsiad z plaży, który rozstawił się o metr za blisko' },
+    ],
+  },
+  {
+    id: 'parking', icon: '🅿️', title: 'Spór o miejsce parkingowe',
+    roles: [
+      { user: 'Kierowca, który "zajął" czyjeś zwyczajowe miejsce', ai: 'Oburzony sąsiad broniący swojego terytorium' },
+      { user: 'Osoba parkująca lekko krzywo', ai: 'Nadgorliwy strażnik osiedlowy z metrówką' },
+    ],
+  },
+  {
+    id: 'fortuneteller', icon: '🔮', title: 'Wizyta u wróżki',
+    roles: [
+      { user: 'Sceptyczny klient chcący poznać przyszłość', ai: 'Tajemnicza wróżka z kryształową kulą' },
+      { user: 'Osoba pytająca o miłość', ai: 'Wróżka, która widzi wyłącznie złe wiadomości' },
+    ],
+  },
+  {
+    id: 'alien', icon: '👽', title: 'Rozmowa z kosmitą uczącym się angielskiego',
+    roles: [
+      { user: 'Ziemianin tłumaczący, czym jest kawa', ai: 'Kosmita, który myli słowa i zadaje bardzo dziwne pytania' },
+      { user: 'Przewodnik oprowadzający kosmitę po Ziemi', ai: 'Kosmita głęboko przekonany, że ludzie to roboty' },
+    ],
+  },
+  {
+    id: 'robot', icon: '🤖', title: 'Robot-sprzedawca w sklepie przyszłości',
+    roles: [
+      { user: 'Klient szukający zwykłego chleba', ai: 'Robot-sprzedawca polecający wyłącznie futurystyczne jedzenie' },
+      { user: 'Klient próbujący wyłączyć nachalnego robota', ai: 'Robot z nadgorliwym programem sprzedażowym' },
+    ],
+  },
+  {
+    id: 'ghost', icon: '🏰', title: 'Rozmowa z duchem w starym zamku',
+    roles: [
+      { user: 'Zwiedzający, który niespodziewanie spotkał ducha', ai: 'Zrzędliwy duch mieszkający w zamku od 300 lat' },
+      { user: 'Przewodnik wycieczki próbujący uspokoić grupę', ai: 'Duch, który uwielbia straszyć, ale w głębi duszy jest samotny' },
+    ],
+  },
+  {
+    id: 'superhero', icon: '🦸', title: 'Trening superbohatera',
+    roles: [
+      { user: 'Uczeń szkoły superbohaterów', ai: 'Ekscentryczny mentor-superbohater' },
+      { user: 'Superbohater na pierwszej misji', ai: 'Złoczyńca, który tak naprawdę chce się zaprzyjaźnić' },
+    ],
+  },
+  {
+    id: 'pirates', icon: '🏴‍☠️', title: 'Na statku piratów',
+    roles: [
+      { user: 'Nowy członek załogi', ai: 'Kapitan piratów szukający zaginionego skarbu' },
+      { user: 'Jeniec próbujący uciec', ai: 'Gadatliwa papuga kapitana, która mówi ludzkim głosem' },
+    ],
+  },
+  {
+    id: 'dragonschool', icon: '🐉', title: 'Szkoła treserów smoków',
+    roles: [
+      { user: 'Uczeń w szkole treserów smoków', ai: 'Nauczycielka ucząca, jak się zaprzyjaźnić ze smokiem' },
+      { user: 'Smoczy jeździec na pierwszym locie', ai: 'Nerwowy smok, który boi się latać' },
+    ],
+  },
+  {
+    id: 'videogame', icon: '🎮', title: 'Wewnątrz gry wideo',
+    roles: [
+      { user: 'Gracz, który utknął w grze', ai: 'NPC dający wskazówki, ale trochę pomylony' },
+      { user: 'Bohater questu', ai: 'Zły boss, który tak naprawdę woli gadać niż walczyć' },
+    ],
+  },
+  {
+    id: 'magicschool', icon: '🧙', title: 'Szkoła magii',
+    roles: [
+      { user: 'Nowy uczeń szkoły magii', ai: 'Ekscentryczny nauczyciel zaklęć' },
+      { user: 'Uczeń, któremu zaklęcie nie do końca wyszło', ai: 'Mówiący kot, który jest w tej szkole od 100 lat' },
+    ],
+  },
+  {
+    id: 'timetravel', icon: '🕰️', title: 'Podróż w czasie',
+    roles: [
+      { user: 'Podróżnik w czasie, który wylądował w średniowieczu', ai: 'Zdziwiony mieszkaniec średniowiecznej wioski' },
+      { user: 'Odkrywca przyszłości', ai: 'Robot z roku 3000, trochę zdezorientowany' },
+    ],
+  },
+  {
+    id: 'zoo', icon: '🦁', title: 'W zoo',
+    roles: [
+      { user: 'Zwiedzający pytający opiekuna o zwierzęta', ai: 'Entuzjastyczny opiekun zoo' },
+      { user: 'Osoba, która przypadkiem rozumie mowę zwierząt', ai: 'Znudzony lew, który narzeka na jedzenie' },
+    ],
+  },
+  {
+    id: 'friendbirthday', icon: '🎂', title: 'Urodziny kolegi/koleżanki ze szkoły',
+    roles: [
+      { user: 'Gość na urodzinach szkolnego kolegi', ai: 'Ekscytowany solenizant pokazujący prezenty' },
+      { user: 'Osoba organizująca niespodziankę', ai: 'Kolega, który prawie zdradza sekret' },
+    ],
+  },
+  {
+    id: 'summercamp', icon: '🏕️', title: 'Na obozie letnim',
+    roles: [
+      { user: 'Uczestnik obozu poznający nowych znajomych', ai: 'Wesoły opiekun obozowy' },
+      { user: 'Osoba opowiadająca straszną historię przy ognisku', ai: 'Nieco przestraszony uczestnik obozu' },
+    ],
+  },
+  {
+    id: 'ghosthunt', icon: '👻', title: 'Polowanie na duchy',
+    roles: [
+      { user: 'Młody łowca duchów na pierwszej misji', ai: 'Doświadczony, ale zabawny mentor łowców duchów' },
+      { user: 'Osoba, która znalazła nawiedzony dom', ai: 'Duch, który tylko chce, żeby ktoś zagrał z nim w planszówkę' },
+    ],
+  },
+];
+
+let currentChat = null;
+let chatSetupState = { scenario: null, level: null };
+let chatSummaryWords = {};
+
 // ===== STORAGE =====
 const DB = {
   get: (key) => { try { return JSON.parse(localStorage.getItem(key)) || null; } catch { return null; } },
@@ -71,6 +363,9 @@ function showView(name, params = {}) {
   if (name === 'hangman')     {} // initialized by startHangman()
   if (name === 'match')       {} // initialized by startMatch()
   if (name === 'progress')    renderProgress();
+  if (name === 'chat-setup')  renderChatSetup();
+  if (name === 'chat')        {} // initialized by startChat()
+  if (name === 'chat-summary'){} // initialized by finishChat()
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -758,11 +1053,69 @@ function renderExtract(id) {
   document.getElementById('extract-set-name').value = song.title ? `Słówka z "${song.title}"` : 'Słówka z piosenki';
 }
 
+// ===== GEMINI API =====
+const GEMINI_MODEL = 'gemini-3.5-flash-lite';
+
+function getGeminiKey() { return localStorage.getItem('gemini_api_key') || ''; }
+function saveGeminiKey(k) { localStorage.setItem('gemini_api_key', k.trim()); }
+
+async function fetchTranslationGemini(phrase, apiKey) {
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: `Przetłumacz poniższe angielskie słowo lub zwrot na język polski. Podaj TYLKO tłumaczenie, nic więcej. Jeśli jest kilka znaczeń, rozdziel je ukośnikiem. Słowo/zwrot: "${phrase}"` }] }]
+      })
+    }
+  );
+  const data = await res.json();
+  const t = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+  return t || '';
+}
+
+function openApiSettings() {
+  const currentKey = getGeminiKey();
+  const masked = currentKey ? currentKey.slice(0, 8) + '••••••••••••••••' : '';
+  showModal('⚙️ Ustawienia — klucz Gemini API', '', [
+    { label: 'Zapisz', cls: 'btn-primary', action: () => {
+      const input = document.getElementById('gemini-key-input');
+      if (input) {
+        saveGeminiKey(input.value);
+        showToast(input.value.trim() ? '✅ Klucz Gemini zapisany!' : 'Klucz usunięty.');
+      }
+      closeModal();
+    }},
+    { label: 'Anuluj', cls: 'btn-secondary', action: closeModal },
+  ]);
+  setTimeout(() => {
+    const body = document.getElementById('modal-body');
+    if (body) body.innerHTML = `
+      <p style="margin-bottom:12px;font-size:0.9rem;color:var(--text-light)">
+        Klucz Google AI Studio (Gemini). Gdy podany — tłumaczenia słówek i zwrotów oraz tryb "Pogadajmy" używają Gemini 3.5 Flash Lite zamiast MyMemory.
+      </p>
+      <input id="gemini-key-input" type="password" class="big-input"
+        placeholder="AIza..." value="${esc(currentKey)}"
+        style="font-family:monospace;font-size:0.9rem" />
+      ${currentKey ? `<div style="font-size:0.8rem;color:var(--text-light);margin-top:6px">Aktualny klucz: ${esc(masked)}</div>` : ''}
+    `;
+  }, 0);
+}
+
 async function fetchTranslation(word) {
   const w = word.toLowerCase();
   // 1. Offline dictionary
   if (typeof OFFLINE_DICT !== 'undefined' && OFFLINE_DICT[w]) return OFFLINE_DICT[w];
-  // 2. MyMemory fallback
+  // 2. Gemini (jeśli podano klucz)
+  const key = getGeminiKey();
+  if (key) {
+    try {
+      const t = await fetchTranslationGemini(word, key);
+      if (t) return t;
+    } catch {}
+  }
+  // 3. MyMemory fallback
   try {
     const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=en|pl`);
     const data = await res.json();
@@ -809,6 +1162,355 @@ function saveExtractedWords() {
   sets.push({ id: uid(), name, icon: '🎵', words, results: [], createdAt: today(), lastUsed: Date.now() });
   saveSets(sets);
   showToast(`✅ Zestaw "${name}" zapisany!`);
+  showView('sets-list');
+}
+
+// ===== CHAT (POGADAJMY) =====
+function renderChatSetup() {
+  chatSetupState = { scenario: null, level: null };
+  renderChatStepScenario();
+}
+
+function renderChatStepScenario() {
+  document.getElementById('chat-setup-body').innerHTML = `
+    <p class="hint">Wybierz temat rozmowy:</p>
+    <div class="scenario-grid">
+      ${CHAT_SCENARIOS.map(s => `
+        <div class="scenario-card" onclick="pickChatScenario('${s.id}')">
+          <div class="scenario-icon">${s.icon}</div>
+          <div class="scenario-title">${esc(s.title)}</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function pickChatScenario(id) {
+  chatSetupState.scenario = CHAT_SCENARIOS.find(s => s.id === id);
+  renderChatStepLevel();
+}
+
+function renderChatStepLevel() {
+  const s = chatSetupState.scenario;
+  document.getElementById('chat-setup-body').innerHTML = `
+    <button class="btn btn-ghost" onclick="renderChatStepScenario()">← Inny temat</button>
+    <p class="hint">${s.icon} ${esc(s.title)} — wybierz poziom trudności:</p>
+    <div class="level-grid">
+      ${['A1','A2','B1','B2'].map(l => `<div class="level-pill" onclick="pickChatLevel('${l}')">${l}</div>`).join('')}
+    </div>`;
+}
+
+function pickChatLevel(level) {
+  chatSetupState.level = level;
+  renderChatStepRole();
+}
+
+function renderChatStepRole() {
+  const s = chatSetupState.scenario;
+  document.getElementById('chat-setup-body').innerHTML = `
+    <button class="btn btn-ghost" onclick="renderChatStepLevel()">← Inny poziom</button>
+    <p class="hint">${s.icon} ${esc(s.title)} · poziom ${chatSetupState.level} — kim chcesz być?</p>
+    <div class="role-grid">
+      ${s.roles.map((r, i) => `
+        <div class="role-pair-card" onclick="startChat(${i})">
+          <div class="role-you"><b>Ty:</b> ${esc(r.user)}</div>
+          <div class="role-ai"><b>AI:</b> ${esc(r.ai)}</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function buildChatSystemPrompt(scenario, level, userRole, aiRole) {
+  return `Uczymy się języka angielskiego. Rozmówcą jest nastolatek (10-15 lat), więc bądź cierpliwy, przyjazny i wyrozumiały. ` +
+    `Ćwiczymy dialog w scenariuszu: "${scenario.title}". Poziom językowy ucznia: ${level}. Odpowiadaj WYŁĄCZNIE po angielsku, dostosowując słownictwo i długość zdań do poziomu ${level}. ` +
+    `Ty wcielasz się w rolę: ${aiRole}. Uczeń gra rolę: ${userRole}. ` +
+    `To jest dialog ćwiczebny — jeśli widzisz, że uczeń nie radzi sobie, ma problem ze sformułowaniem zdania, pisze po polsku albo utknął, ` +
+    `delikatnie podpowiedz mu po angielsku (możesz dodać krótką podpowiedź po polsku w nawiasie) i zachęć go ciepłym tonem do kontynuowania w roli. ` +
+    `Trzymaj się swojej roli i scenariusza przez całą rozmowę, baw się nią i bądź pozytywny. Zacznij rozmowę pierwszy, krótkim zdaniem pasującym do sceny i Twojej roli.`;
+}
+
+function startChat(roleIdx) {
+  if (!getGeminiKey()) {
+    showToast('Ustaw najpierw klucz Gemini API (⚙️ w górnym menu)!');
+    return;
+  }
+  const s = chatSetupState.scenario;
+  const role = s.roles[roleIdx];
+  currentChat = {
+    scenario: s, level: chatSetupState.level,
+    userRole: role.user, aiRole: role.ai,
+    history: [],
+  };
+  currentChat.systemPrompt = buildChatSystemPrompt(s, chatSetupState.level, role.user, role.ai);
+
+  document.getElementById('chat-title').textContent = `💬 ${s.title}`;
+  document.getElementById('chat-info-bar').innerHTML =
+    `<span>${chatSetupState.level}</span> · <span>Ty: ${esc(role.user)}</span> · <span>AI: ${esc(role.ai)}</span>`;
+  document.getElementById('chat-window').innerHTML = '';
+  document.getElementById('chat-error').style.display = 'none';
+  document.getElementById('chat-input').value = '';
+  showView('chat');
+  requestFirstChatMessage();
+}
+
+async function callGeminiChat(history) {
+  const key = getGeminiKey();
+  if (!key) throw new Error('no-key');
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${key}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: currentChat.systemPrompt }] },
+        contents: history.map(m => ({ role: m.role, parts: [{ text: m.text }] })),
+      }),
+    }
+  );
+  if (!res.ok) throw new Error('http-' + res.status);
+  const data = await res.json();
+  const t = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+  if (!t) throw new Error('empty-response');
+  return t;
+}
+
+async function requestFirstChatMessage() {
+  renderChatTyping(true);
+  try {
+    const reply = await callGeminiChat([{ role: 'user', text: 'Rozpocznij teraz rozmowę zgodnie z instrukcjami.' }]);
+    currentChat.history.push({ role: 'model', text: reply });
+    renderChatMessages();
+  } catch {
+    showChatError();
+  } finally {
+    renderChatTyping(false);
+  }
+}
+
+async function sendChatMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text || !currentChat) return;
+  document.getElementById('chat-error').style.display = 'none';
+  currentChat.history.push({ role: 'user', text });
+  input.value = '';
+  renderChatMessages();
+  renderChatTyping(true);
+  try {
+    const reply = await callGeminiChat(currentChat.history);
+    currentChat.history.push({ role: 'model', text: reply });
+    renderChatMessages();
+  } catch {
+    showChatError();
+  } finally {
+    renderChatTyping(false);
+    setTimeout(() => input.focus(), 50);
+  }
+}
+
+function showChatError() {
+  const el = document.getElementById('chat-error');
+  el.textContent = 'Nie udało się połączyć z Gemini. Sprawdź klucz API (⚙️) i połączenie z internetem, i spróbuj ponownie.';
+  el.style.display = '';
+}
+
+function renderChatTyping(show) {
+  document.getElementById('chat-send-btn').disabled = show;
+  let el = document.getElementById('chat-typing');
+  if (show) {
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'chat-typing';
+      el.className = 'chat-bubble chat-bubble-ai chat-typing';
+      el.textContent = '…';
+      document.getElementById('chat-window').appendChild(el);
+    }
+  } else if (el) {
+    el.remove();
+  }
+  const w = document.getElementById('chat-window');
+  w.scrollTop = w.scrollHeight;
+}
+
+function renderChatMessages() {
+  const w = document.getElementById('chat-window');
+  w.innerHTML = currentChat.history.map(m => `
+    <div class="chat-bubble ${m.role === 'user' ? 'chat-bubble-user' : 'chat-bubble-ai'}">${esc(m.text)}</div>`
+  ).join('');
+  w.scrollTop = w.scrollHeight;
+}
+
+function exitChat() {
+  if (currentChat && currentChat.history.length) {
+    showModal('Zakończyć rozmowę?', 'Jeśli wyjdziesz teraz, ta rozmowa nie zostanie podsumowana i słówka z niej nie zostaną zapisane. Na pewno?', [
+      { label: 'Tak, wyjdź', cls: 'btn-danger', action: () => { closeModal(); currentChat = null; showView('chat-setup'); } },
+      { label: 'Anuluj', cls: 'btn-secondary', action: closeModal },
+    ]);
+  } else {
+    currentChat = null;
+    showView('chat-setup');
+  }
+}
+
+async function finishChat() {
+  if (!currentChat || !currentChat.history.length) { showToast('Rozmowa jest jeszcze pusta!'); return; }
+  document.getElementById('chat-send-btn').disabled = true;
+  showToast('Generuję podsumowanie…');
+  try {
+    await generateChatSummary();
+    showView('chat-summary');
+  } catch {
+    showToast('Nie udało się wygenerować podsumowania. Spróbuj ponownie.');
+  } finally {
+    document.getElementById('chat-send-btn').disabled = false;
+  }
+}
+
+async function generateChatSummary() {
+  const prompt = 'Rozmowa ćwiczebna dobiegła końca. Napisz podsumowanie przebiegu rozmowy (2-3 zdania) w DWÓCH wersjach językowych: ' +
+    'po polsku i po angielsku. Podaj też listę wszystkich nowych/ważnych angielskich słówek i zwrotów, które pojawiły się w rozmowie, wraz z tłumaczeniem na polski. ' +
+    'Odpowiedz WYŁĄCZNIE w formacie JSON, bez znaczników markdown, dokładnie w takiej strukturze: ' +
+    '{"summary_pl":"...","summary_en":"...","words":[{"en":"...","pl":"..."}]}';
+  const history = [...currentChat.history, { role: 'user', text: prompt }];
+  const raw = await callGeminiChat(history);
+  const cleaned = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
+  let data;
+  try { data = JSON.parse(cleaned); } catch { data = null; }
+
+  chatSummaryWords = {};
+  if (data) {
+    if (Array.isArray(data.words)) data.words.forEach(w => { if (w.en) chatSummaryWords[w.en] = w.pl || ''; });
+    document.getElementById('chat-summary-text').innerHTML =
+      `<div class="summary-lang"><b>🇵🇱 PL:</b> ${esc(data.summary_pl || '')}</div>` +
+      `<div class="summary-lang summary-en">${esc(data.summary_en || '')}</div>`;
+  } else {
+    document.getElementById('chat-summary-text').textContent = raw;
+  }
+  document.getElementById('chat-summary-set-name').value = `Pogadajmy: ${currentChat.scenario.title}`;
+  document.getElementById('chat-analysis').innerHTML = '';
+  document.getElementById('chat-analysis').style.display = 'none';
+  document.getElementById('chat-summary-transcript').style.display = 'none';
+  document.getElementById('chat-summary-transcript').innerHTML = '';
+  document.getElementById('toggle-transcript-btn').textContent = 'Pokaż całą rozmowę';
+  renderChatSummaryChips();
+}
+
+function toggleChatTranscript() {
+  const el  = document.getElementById('chat-summary-transcript');
+  const btn = document.getElementById('toggle-transcript-btn');
+  const hidden = el.style.display === 'none';
+  if (hidden && !el.innerHTML) renderChatTranscript();
+  el.style.display = hidden ? '' : 'none';
+  btn.textContent = hidden ? 'Ukryj rozmowę' : 'Pokaż całą rozmowę';
+}
+
+function renderChatTranscript() {
+  const el = document.getElementById('chat-summary-transcript');
+  el.innerHTML = currentChat.history.map(m => `
+    <div class="chat-bubble ${m.role === 'user' ? 'chat-bubble-user' : 'chat-bubble-ai'} transcript-bubble">
+      ${makeChatWordsClickable(m.text)}
+    </div>`).join('') +
+    '<p class="hint" style="margin-top:6px">Kliknij na angielskie słowo, żeby dodać je do listy słówek poniżej.</p>';
+}
+
+function makeChatWordsClickable(text) {
+  return text.split(/(\s+)/).map(token => {
+    const clean = token.replace(/[^a-zA-Z'-]/g, '');
+    if (!clean) return esc(token);
+    const key = clean.toLowerCase();
+    const selected = chatSummaryWords[key] !== undefined;
+    return `<span class="extract-word${selected ? ' selected' : ''}" data-chat-word="${esc(key)}" onclick="toggleChatWord('${key.replace(/'/g, "\\'")}', this)">${esc(token)}</span>`;
+  }).join('');
+}
+
+async function toggleChatWord(word, el) {
+  if (chatSummaryWords[word] !== undefined) {
+    delete chatSummaryWords[word];
+    document.querySelectorAll(`[data-chat-word="${word}"]`).forEach(e => e.classList.remove('selected'));
+    renderChatSummaryChips();
+  } else {
+    chatSummaryWords[word] = '';
+    document.querySelectorAll(`[data-chat-word="${word}"]`).forEach(e => e.classList.add('selected'));
+    renderChatSummaryChips();
+    const pl = await fetchTranslation(word);
+    if (chatSummaryWords[word] === '') {
+      chatSummaryWords[word] = pl;
+      renderChatSummaryChips();
+    }
+  }
+}
+
+async function analyzeChatMistakes() {
+  const btn = document.getElementById('analyze-chat-btn');
+  btn.disabled = true;
+  btn.textContent = 'Analizuję…';
+  const prompt = 'Przeanalizuj powyższą rozmowę pod kątem błędów językowych UCZNIA (wiadomości o roli "user"), oceniając poziom ' +
+    `${currentChat.level}. Dla każdego istotnego błędu podaj: co uczeń napisał, poprawną wersję po angielsku, i krótkie, ciepłe wyjaśnienie po polsku, ` +
+    'dlaczego to był błąd (pisz życzliwie, to nastolatek uczący się języka). Jeśli uczeń nie popełnił błędów, zwróć pustą listę mistakes. Na koniec przygotuj też "improved_dialogue" — ' +
+    'całą rozmowę zapisaną od nowa, w której wypowiedzi ucznia są poprawione na w pełni poprawny, bardziej naturalny angielski ' +
+    '(wypowiedzi AI zostaw bez zmian). Odpowiedz WYŁĄCZNIE w formacie JSON, bez znaczników markdown, dokładnie w takiej strukturze: ' +
+    '{"mistakes":[{"original":"...","corrected":"...","explanation":"..."}],"improved_dialogue":[{"speaker":"user"|"ai","text":"..."}]}';
+  const history = [...currentChat.history, { role: 'user', text: prompt }];
+  try {
+    const raw = await callGeminiChat(history);
+    const cleaned = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
+    const data = JSON.parse(cleaned);
+    renderChatAnalysis(data);
+  } catch {
+    showToast('Nie udało się wygenerować analizy. Spróbuj ponownie.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🔍 Popraw razem';
+  }
+}
+
+function renderChatAnalysis(data) {
+  const mistakes = Array.isArray(data.mistakes) ? data.mistakes : [];
+  const dialogue = Array.isArray(data.improved_dialogue) ? data.improved_dialogue : [];
+
+  const mistakesHtml = mistakes.length
+    ? mistakes.map(m => `
+      <div class="mistake-item">
+        <div class="mistake-original">❌ ${esc(m.original || '')}</div>
+        <div class="mistake-corrected">✅ ${esc(m.corrected || '')}</div>
+        <div class="mistake-explanation">${esc(m.explanation || '')}</div>
+      </div>`).join('')
+    : '<p class="hint">Brak istotnych błędów — świetna robota! 🎉</p>';
+
+  const dialogueHtml = dialogue.map(d => `
+    <div class="chat-bubble ${d.speaker === 'user' ? 'chat-bubble-user' : 'chat-bubble-ai'} transcript-bubble">${esc(d.text || '')}</div>`
+  ).join('');
+
+  document.getElementById('chat-analysis').innerHTML = `
+    <h3>Twoje błędy i poprawki</h3>
+    ${mistakesHtml}
+    ${dialogueHtml ? `<h3 style="margin-top:18px">Jak mogłaby wyglądać ta rozmowa</h3><div class="chat-window analysis-window">${dialogueHtml}</div>` : ''}`;
+  document.getElementById('chat-analysis').style.display = '';
+}
+
+function renderChatSummaryChips() {
+  const list = document.getElementById('chat-summary-words-list');
+  list.innerHTML = Object.keys(chatSummaryWords).map(w => `
+    <span class="selected-word-chip" data-key="${esc(w)}">
+      <b>${esc(w)}</b> =
+      <input type="text" placeholder="tłumaczenie" value="${esc(chatSummaryWords[w])}"
+        oninput="chatSummaryWords[this.closest('.selected-word-chip').dataset.key]=this.value" />
+      <span class="chip-remove" onclick="removeChatSummaryChip(this.closest('.selected-word-chip').dataset.key)">✕</span>
+    </span>`).join('');
+}
+
+function removeChatSummaryChip(word) {
+  delete chatSummaryWords[word];
+  renderChatSummaryChips();
+}
+
+function saveChatSummaryWords() {
+  const entries = Object.entries(chatSummaryWords).filter(([w]) => w);
+  if (!entries.length) { showToast('Brak słówek do zapisania!'); return; }
+  const name  = document.getElementById('chat-summary-set-name').value.trim() || 'Słówka z rozmowy';
+  const words = entries.map(([en, pl]) => ({ id: uid(), en, pl }));
+  const sets  = getSets();
+  sets.push({ id: uid(), name, icon: '💬', words, results: [], createdAt: today(), lastUsed: Date.now() });
+  saveSets(sets);
+  showToast(`✅ Zestaw "${name}" zapisany!`);
+  currentChat = null;
   showView('sets-list');
 }
 
@@ -1273,6 +1975,11 @@ document.addEventListener('keydown', e => {
     if (testView && testView.style.display !== 'none') {
       if (testFeedback && testFeedback.style.display !== 'none') nextTestWord();
       else checkTestAnswer();
+      return;
+    }
+    const chatView = document.getElementById('view-chat');
+    if (chatView && chatView.style.display !== 'none' && document.activeElement === document.getElementById('chat-input')) {
+      sendChatMessage();
       return;
     }
   }
