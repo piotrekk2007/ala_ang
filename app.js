@@ -18,6 +18,10 @@ const BADGES_DEF = [
   { id:'songs3',       icon:'🎤', name:'Gwiazda pop',       desc:'Dodaj 3 piosenki' },
   { id:'three_good',   icon:'😎', name:'Passa wyników',     desc:'Trzy razy powyżej 80%' },
   { id:'improved',     icon:'📈', name:'Coraz lepiej!',     desc:'Popraw swój poprzedni wynik' },
+  { id:'chat_first',   icon:'💬', name:'Pierwsza pogawędka',  desc:'Ukończ swoją pierwszą rozmowę w Pogadajmy' },
+  { id:'chat10',       icon:'🗣️', name:'Gadatliwa Ala',       desc:'Ukończ 10 rozmów w Pogadajmy' },
+  { id:'chat_explorer',icon:'🗺️', name:'Odkrywczyni scenariuszy', desc:'Wypróbuj 10 różnych scenariuszy rozmów' },
+  { id:'chat_flawless',icon:'🌟', name:'Bez błędu!',          desc:'Zakończ rozmowę bez żadnych błędów w analizie "Popraw razem"' },
 ];
 
 // ===== CHAT SCENARIOS (Pogadajmy) =====
@@ -29,6 +33,10 @@ const CHAT_SCENARIOS = [
       { user: 'Wybredny klient ze specjalną dietą', ai: 'Znudzony, oschły kelner' },
       { user: 'Celebryta incognito', ai: 'Kelner, który rozpoznał gwiazdę i traci głowę' },
     ],
+    complications: {
+      B1: 'W trakcie zamówienia zabrakło jednego z dań z menu — zareaguj na to i wybierz alternatywę.',
+      B2: 'Pod koniec pojawia się problem z rachunkiem (zła kwota lub brak możliwości płatności kartą) — rozwiąż to grzecznie, ale stanowczo.',
+    },
   },
   {
     id: 'post', icon: '📮', title: 'Na poczcie',
@@ -37,6 +45,10 @@ const CHAT_SCENARIOS = [
       { user: 'Zdezorientowany klient, który zgubił awizo', ai: 'Zniecierpliwiony urzędnik' },
       { user: 'Osoba nadająca tajemniczą, ciężką paczkę', ai: 'Podejrzliwy urzędnik przekonany, że to przemyt' },
     ],
+    complications: {
+      B1: 'Paczka jest za ciężka na standardową wysyłkę — negocjuj inną opcję dostawy.',
+      B2: 'Urzędnik informuje, że przesyłka wymaga dodatkowych dokumentów celnych — dopytaj o szczegóły i ustal, co dalej.',
+    },
   },
   {
     id: 'park', icon: '🌳', title: 'Small talk w parku',
@@ -45,6 +57,10 @@ const CHAT_SCENARIOS = [
       { user: 'Turysta pytający o drogę', ai: 'Uprzejmy miejscowy' },
       { user: 'Amatorski poeta czytający wiersze na ławce', ai: 'Zdezorientowany przechodzień, który się na to natknął' },
     ],
+    complications: {
+      B1: 'W trakcie rozmowy zaczyna padać deszcz — zdecydujcie razem, co robić dalej.',
+      B2: 'Rozmówca zaprasza Cię na wydarzenie w przyszłym tygodniu — dopytaj o szczegóły i uzgodnij termin.',
+    },
   },
   {
     id: 'shop', icon: '🛒', title: 'Zakupy w sklepie',
@@ -53,6 +69,10 @@ const CHAT_SCENARIOS = [
       { user: 'Klient reklamujący zepsuty towar', ai: 'Nieco zirytowany sprzedawca' },
       { user: 'Klient kupujący prezent na ostatnią chwilę', ai: 'Sprzedawca, dla którego wszystko jest "idealnym prezentem"' },
     ],
+    complications: {
+      B1: 'Produktu, którego szukasz, akurat zabrakło — zapytaj o zamiennik lub termin dostawy.',
+      B2: 'Sprzedawca próbuje sprzedać Ci droższy produkt niż potrzebujesz — grzecznie odmów, argumentując swój wybór.',
+    },
   },
   {
     id: 'airport', icon: '✈️', title: 'Na lotnisku (odprawa)',
@@ -60,6 +80,10 @@ const CHAT_SCENARIOS = [
       { user: 'Pasażer z nadbagażem', ai: 'Sumienna pracownica odprawy' },
       { user: 'Roztrzepany podróżnik, który nie może znaleźć paszportu', ai: 'Zniecierpliwiony strażnik graniczny' },
     ],
+    complications: {
+      B1: 'Twój lot jest opóźniony — dopytaj o nowy czas i możliwe opcje.',
+      B2: 'Brakuje Ci jednego z wymaganych dokumentów — wytłumacz sytuację i poproś o rozwiązanie.',
+    },
   },
   {
     id: 'hotel', icon: '🏨', title: 'W hotelu (recepcja)',
@@ -67,6 +91,10 @@ const CHAT_SCENARIOS = [
       { user: 'Gość zameldowujący się po długiej podróży', ai: 'Uprzejmy recepcjonista' },
       { user: 'Gość reklamujący hałas z sąsiedniego pokoju', ai: 'Recepcjonista, który udaje, że nic nie słyszał' },
     ],
+    complications: {
+      B1: 'Pokój, który zarezerwowałeś, jest niedostępny — uzgodnij alternatywę.',
+      B2: 'W rachunku pojawia się nieoczekiwana opłata — dopytaj, skąd się wzięła, i wynegocjuj jej usunięcie.',
+    },
   },
   {
     id: 'pharmacy', icon: '💊', title: 'W aptece',
@@ -74,6 +102,10 @@ const CHAT_SCENARIOS = [
       { user: 'Pacjent z przeziębieniem', ai: 'Troskliwy farmaceuta' },
       { user: 'Hipochondryk pytający o każdy możliwy lek', ai: 'Cierpliwy, ale już nieco zmęczony farmaceuta' },
     ],
+    complications: {
+      B1: 'Lek, którego potrzebujesz, wymaga recepty, której nie masz — zapytaj o inne rozwiązanie.',
+      B2: 'Musisz dokładnie opisać objawy i zapytać o możliwe interakcje z innym lekiem, który już bierzesz.',
+    },
   },
   {
     id: 'doctor', icon: '🩺', title: 'U lekarza',
@@ -81,6 +113,10 @@ const CHAT_SCENARIOS = [
       { user: 'Pacjent opisujący objawy bólu głowy', ai: 'Spokojny lekarz rodzinny' },
       { user: 'Pacjent przekonany, że ma rzadką chorobę z internetu', ai: 'Lekarz o ograniczonej cierpliwości' },
     ],
+    complications: {
+      B1: 'Lekarz pyta o historię choroby w rodzinie — musisz to opisać własnymi słowami.',
+      B2: 'Musisz wynegocjować termin badania, bo najbliższy wolny termin Ci nie pasuje.',
+    },
   },
   {
     id: 'hairdresser', icon: '💇', title: 'U fryzjera',
@@ -88,6 +124,10 @@ const CHAT_SCENARIOS = [
       { user: 'Klient chcący drobną zmianę fryzury', ai: 'Gadatliwy fryzjer, który zna wszystkie plotki' },
       { user: 'Klient, który boi się nowej fryzury', ai: 'Fryzjer-artysta z wielkimi ambicjami' },
     ],
+    complications: {
+      B1: 'Fryzjer proponuje coś innego niż prosiłeś — wyjaśnij dokładnie, czego chcesz.',
+      B2: 'W trakcie strzyżenia coś idzie nie tak — musisz zareagować i zdecydować, jak to naprawić.',
+    },
   },
   {
     id: 'taxi', icon: '🚕', title: 'W taksówce',
@@ -95,6 +135,10 @@ const CHAT_SCENARIOS = [
       { user: 'Pasażer śpieszący się na pociąg', ai: 'Kierowca, który zna skróty, ale uwielbia opowiadać historie' },
       { user: 'Turysta niepewny adresu', ai: 'Milczący, tajemniczy taksówkarz' },
     ],
+    complications: {
+      B1: 'Kierowca jedzie inną trasą niż się spodziewałeś — zapytaj dlaczego i czy to się opłaca.',
+      B2: 'Musisz wynegocjować cenę kursu, zanim wsiądziesz, bo licznik nie działa.',
+    },
   },
   {
     id: 'bank', icon: '🏦', title: 'W banku',
@@ -102,6 +146,10 @@ const CHAT_SCENARIOS = [
       { user: 'Klient zakładający konto', ai: 'Formalny doradca bankowy' },
       { user: 'Klient reklamujący dziwną opłatę na koncie', ai: 'Doradca, który tylko recytuje regulamin' },
     ],
+    complications: {
+      B1: 'Bank wymaga dodatkowego dokumentu, którego nie masz przy sobie — zapytaj o alternatywę.',
+      B2: 'Musisz złożyć reklamację nieautoryzowanej transakcji i wyjaśnić szczegóły.',
+    },
   },
   {
     id: 'office', icon: '🏢', title: 'W urzędzie',
@@ -109,6 +157,10 @@ const CHAT_SCENARIOS = [
       { user: 'Osoba meldująca nowy adres', ai: 'Rzeczowy urzędnik' },
       { user: 'Osoba z niekompletnymi dokumentami', ai: 'Urzędnik uwielbiający stemple i procedury' },
     ],
+    complications: {
+      B1: 'Brakuje jednego z wymaganych formularzy — zapytaj, jak go uzupełnić.',
+      B2: 'Urzędnik odsyła Cię do innego okienka — musisz dopytać o cały proces krok po kroku.',
+    },
   },
   {
     id: 'mechanic', icon: '🔧', title: 'U mechanika',
@@ -116,6 +168,10 @@ const CHAT_SCENARIOS = [
       { user: 'Kierowca z dziwnym dźwiękiem w silniku', ai: 'Doświadczony mechanik' },
       { user: 'Kierowca, który nic nie wie o samochodach', ai: 'Mechanik próbujący sprzedać niepotrzebne naprawy' },
     ],
+    complications: {
+      B1: 'Naprawa będzie droższa niż się spodziewałeś — zareaguj i zapytaj o tańsze opcje.',
+      B2: 'Musisz wynegocjować termin odbioru samochodu, bo pilnie go potrzebujesz.',
+    },
   },
   {
     id: 'gym', icon: '🏋️', title: 'Na siłowni',
@@ -123,6 +179,10 @@ const CHAT_SCENARIOS = [
       { user: 'Nowy członek pytający o sprzęt', ai: 'Entuzjastyczny trener personalny' },
       { user: 'Osoba szukająca partnera do ćwiczeń', ai: 'Zbyt pewny siebie kulturysta' },
     ],
+    complications: {
+      B1: 'Sprzęt, którego chciałeś użyć, jest zajęty — zapytaj o alternatywę.',
+      B2: 'Trener proponuje plan treningowy, którego się obawiasz — wyraź swoje wątpliwości i wynegocjuj zmiany.',
+    },
   },
   {
     id: 'party', icon: '🎉', title: 'Na imprezie urodzinowej',
@@ -130,6 +190,10 @@ const CHAT_SCENARIOS = [
       { user: 'Gość, który nikogo nie zna', ai: 'Towarzyski gospodarz imprezy' },
       { user: 'Osoba próbująca uciec od nudnej rozmowy', ai: 'Gaduła opowiadający wyłącznie o swoim akwarium' },
     ],
+    complications: {
+      B1: 'Ktoś na imprezie myli Cię z inną osobą — musisz to wyjaśnić.',
+      B2: 'W trakcie rozmowy musisz taktownie odmówić czegoś, co Ci zaproponowano (np. jedzenia, gry, wyjścia).',
+    },
   },
   {
     id: 'interview', icon: '💼', title: 'Rozmowa kwalifikacyjna',
@@ -137,6 +201,10 @@ const CHAT_SCENARIOS = [
       { user: 'Kandydat na stanowisko stażysty', ai: 'Uprzejma rekruterka' },
       { user: 'Pewny siebie kandydat z małym doświadczeniem', ai: 'Sceptyczny, wymagający dyrektor HR' },
     ],
+    complications: {
+      B1: 'Rekruterka pyta o Twoją największą słabość — musisz odpowiedzieć dyplomatycznie.',
+      B2: 'Musisz wynegocjować termin rozpoczęcia pracy lub inny szczegół oferty.',
+    },
   },
   {
     id: 'neighbor', icon: '🏠', title: 'Rozmowa z sąsiadem',
@@ -144,6 +212,10 @@ const CHAT_SCENARIOS = [
       { user: 'Zirytowany sąsiad zza ściany skarżący się na hałas', ai: 'Zaskoczony sąsiad, który właśnie urządził imprezę' },
       { user: 'Osoba proszące o pożyczenie cukru', ai: 'Podejrzliwy, samotny sąsiad, który uwielbia teorie spiskowe' },
     ],
+    complications: {
+      B1: 'Sąsiad prosi o coś, na co nie masz ochoty — musisz grzecznie odmówić.',
+      B2: 'Sytuacja się komplikuje (sąsiad się obraża lub nie ustępuje) — musisz rozładować napięcie.',
+    },
   },
   {
     id: 'vet', icon: '🐶', title: 'U weterynarza',
@@ -151,6 +223,10 @@ const CHAT_SCENARIOS = [
       { user: 'Zaniepokojony właściciel psa', ai: 'Spokojna weterynarz' },
       { user: 'Właściciel bardzo niegrzecznego kota', ai: 'Weterynarz, który szczerze boi się tego kota' },
     ],
+    complications: {
+      B1: 'Weterynarz sugeruje kosztowne badanie — zapytaj o alternatywy.',
+      B2: 'Musisz opisać nietypowe zachowanie zwierzęcia i odpowiedzieć na serię szczegółowych pytań.',
+    },
   },
   {
     id: 'library', icon: '📚', title: 'W bibliotece',
@@ -158,6 +234,10 @@ const CHAT_SCENARIOS = [
       { user: 'Student szukający konkretnej książki', ai: 'Pomocna bibliotekarka' },
       { user: 'Osoba oddająca książkę miesiąc po terminie', ai: 'Surowa bibliotekarka pilnująca ciszy' },
     ],
+    complications: {
+      B1: 'Książki, której szukasz, nie ma na półce — zapytaj o inne opcje.',
+      B2: 'Musisz wynegocjować przedłużenie terminu zwrotu, tłumacząc swoją sytuację.',
+    },
   },
   {
     id: 'cinema', icon: '🎬', title: 'W kinie (kasa biletowa)',
@@ -165,6 +245,10 @@ const CHAT_SCENARIOS = [
       { user: 'Widz kupujący bilety na wieczorny seans', ai: 'Znudzona kasjerka' },
       { user: 'Osoba, która pomyliła godzinę seansu', ai: 'Kasjer-fanatyk kina, który zna każdy film na pamięć' },
     ],
+    complications: {
+      B1: 'Seans, na który chciałeś iść, jest wyprzedany — zapytaj o alternatywę.',
+      B2: 'Musisz zareklamować złe miejsca lub problem z biletem kupionym online.',
+    },
   },
   {
     id: 'return', icon: '🛍️', title: 'Zwrot towaru w sklepie',
@@ -172,6 +256,10 @@ const CHAT_SCENARIOS = [
       { user: 'Klient zwracający buty w złym rozmiarze', ai: 'Wyrozumiały sprzedawca' },
       { user: 'Klient reklamujący pizzę z za małą ilością salami', ai: 'Zdezorientowany kucharz broniący swojej pizzy' },
     ],
+    complications: {
+      B1: 'Sprzedawca prosi o paragon, którego nie masz — musisz to jakoś rozwiązać.',
+      B2: 'Sprzedawca odmawia zwrotu — musisz argumentować i dążyć do kompromisu.',
+    },
   },
   {
     id: 'luggage', icon: '🧳', title: 'Zgubiony bagaż na lotnisku',
@@ -179,6 +267,10 @@ const CHAT_SCENARIOS = [
       { user: 'Pasażer zgłaszający zaginiony bagaż', ai: 'Cierpliwy pracownik biura reklamacji' },
       { user: 'Podróżnik w panice bez ubrań na wakacje', ai: 'Pracownik linii lotniczych, który akurat ma kiepski dzień' },
     ],
+    complications: {
+      B1: 'Musisz dokładnie opisać wygląd zagubionej walizki.',
+      B2: 'Pracownik informuje, że bagaż odnajdzie się dopiero za kilka dni — musisz wynegocjować rekompensatę lub pomoc.',
+    },
   },
   {
     id: 'carrental', icon: '🚗', title: 'Wypożyczalnia samochodów',
@@ -186,6 +278,10 @@ const CHAT_SCENARIOS = [
       { user: 'Klient wypożyczający samochód na weekend', ai: 'Rzeczowy pracownik wypożyczalni' },
       { user: 'Klient chcący najtańszą opcję, ale z dużymi wymaganiami', ai: 'Sprzedawca usilnie dosprzedający ubezpieczenie' },
     ],
+    complications: {
+      B1: 'Samochód, który rezerwowałeś, jest niedostępny — uzgodnij zamiennik.',
+      B2: 'Podczas odbioru zauważasz rysę na aucie — musisz to zgłosić, zanim podpiszesz umowę.',
+    },
   },
   {
     id: 'office-smalltalk', icon: '☕', title: 'Small talk przy kawie w pracy',
@@ -193,6 +289,10 @@ const CHAT_SCENARIOS = [
       { user: 'Nowy pracownik poznający kolegów', ai: 'Wylewny współpracownik uwielbiający plotki z biura' },
       { user: 'Osoba unikająca rozmowy o pogodzie', ai: 'Kolega, który potrafi rozmawiać wyłącznie o pogodzie' },
     ],
+    complications: {
+      B1: 'Ktoś pyta Cię o coś niezręcznego — musisz zmienić temat w naturalny sposób.',
+      B2: 'Musisz taktownie nie zgodzić się z opinią współpracownika, nie robiąc z tego konfliktu.',
+    },
   },
   {
     id: 'beach', icon: '🏖️', title: 'Na plaży (wakacje)',
@@ -200,6 +300,10 @@ const CHAT_SCENARIOS = [
       { user: 'Turysta pytający o wypożyczenie leżaka', ai: 'Zrelaksowany ratownik' },
       { user: 'Osoba broniąca swojego miejsca na plaży', ai: 'Sąsiad z plaży, który rozstawił się o metr za blisko' },
     ],
+    complications: {
+      B1: 'Zaczyna się sztorm lub silny wiatr — musisz zdecydować, co robić.',
+      B2: 'Musisz rozwiązać spór o miejsce na plaży w sposób dyplomatyczny.',
+    },
   },
   {
     id: 'parking', icon: '🅿️', title: 'Spór o miejsce parkingowe',
@@ -207,6 +311,10 @@ const CHAT_SCENARIOS = [
       { user: 'Kierowca, który "zajął" czyjeś zwyczajowe miejsce', ai: 'Oburzony sąsiad broniący swojego terytorium' },
       { user: 'Osoba parkująca lekko krzywo', ai: 'Nadgorliwy strażnik osiedlowy z metrówką' },
     ],
+    complications: {
+      B1: 'Druga osoba nie chce ustąpić — musisz znaleźć kompromis.',
+      B2: 'Sytuacja eskaluje i ktoś grozi wezwaniem straży — musisz rozładować napięcie i zaproponować rozwiązanie.',
+    },
   },
   {
     id: 'fortuneteller', icon: '🔮', title: 'Wizyta u wróżki',
@@ -214,6 +322,10 @@ const CHAT_SCENARIOS = [
       { user: 'Sceptyczny klient chcący poznać przyszłość', ai: 'Tajemnicza wróżka z kryształową kulą' },
       { user: 'Osoba pytająca o miłość', ai: 'Wróżka, która widzi wyłącznie złe wiadomości' },
     ],
+    complications: {
+      B1: 'Wróżka przepowiada coś niepokojącego — musisz zapytać o więcej szczegółów.',
+      B2: 'Musisz zakwestionować jedną z przepowiedni, zachowując uprzejmość.',
+    },
   },
   {
     id: 'alien', icon: '👽', title: 'Rozmowa z kosmitą uczącym się angielskiego',
@@ -221,6 +333,10 @@ const CHAT_SCENARIOS = [
       { user: 'Ziemianin tłumaczący, czym jest kawa', ai: 'Kosmita, który myli słowa i zadaje bardzo dziwne pytania' },
       { user: 'Przewodnik oprowadzający kosmitę po Ziemi', ai: 'Kosmita głęboko przekonany, że ludzie to roboty' },
     ],
+    complications: {
+      B1: 'Kosmita nie rozumie podstawowego ziemskiego zwyczaju — musisz to cierpliwie wytłumaczyć.',
+      B2: 'Kosmita zaczyna panikować z powodu nieporozumienia — musisz go uspokoić i wyjaśnić sytuację.',
+    },
   },
   {
     id: 'robot', icon: '🤖', title: 'Robot-sprzedawca w sklepie przyszłości',
@@ -228,6 +344,10 @@ const CHAT_SCENARIOS = [
       { user: 'Klient szukający zwykłego chleba', ai: 'Robot-sprzedawca polecający wyłącznie futurystyczne jedzenie' },
       { user: 'Klient próbujący wyłączyć nachalnego robota', ai: 'Robot z nadgorliwym programem sprzedażowym' },
     ],
+    complications: {
+      B1: 'Robot poleca coś zupełnie niepotrzebnego — musisz stanowczo, ale grzecznie odmówić.',
+      B2: 'System robota się zawiesza w trakcie rozmowy — musisz zdecydować, jak dokończyć zakupy.',
+    },
   },
   {
     id: 'ghost', icon: '🏰', title: 'Rozmowa z duchem w starym zamku',
@@ -235,6 +355,10 @@ const CHAT_SCENARIOS = [
       { user: 'Zwiedzający, który niespodziewanie spotkał ducha', ai: 'Zrzędliwy duch mieszkający w zamku od 300 lat' },
       { user: 'Przewodnik wycieczki próbujący uspokoić grupę', ai: 'Duch, który uwielbia straszyć, ale w głębi duszy jest samotny' },
     ],
+    complications: {
+      B1: 'Duch prosi Cię o przysługę — musisz zdecydować, czy się zgodzić.',
+      B2: 'Duch zdradza mroczny sekret zamku — musisz zareagować i zadać dalsze pytania.',
+    },
   },
   {
     id: 'superhero', icon: '🦸', title: 'Trening superbohatera',
@@ -242,6 +366,10 @@ const CHAT_SCENARIOS = [
       { user: 'Uczeń szkoły superbohaterów', ai: 'Ekscentryczny mentor-superbohater' },
       { user: 'Superbohater na pierwszej misji', ai: 'Złoczyńca, który tak naprawdę chce się zaprzyjaźnić' },
     ],
+    complications: {
+      B1: 'Mentor daje Ci trudne zadanie do wykonania na już — musisz zapytać o szczegóły.',
+      B2: 'W trakcie treningu coś idzie nie tak (sprzęt lub moc zawodzi) — musisz zaimprowizować rozwiązanie.',
+    },
   },
   {
     id: 'pirates', icon: '🏴‍☠️', title: 'Na statku piratów',
@@ -249,6 +377,10 @@ const CHAT_SCENARIOS = [
       { user: 'Nowy członek załogi', ai: 'Kapitan piratów szukający zaginionego skarbu' },
       { user: 'Jeniec próbujący uciec', ai: 'Gadatliwa papuga kapitana, która mówi ludzkim głosem' },
     ],
+    complications: {
+      B1: 'Załoga odkrywa problem z mapą skarbów — musisz zaproponować rozwiązanie.',
+      B2: 'Musisz wynegocjować swój udział w skarbie z resztą załogi.',
+    },
   },
   {
     id: 'dragonschool', icon: '🐉', title: 'Szkoła treserów smoków',
@@ -256,6 +388,10 @@ const CHAT_SCENARIOS = [
       { user: 'Uczeń w szkole treserów smoków', ai: 'Nauczycielka ucząca, jak się zaprzyjaźnić ze smokiem' },
       { user: 'Smoczy jeździec na pierwszym locie', ai: 'Nerwowy smok, który boi się latać' },
     ],
+    complications: {
+      B1: 'Twój smok odmawia współpracy — musisz go uspokoić i przekonać.',
+      B2: 'Pojawia się nieoczekiwane niebezpieczeństwo podczas lotu — musisz zareagować i podjąć decyzję.',
+    },
   },
   {
     id: 'videogame', icon: '🎮', title: 'Wewnątrz gry wideo',
@@ -263,6 +399,10 @@ const CHAT_SCENARIOS = [
       { user: 'Gracz, który utknął w grze', ai: 'NPC dający wskazówki, ale trochę pomylony' },
       { user: 'Bohater questu', ai: 'Zły boss, który tak naprawdę woli gadać niż walczyć' },
     ],
+    complications: {
+      B1: 'NPC daje Ci mylące wskazówki — musisz dopytać, żeby zrozumieć zadanie.',
+      B2: 'Musisz wynegocjować z bossem rozejm zamiast walki.',
+    },
   },
   {
     id: 'magicschool', icon: '🧙', title: 'Szkoła magii',
@@ -270,6 +410,10 @@ const CHAT_SCENARIOS = [
       { user: 'Nowy uczeń szkoły magii', ai: 'Ekscentryczny nauczyciel zaklęć' },
       { user: 'Uczeń, któremu zaklęcie nie do końca wyszło', ai: 'Mówiący kot, który jest w tej szkole od 100 lat' },
     ],
+    complications: {
+      B1: 'Twoje zaklęcie działa nie tak, jak powinno — musisz opisać, co poszło nie tak.',
+      B2: 'Musisz przekonać nauczyciela, żeby dał Ci drugą szansę po nieudanym zaklęciu.',
+    },
   },
   {
     id: 'timetravel', icon: '🕰️', title: 'Podróż w czasie',
@@ -277,6 +421,10 @@ const CHAT_SCENARIOS = [
       { user: 'Podróżnik w czasie, który wylądował w średniowieczu', ai: 'Zdziwiony mieszkaniec średniowiecznej wioski' },
       { user: 'Odkrywca przyszłości', ai: 'Robot z roku 3000, trochę zdezorientowany' },
     ],
+    complications: {
+      B1: 'Rozmówca nie rozumie, skąd jesteś — musisz to wytłumaczyć.',
+      B2: 'Musisz rozwiązać nieporozumienie, które grozi zmianą biegu historii.',
+    },
   },
   {
     id: 'zoo', icon: '🦁', title: 'W zoo',
@@ -284,6 +432,10 @@ const CHAT_SCENARIOS = [
       { user: 'Zwiedzający pytający opiekuna o zwierzęta', ai: 'Entuzjastyczny opiekun zoo' },
       { user: 'Osoba, która przypadkiem rozumie mowę zwierząt', ai: 'Znudzony lew, który narzeka na jedzenie' },
     ],
+    complications: {
+      B1: 'Jedno ze zwierząt zachowuje się nietypowo — musisz o to dopytać opiekuna.',
+      B2: 'Musisz przekonać znudzone, marudne zwierzę, żeby współpracowało.',
+    },
   },
   {
     id: 'friendbirthday', icon: '🎂', title: 'Urodziny kolegi/koleżanki ze szkoły',
@@ -291,6 +443,10 @@ const CHAT_SCENARIOS = [
       { user: 'Gość na urodzinach szkolnego kolegi', ai: 'Ekscytowany solenizant pokazujący prezenty' },
       { user: 'Osoba organizująca niespodziankę', ai: 'Kolega, który prawie zdradza sekret' },
     ],
+    complications: {
+      B1: 'Zapomniałeś prezentu — musisz wytłumaczyć się przed solenizantem.',
+      B2: 'Musisz utrzymać niespodziankę w tajemnicy mimo trudnych pytań.',
+    },
   },
   {
     id: 'summercamp', icon: '🏕️', title: 'Na obozie letnim',
@@ -298,6 +454,10 @@ const CHAT_SCENARIOS = [
       { user: 'Uczestnik obozu poznający nowych znajomych', ai: 'Wesoły opiekun obozowy' },
       { user: 'Osoba opowiadająca straszną historię przy ognisku', ai: 'Nieco przestraszony uczestnik obozu' },
     ],
+    complications: {
+      B1: 'Pogoda psuje zaplanowaną aktywność — musicie zdecydować, co robić zamiast tego.',
+      B2: 'Musisz rozwiązać spór między dwoma uczestnikami obozu.',
+    },
   },
   {
     id: 'ghosthunt', icon: '👻', title: 'Polowanie na duchy',
@@ -305,6 +465,10 @@ const CHAT_SCENARIOS = [
       { user: 'Młody łowca duchów na pierwszej misji', ai: 'Doświadczony, ale zabawny mentor łowców duchów' },
       { user: 'Osoba, która znalazła nawiedzony dom', ai: 'Duch, który tylko chce, żeby ktoś zagrał z nim w planszówkę' },
     ],
+    complications: {
+      B1: 'Wykrywacz duchów pokazuje coś niepokojącego — musisz zdecydować, co dalej.',
+      B2: 'Duch, na którego polujecie, okazuje się bardziej przebiegły, niż myśleliście — musicie zmienić plan.',
+    },
   },
 ];
 
@@ -1218,12 +1382,18 @@ function renderChatStepRole() {
 }
 
 function buildChatSystemPrompt(scenario, level, userRole, aiRole) {
-  return `Uczymy się języka angielskiego. Rozmówcą jest nastolatek (10-15 lat), więc bądź cierpliwy, przyjazny i wyrozumiały. ` +
+  let prompt = `Uczymy się języka angielskiego. Rozmówcą jest nastolatek (10-15 lat), więc bądź cierpliwy, przyjazny i wyrozumiały. ` +
     `Ćwiczymy dialog w scenariuszu: "${scenario.title}". Poziom językowy ucznia: ${level}. Odpowiadaj WYŁĄCZNIE po angielsku, dostosowując słownictwo i długość zdań do poziomu ${level}. ` +
     `Ty wcielasz się w rolę: ${aiRole}. Uczeń gra rolę: ${userRole}. ` +
     `To jest dialog ćwiczebny — jeśli widzisz, że uczeń nie radzi sobie, ma problem ze sformułowaniem zdania, pisze po polsku albo utknął, ` +
     `delikatnie podpowiedz mu po angielsku (możesz dodać krótką podpowiedź po polsku w nawiasie) i zachęć go ciepłym tonem do kontynuowania w roli. ` +
-    `Trzymaj się swojej roli i scenariusza przez całą rozmowę, baw się nią i bądź pozytywny. Zacznij rozmowę pierwszy, krótkim zdaniem pasującym do sceny i Twojej roli.`;
+    `Trzymaj się swojej roli i scenariusza przez całą rozmowę, baw się nią i bądź pozytywny.`;
+  const complication = scenario.complications && scenario.complications[level];
+  if (complication) {
+    prompt += ` Dodatkowe wyzwanie, które musisz wpleść w rozmowę w naturalnym momencie: ${complication}`;
+  }
+  prompt += ` Zacznij rozmowę pierwszy, krótkim zdaniem pasującym do sceny i Twojej roli.`;
+  return prompt;
 }
 
 function startChat(roleIdx) {
@@ -1245,6 +1415,7 @@ function startChat(roleIdx) {
     `<span>${chatSetupState.level}</span> · <span>Ty: ${esc(role.user)}</span> · <span>AI: ${esc(role.ai)}</span>`;
   document.getElementById('chat-window').innerHTML = '';
   document.getElementById('chat-error').style.display = 'none';
+  document.getElementById('chat-hint').style.display = 'none';
   document.getElementById('chat-input').value = '';
   showView('chat');
   requestFirstChatMessage();
@@ -1284,11 +1455,32 @@ async function requestFirstChatMessage() {
   }
 }
 
+async function requestChatHint() {
+  if (!currentChat) return;
+  const btn = document.getElementById('chat-hint-btn');
+  const hintEl = document.getElementById('chat-hint');
+  btn.disabled = true;
+  hintEl.style.display = '';
+  hintEl.textContent = 'Szukam podpowiedzi…';
+  const prompt = 'Nie kontynuuj teraz rozmowy jako postać. Zamiast tego podaj uczniowi krótką podpowiedź PO POLSKU (1-2 zdania), ' +
+    'co mógłby teraz odpowiedzieć po angielsku w tej sytuacji, dopasowaną do jego roli i poziomu. Możesz podać przykładowe zdanie po angielsku w cudzysłowie.';
+  const history = [...currentChat.history, { role: 'user', text: prompt }];
+  try {
+    const hint = await callGeminiChat(history);
+    hintEl.textContent = '💡 ' + hint;
+  } catch {
+    hintEl.textContent = 'Nie udało się pobrać podpowiedzi. Spróbuj ponownie.';
+  } finally {
+    btn.disabled = false;
+  }
+}
+
 async function sendChatMessage() {
   const input = document.getElementById('chat-input');
   const text = input.value.trim();
   if (!text || !currentChat) return;
   document.getElementById('chat-error').style.display = 'none';
+  document.getElementById('chat-hint').style.display = 'none';
   currentChat.history.push({ role: 'user', text });
   input.value = '';
   renderChatMessages();
@@ -1355,12 +1547,29 @@ async function finishChat() {
   showToast('Generuję podsumowanie…');
   try {
     await generateChatSummary();
+    recordChatCompletion(currentChat.scenario.id);
     showView('chat-summary');
   } catch {
     showToast('Nie udało się wygenerować podsumowania. Spróbuj ponownie.');
   } finally {
     document.getElementById('chat-send-btn').disabled = false;
   }
+}
+
+function recordChatCompletion(scenarioId) {
+  const prog = getProgress();
+  if (!prog.chatStats) prog.chatStats = { count: 0, scenarios: [] };
+  prog.chatStats.count++;
+  if (!prog.chatStats.scenarios.includes(scenarioId)) prog.chatStats.scenarios.push(scenarioId);
+  checkChatBadges(prog);
+  saveProgress(prog);
+}
+
+function checkChatBadges(prog) {
+  const add = id => { if (!prog.badges.includes(id)) { prog.badges.push(id); showToast(`🎖️ Nowa odznaka: ${BADGES_DEF.find(b=>b.id===id)?.name || id}!`); } };
+  if (prog.chatStats.count >= 1) add('chat_first');
+  if (prog.chatStats.count >= 10) add('chat10');
+  if (prog.chatStats.scenarios.length >= 10) add('chat_explorer');
 }
 
 async function generateChatSummary() {
@@ -1453,6 +1662,14 @@ async function analyzeChatMistakes() {
     const cleaned = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
     const data = JSON.parse(cleaned);
     renderChatAnalysis(data);
+    if (Array.isArray(data.mistakes) && data.mistakes.length === 0) {
+      const prog = getProgress();
+      if (!prog.badges.includes('chat_flawless')) {
+        prog.badges.push('chat_flawless');
+        showToast(`🎖️ Nowa odznaka: ${BADGES_DEF.find(b => b.id === 'chat_flawless')?.name}!`);
+        saveProgress(prog);
+      }
+    }
   } catch {
     showToast('Nie udało się wygenerować analizy. Spróbuj ponownie.');
   } finally {
