@@ -476,6 +476,127 @@ let currentChat = null;
 let chatSetupState = { scenario: null, level: null };
 let chatSummaryWords = {};
 
+// ===== ESSAY TOPICS (Wypracowania) =====
+const ESSAY_TOPICS = {
+  A1: [
+    { title: 'My family', minWords: 40, requirements: [
+      'Napisz minimum 40 słów.',
+      'Powiedz, ile osób jest w Twojej rodzinie.',
+      'Opisz, kim są (mama, tata, brat, siostra...) i ile mają lat.',
+      'Napisz, co lubią robić.',
+    ]},
+    { title: 'My favourite animal', minWords: 40, requirements: [
+      'Napisz minimum 40 słów.',
+      'Napisz, jakie to zwierzę i jak wygląda.',
+      'Opisz, gdzie mieszka.',
+      'Napisz, co je i dlaczego je lubisz.',
+    ]},
+    { title: 'My day', minWords: 40, requirements: [
+      'Napisz minimum 40 słów.',
+      'Opisz swój typowy dzień od rana do wieczora.',
+      'Użyj czasu teraźniejszego (Present Simple).',
+    ]},
+    { title: 'My room', minWords: 40, requirements: [
+      'Napisz minimum 40 słów.',
+      'Opisz, jakie meble i przedmioty są w Twoim pokoju.',
+      'Napisz, gdzie się znajdują (użyj słów typu "next to", "on", "under").',
+    ]},
+    { title: 'My favourite food', minWords: 40, requirements: [
+      'Napisz minimum 40 słów.',
+      'Napisz, jakie jedzenie lubisz najbardziej i dlaczego.',
+      'Opisz, kiedy je jesz.',
+    ]},
+  ],
+  A2: [
+    { title: 'My last holiday', minWords: 70, requirements: [
+      'Napisz minimum 70 słów.',
+      'Opisz, gdzie byłeś na ostatnich wakacjach i z kim.',
+      'Napisz, co robiłeś każdego dnia.',
+      'Użyj czasu przeszłego (Past Simple).',
+    ]},
+    { title: 'My best friend', minWords: 70, requirements: [
+      'Napisz minimum 70 słów.',
+      'Opisz wygląd i charakter swojego najlepszego przyjaciela.',
+      'Napisz, co razem lubicie robić.',
+    ]},
+    { title: 'My favourite hobby', minWords: 70, requirements: [
+      'Napisz minimum 70 słów.',
+      'Napisz, jakie masz hobby i od kiedy je uprawiasz.',
+      'Wyjaśnij, dlaczego je lubisz.',
+    ]},
+    { title: 'A day I will never forget', minWords: 70, requirements: [
+      'Napisz minimum 70 słów.',
+      'Opisz konkretny dzień, który dobrze zapamiętałeś.',
+      'Wyjaśnij, dlaczego był wyjątkowy.',
+      'Użyj czasu przeszłego (Past Simple).',
+    ]},
+    { title: 'My dream house', minWords: 70, requirements: [
+      'Napisz minimum 70 słów.',
+      'Opisz, jak wyglądałby Twój wymarzony dom.',
+      'Napisz, gdzie by stał i co by w nim było.',
+    ]},
+  ],
+  B1: [
+    { title: 'The advantages and disadvantages of social media', minWords: 120, requirements: [
+      'Napisz minimum 120 słów.',
+      'Podaj przynajmniej dwie zalety i dwie wady social mediów.',
+      'Zakończ własną opinią.',
+    ]},
+    { title: 'My plans for the future', minWords: 120, requirements: [
+      'Napisz minimum 120 słów.',
+      'Opisz swoje plany dotyczące szkoły, pracy i marzeń.',
+      'Użyj konstrukcji czasu przyszłego ("will", "going to").',
+    ]},
+    { title: 'A book or a movie that changed how I think', minWords: 120, requirements: [
+      'Napisz minimum 120 słów.',
+      'Opisz krótko, o czym była książka/film.',
+      'Wyjaśnij, jak wpłynęła na Twoje myślenie.',
+    ]},
+    { title: 'Should students have homework?', minWords: 120, requirements: [
+      'Napisz minimum 120 słów.',
+      'Przedstaw argumenty za i przeciw.',
+      'Zakończ własną opinią.',
+    ]},
+    { title: 'The most interesting place I have visited', minWords: 120, requirements: [
+      'Napisz minimum 120 słów.',
+      'Opisz miejsce i to, co widziałeś/robiłeś.',
+      'Wyjaśnij, dlaczego było interesujące.',
+    ]},
+  ],
+  B2: [
+    { title: 'Is technology making us less social?', minWords: 180, requirements: [
+      'Napisz minimum 180 słów.',
+      'Przedstaw argumenty za i przeciw tej tezie.',
+      'Użyj słów łączących (however, moreover, on the other hand).',
+      'Zakończ jasnym wnioskiem.',
+    ]},
+    { title: 'The importance of learning foreign languages', minWords: 180, requirements: [
+      'Napisz minimum 180 słów.',
+      'Wyjaśnij, dlaczego nauka języków obcych jest ważna.',
+      'Podaj konkretne przykłady/argumenty.',
+    ]},
+    { title: 'Should schools ban mobile phones?', minWords: 180, requirements: [
+      'Napisz minimum 180 słów.',
+      'Przedstaw argumenty obu stron.',
+      'Zakończ własnym, uzasadnionym stanowiskiem.',
+    ]},
+    { title: 'My role model', minWords: 180, requirements: [
+      'Napisz minimum 180 słów.',
+      'Opisz osobę, która Cię inspiruje.',
+      'Podaj konkretne przykłady jej osiągnięć lub cech.',
+    ]},
+    { title: 'Living in a big city vs a small town', minWords: 180, requirements: [
+      'Napisz minimum 180 słów.',
+      'Porównaj zalety i wady życia w dużym mieście i w małej miejscowości.',
+      'Zakończ własną opinią, gdzie wolałbyś mieszkać.',
+    ]},
+  ],
+};
+
+let essaySetupState = { level: null };
+let currentEssay = null;
+let essayVocabWords = {};
+
 // ===== STORAGE =====
 const DB = {
   get: (key) => { try { return JSON.parse(localStorage.getItem(key)) || null; } catch { return null; } },
@@ -530,6 +651,9 @@ function showView(name, params = {}) {
   if (name === 'chat-setup')  renderChatSetup();
   if (name === 'chat')        {} // initialized by startChat()
   if (name === 'chat-summary'){} // initialized by finishChat()
+  if (name === 'essay-setup') renderEssaySetup();
+  if (name === 'essay-write') {} // initialized by startEssay()
+  if (name === 'essay-result'){} // initialized by submitEssayForCheck()
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -1421,7 +1545,7 @@ function startChat(roleIdx) {
   requestFirstChatMessage();
 }
 
-async function callGeminiChat(history) {
+async function callGemini(systemInstruction, contents) {
   const key = getGeminiKey();
   if (!key) throw new Error('no-key');
   const res = await fetch(
@@ -1430,8 +1554,8 @@ async function callGeminiChat(history) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        systemInstruction: { parts: [{ text: currentChat.systemPrompt }] },
-        contents: history.map(m => ({ role: m.role, parts: [{ text: m.text }] })),
+        systemInstruction: { parts: [{ text: systemInstruction }] },
+        contents,
       }),
     }
   );
@@ -1440,6 +1564,10 @@ async function callGeminiChat(history) {
   const t = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
   if (!t) throw new Error('empty-response');
   return t;
+}
+
+async function callGeminiChat(history) {
+  return callGemini(currentChat.systemPrompt, history.map(m => ({ role: m.role, parts: [{ text: m.text }] })));
 }
 
 async function requestFirstChatMessage() {
@@ -1731,6 +1859,182 @@ function saveChatSummaryWords() {
   showView('sets-list');
 }
 
+// ===== ESSAYS (WYPRACOWANIA) =====
+function renderEssaySetup() {
+  essaySetupState = { level: null };
+  renderEssayStepLevel();
+}
+
+function renderEssayStepLevel() {
+  document.getElementById('essay-setup-body').innerHTML = `
+    <p class="hint">Wybierz poziom trudności:</p>
+    <div class="level-grid">
+      ${['A1','A2','B1','B2'].map(l => `<div class="level-pill" onclick="pickEssayLevel('${l}')">${l}</div>`).join('')}
+    </div>`;
+}
+
+function pickEssayLevel(level) {
+  essaySetupState.level = level;
+  renderEssayStepTopic();
+}
+
+function renderEssayStepTopic() {
+  const level  = essaySetupState.level;
+  const topics = ESSAY_TOPICS[level];
+  document.getElementById('essay-setup-body').innerHTML = `
+    <button class="btn btn-ghost" onclick="renderEssayStepLevel()">← Inny poziom</button>
+    <p class="hint">Poziom ${level} — wybierz temat wypracowania:</p>
+    <div class="topic-grid">
+      ${topics.map((t, i) => `
+        <div class="topic-card" onclick="startEssay(${i})">
+          <div class="topic-card-title">${esc(t.title)}</div>
+          <div class="topic-card-hint">min. ${t.minWords} słów</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function startEssay(idx) {
+  if (!getGeminiKey()) {
+    showToast('Ustaw najpierw klucz Gemini API (⚙️ w górnym menu)!');
+    return;
+  }
+  const level = essaySetupState.level;
+  const topic = ESSAY_TOPICS[level][idx];
+  currentEssay = { level, topic, text: '' };
+
+  document.getElementById('essay-write-title').textContent = `📝 ${topic.title}`;
+  document.getElementById('essay-info-bar').innerHTML = `<span>Poziom ${level}</span> · <span>${esc(topic.title)}</span>`;
+  document.getElementById('essay-requirements').innerHTML = topic.requirements.map(r => `<li>${esc(r)}</li>`).join('');
+  document.getElementById('essay-textarea').value = '';
+  document.getElementById('essay-error').style.display = 'none';
+  updateEssayWordCount();
+  showView('essay-write');
+  setTimeout(() => document.getElementById('essay-textarea').focus(), 50);
+}
+
+function countWords(text) {
+  return (text.trim().match(/\S+/g) || []).length;
+}
+
+function updateEssayWordCount() {
+  const text  = document.getElementById('essay-textarea').value;
+  const count = countWords(text);
+  const min   = currentEssay ? currentEssay.topic.minWords : 0;
+  const el    = document.getElementById('essay-word-counter');
+  el.textContent = `Liczba słów: ${count} (minimum: ${min})`;
+  el.classList.toggle('too-short', count < min);
+}
+
+function exitEssayWrite() {
+  const text = document.getElementById('essay-textarea').value.trim();
+  if (text) {
+    showModal('Wyjść bez zapisu?', 'Twoje wypracowanie nie zostało sprawdzone i zniknie. Na pewno chcesz wyjść?', [
+      { label: 'Tak, wyjdź', cls: 'btn-danger', action: () => { closeModal(); currentEssay = null; showView('essay-setup'); } },
+      { label: 'Anuluj', cls: 'btn-secondary', action: closeModal },
+    ]);
+  } else {
+    currentEssay = null;
+    showView('essay-setup');
+  }
+}
+
+function buildEssaySystemPrompt(level, topic) {
+  return `Jesteś nauczycielem języka angielskiego oceniającym wypracowanie ucznia (nastolatka 10-15 lat) na poziomie ${level}. ` +
+    `Bądź życzliwy i wspierający, dostosuj surowość oceny do poziomu ${level}. ` +
+    `Temat wypracowania: "${topic.title}". Wymagania zadania: ${topic.requirements.join(' ')} ` +
+    `Uczeń przyśle swoje wypracowanie jako wiadomość. Oceń je pod kątem poprawności językowej (gramatyka, słownictwo, szyk zdania) ` +
+    `odpowiedniej dla poziomu ${level} oraz sprawdź, czy spełnia wymagania zadania. ` +
+    `Odpowiedz WYŁĄCZNIE w formacie JSON, bez znaczników markdown, dokładnie w takiej strukturze: ` +
+    `{"overall_pl":"...","mistakes":[{"original":"...","corrected":"...","explanation":"..."}],"vocabulary":[{"en":"...","pl":"..."}]}. ` +
+    `Pole "overall_pl" to krótkie (2-3 zdania), ciepłe podsumowanie PO POLSKU — co wyszło dobrze i co warto poprawić, oraz czy wymagania zadania zostały spełnione. ` +
+    `Pole "mistakes" to lista istotnych błędów językowych z krótkim wyjaśnieniem po polsku (jeśli nie ma błędów, zwróć pustą listę). ` +
+    `Pole "vocabulary" to 5-8 przydatnych angielskich słówek lub zwrotów związanych z tematem, których uczeń mógłby się nauczyć, żeby wzbogacić wypracowanie (nie muszą pochodzić z jego tekstu).`;
+}
+
+async function submitEssayForCheck() {
+  const text = document.getElementById('essay-textarea').value.trim();
+  if (!text) { showToast('Napisz coś przed sprawdzeniem!'); return; }
+  const btn = document.getElementById('essay-check-btn');
+  document.getElementById('essay-error').style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = 'Sprawdzam…';
+  try {
+    const systemInstruction = buildEssaySystemPrompt(currentEssay.level, currentEssay.topic);
+    const raw = await callGemini(systemInstruction, [{ role: 'user', parts: [{ text }] }]);
+    const cleaned = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
+    const data = JSON.parse(cleaned);
+    currentEssay.text = text;
+    renderEssayResult(data);
+    recordEssayCompletion(currentEssay.level, currentEssay.topic.title, Array.isArray(data.mistakes) ? data.mistakes.length : 0);
+    showView('essay-result');
+  } catch {
+    document.getElementById('essay-error').textContent = 'Nie udało się sprawdzić wypracowania. Sprawdź klucz API (⚙️) i połączenie z internetem, i spróbuj ponownie.';
+    document.getElementById('essay-error').style.display = '';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Sprawdź ✓';
+  }
+}
+
+function renderEssayResult(data) {
+  document.getElementById('essay-overall-text').textContent = data.overall_pl || '';
+
+  const mistakes = Array.isArray(data.mistakes) ? data.mistakes : [];
+  const mistakesHtml = mistakes.length
+    ? mistakes.map(m => `
+      <div class="mistake-item">
+        <div class="mistake-original">❌ ${esc(m.original || '')}</div>
+        <div class="mistake-corrected">✅ ${esc(m.corrected || '')}</div>
+        <div class="mistake-explanation">${esc(m.explanation || '')}</div>
+      </div>`).join('')
+    : '<p class="hint">Brak istotnych błędów — świetna robota! 🎉</p>';
+  document.getElementById('essay-mistakes').innerHTML = `<h3>Błędy i poprawki</h3>${mistakesHtml}`;
+
+  essayVocabWords = {};
+  if (Array.isArray(data.vocabulary)) {
+    data.vocabulary.forEach(w => { if (w.en) essayVocabWords[w.en] = w.pl || ''; });
+  }
+  document.getElementById('essay-set-name').value = `Wypracowanie: ${currentEssay.topic.title}`;
+  renderEssayVocabChips();
+}
+
+function renderEssayVocabChips() {
+  const list = document.getElementById('essay-words-list');
+  list.innerHTML = Object.keys(essayVocabWords).map(w => `
+    <span class="selected-word-chip" data-key="${esc(w)}">
+      <b>${esc(w)}</b> =
+      <input type="text" placeholder="tłumaczenie" value="${esc(essayVocabWords[w])}"
+        oninput="essayVocabWords[this.closest('.selected-word-chip').dataset.key]=this.value" />
+      <span class="chip-remove" onclick="removeEssayVocabChip(this.closest('.selected-word-chip').dataset.key)">✕</span>
+    </span>`).join('');
+}
+
+function removeEssayVocabChip(word) {
+  delete essayVocabWords[word];
+  renderEssayVocabChips();
+}
+
+function saveEssayWords() {
+  const entries = Object.entries(essayVocabWords).filter(([w]) => w);
+  if (!entries.length) { showToast('Brak słówek do zapisania!'); return; }
+  const name  = document.getElementById('essay-set-name').value.trim() || 'Słówka z wypracowania';
+  const words = entries.map(([en, pl]) => ({ id: uid(), en, pl }));
+  const sets  = getSets();
+  sets.push({ id: uid(), name, icon: '📝', words, results: [], createdAt: today(), lastUsed: Date.now() });
+  saveSets(sets);
+  showToast(`✅ Zestaw "${name}" zapisany!`);
+  currentEssay = null;
+  showView('sets-list');
+}
+
+function recordEssayCompletion(level, topicTitle, mistakeCount) {
+  const prog = getProgress();
+  if (!prog.essays) prog.essays = [];
+  prog.essays.unshift({ date: today(), level, topic: topicTitle, mistakeCount });
+  prog.essays = prog.essays.slice(0, 50);
+  saveProgress(prog);
+}
+
 // ===== PROGRESS =====
 function renderProgress() {
   const prog   = getProgress();
@@ -1751,15 +2055,25 @@ function renderProgress() {
 
   if (!prog.history || !prog.history.length) {
     document.getElementById('test-history').innerHTML = '<p style="color:var(--text-light)">Brak historii testów. Rozwiąż swój pierwszy test!</p>';
-    return;
+  } else {
+    document.getElementById('test-history').innerHTML = prog.history.map(h => `
+      <div class="history-item">
+        <span class="history-date">${h.date}</span>
+        <span class="history-set">${esc(h.setName)}</span>
+        <span class="history-score">${h.score}%</span>
+        <span class="history-stars">${'⭐'.repeat(h.stars || 1)}</span>
+      </div>`).join('');
   }
-  document.getElementById('test-history').innerHTML = prog.history.map(h => `
-    <div class="history-item">
-      <span class="history-date">${h.date}</span>
-      <span class="history-set">${esc(h.setName)}</span>
-      <span class="history-score">${h.score}%</span>
-      <span class="history-stars">${'⭐'.repeat(h.stars || 1)}</span>
-    </div>`).join('');
+
+  const essays = prog.essays || [];
+  document.getElementById('essay-history').innerHTML = essays.length
+    ? essays.map(e => `
+      <div class="history-item">
+        <span class="history-date">${e.date}</span>
+        <span class="history-set">${esc(e.topic)} (${e.level})</span>
+        <span class="history-score">${e.mistakeCount} błędów</span>
+      </div>`).join('')
+    : '<p style="color:var(--text-light)">Brak historii wypracowań. Napisz swoje pierwsze!</p>';
 }
 
 function checkBadges(prog, pct, sets) {

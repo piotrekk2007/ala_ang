@@ -11,6 +11,8 @@
   --yellow-light: #fef3c7;
   --green: #10b981;
   --green-light: #d1fae5;
+  --blue: #3b82f6;
+  --blue-light: #dbeafe;
   --red: #ef4444;
   --red-light: #fee2e2;
   --gray: #6b7280;
@@ -159,6 +161,7 @@ body {
 .tile-pink   { background: var(--pink-light); }
 .tile-yellow { background: var(--yellow-light); }
 .tile-green  { background: var(--green-light); }
+.tile-blue   { background: var(--blue-light); }
 
 .nav-btn-settings { opacity: 0.7; font-size: 1.1rem; padding: 8px 10px; }
 .nav-btn-settings:hover { opacity: 1; }
@@ -1048,6 +1051,47 @@ code { background: var(--gray-light); padding: 2px 6px; border-radius: 4px; font
 .mistake-original { color: var(--red); font-weight: 600; margin-bottom: 4px; }
 .mistake-corrected { color: var(--green); font-weight: 700; margin-bottom: 4px; }
 .mistake-explanation { font-size: 0.9rem; color: var(--text-light); }
+
+/* ===== WYPRACOWANIA ===== */
+.topic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin-top: 16px; }
+.topic-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform .2s, box-shadow .2s;
+}
+.topic-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--blue); }
+.topic-card-title { font-weight: 800; color: var(--purple); margin-bottom: 6px; }
+.topic-card-hint { font-size: 0.85rem; color: var(--text-light); }
+
+.essay-topic-box {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+}
+.essay-requirements { margin: 10px 0 0 20px; }
+.essay-requirements li { margin-bottom: 4px; color: var(--text); font-size: 0.95rem; }
+
+.essay-textarea {
+  width: 100%;
+  min-height: 260px;
+  padding: 16px;
+  border-radius: var(--radius);
+  border: 2px solid var(--gray-light);
+  font-size: 1rem;
+  font-family: inherit;
+  line-height: 1.6;
+  resize: vertical;
+}
+.essay-textarea:focus { outline: none; border-color: var(--blue); }
+
+.word-counter { font-size: 0.85rem; color: var(--text-light); margin: 8px 0 16px; text-align: right; }
+.word-counter.too-short { color: var(--red); }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 600px) {

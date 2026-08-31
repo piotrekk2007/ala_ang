@@ -23,6 +23,7 @@
     <button onclick="showView('sets-list')" class="nav-btn">📚 Słówka</button>
     <button onclick="showView('songs-list')" class="nav-btn">🎵 Piosenki</button>
     <button onclick="showView('chat-setup')" class="nav-btn">💬 Pogadajmy</button>
+    <button onclick="showView('essay-setup')" class="nav-btn">📝 Wypracowania</button>
     <button onclick="showView('progress')" class="nav-btn">🏆 Postępy</button>
     <button onclick="saveAll()" class="nav-btn nav-btn-save">💾 Zapisz wszystko</button>
     <button onclick="loadAll()" class="nav-btn">📂 Wczytaj</button>
@@ -52,6 +53,11 @@
       <div class="tile-icon">💬</div>
       <div class="tile-title">Pogadajmy</div>
       <div class="tile-desc">Ćwicz rozmowy z AI</div>
+    </div>
+    <div class="tile tile-blue" onclick="showView('essay-setup')">
+      <div class="tile-icon">📝</div>
+      <div class="tile-title">Wypracowania</div>
+      <div class="tile-desc">Napisz i sprawdź z AI</div>
     </div>
     <div class="tile tile-yellow" onclick="showView('progress')">
       <div class="tile-icon">🏆</div>
@@ -415,6 +421,55 @@
   </div>
 </div>
 
+<!-- ========== WIDOK: WYPRACOWANIA — SETUP ========== -->
+<div id="view-essay-setup" class="view" style="display:none">
+  <div class="view-header">
+    <button class="btn btn-ghost" onclick="showView('home')">← Wróć</button>
+    <h1>📝 Wypracowania</h1>
+  </div>
+  <div id="essay-setup-body"></div>
+</div>
+
+<!-- ========== WIDOK: WYPRACOWANIA — PISANIE ========== -->
+<div id="view-essay-write" class="view" style="display:none">
+  <div class="view-header">
+    <button class="btn btn-ghost" onclick="exitEssayWrite()">← Wróć</button>
+    <h1 id="essay-write-title">📝 Wypracowanie</h1>
+  </div>
+  <div class="essay-topic-box">
+    <div class="chat-info-bar" id="essay-info-bar"></div>
+    <ul id="essay-requirements" class="essay-requirements"></ul>
+  </div>
+  <textarea id="essay-textarea" class="essay-textarea" placeholder="Napisz tutaj swoje wypracowanie po angielsku..."
+    oninput="updateEssayWordCount()"></textarea>
+  <div class="word-counter" id="essay-word-counter"></div>
+  <div id="essay-error" class="chat-error" style="display:none"></div>
+  <div class="edit-actions">
+    <button class="btn btn-primary btn-large" id="essay-check-btn" onclick="submitEssayForCheck()">Sprawdź ✓</button>
+  </div>
+</div>
+
+<!-- ========== WIDOK: WYPRACOWANIA — WYNIK ========== -->
+<div id="view-essay-result" class="view" style="display:none">
+  <div class="view-header">
+    <h1>📋 Sprawdzone wypracowanie</h1>
+  </div>
+  <div class="chat-summary-box" id="essay-overall-text"></div>
+  <div id="essay-mistakes" class="chat-analysis" style="display:block"></div>
+  <div class="extract-selected">
+    <h3>Słówka do nauki z tego tematu:</h3>
+    <div id="essay-words-list"></div>
+  </div>
+  <div class="edit-actions">
+    <div class="form-row" style="flex-basis:100%">
+      <label>Nazwa nowego zestawu</label>
+      <input type="text" id="essay-set-name" class="big-input" placeholder="np. Wypracowanie: My family" />
+    </div>
+    <button class="btn btn-primary" onclick="saveEssayWords()">💾 Zapisz jako zestaw</button>
+    <button class="btn btn-secondary" onclick="showView('essay-setup')">Napisz kolejne wypracowanie</button>
+  </div>
+</div>
+
 <!-- ========== WIDOK: POSTĘPY ========== -->
 <div id="view-progress" class="view" style="display:none">
   <div class="view-header">
@@ -428,6 +483,10 @@
   <div class="history-section">
     <h2>📈 Historia testów</h2>
     <div id="test-history" class="test-history"></div>
+  </div>
+  <div class="history-section">
+    <h2>📝 Historia wypracowań</h2>
+    <div id="essay-history" class="test-history"></div>
   </div>
 </div>
 
