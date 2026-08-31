@@ -15,8 +15,6 @@
   --blue-light: #dbeafe;
   --red: #ef4444;
   --red-light: #fee2e2;
-  --cyan: #0891b2;
-  --cyan-light: #cffafe;
   --gray: #6b7280;
   --gray-light: #f3f4f6;
   --white: #ffffff;
@@ -164,7 +162,6 @@ body {
 .tile-yellow { background: var(--yellow-light); }
 .tile-green  { background: var(--green-light); }
 .tile-blue   { background: var(--blue-light); }
-.tile-cyan   { background: var(--cyan-light); }
 
 .nav-btn-settings { opacity: 0.7; font-size: 1.1rem; padding: 8px 10px; }
 .nav-btn-settings:hover { opacity: 1; }
@@ -821,7 +818,7 @@ code { background: var(--gray-light); padding: 2px 6px; border-radius: 4px; font
 .hangman-key:disabled { opacity: 0.3; cursor: default; }
 .hangman-key.correct { background: var(--green-light); border-color: var(--green); color: var(--green); }
 .hangman-key.wrong   { background: var(--red-light);   border-color: var(--red);   color: var(--red); }
-.hangman-pl-row { display: flex; flex-wrap: wrap; gap: 6px; width: 100%; margin-top: 4px; border-top: 1px dashed #e5e7eb; padding-top: 6px; }
+.hangman-fr-row { display: flex; flex-wrap: wrap; gap: 6px; width: 100%; margin-top: 4px; border-top: 1px dashed #e5e7eb; padding-top: 6px; }
 
 .hangman-result {
   text-align: center;

@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Angielski z Alą 🌟</title>
+  <title>Francuski z Alą 🌟</title>
   <link rel="manifest" href="./manifest.json" />
   <meta name="theme-color" content="#7c3aed" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Angielski Ala" />
+  <meta name="apple-mobile-web-app-title" content="Francuski Ala" />
   <link rel="apple-touch-icon" href="./icons/icon.svg" />
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -17,15 +17,15 @@
 
 <!-- ========== NAWIGACJA ========== -->
 <nav id="navbar">
-  <div class="nav-brand" onclick="showView('home')">🌟 Angielski z Alą</div>
+  <div class="nav-brand" onclick="showView('home')">🌟 Francuski z Alą</div>
   <div class="nav-links">
     <button onclick="showView('home')" class="nav-btn">🏠 Dom</button>
+    <a href="../index.html" class="nav-btn" style="text-decoration:none">🇬🇧 Angielski</a>
     <button onclick="showView('sets-list')" class="nav-btn">📚 Słówka</button>
     <button onclick="showView('songs-list')" class="nav-btn">🎵 Piosenki</button>
     <button onclick="showView('chat-setup')" class="nav-btn">💬 Pogadajmy</button>
     <button onclick="showView('essay-setup')" class="nav-btn">📝 Wypracowania</button>
     <button onclick="showView('progress')" class="nav-btn">🏆 Postępy</button>
-    <a href="french/" class="nav-btn" style="text-decoration:none">🇫🇷 Francuski</a>
     <button onclick="saveAll()" class="nav-btn nav-btn-save">💾 Zapisz wszystko</button>
     <button onclick="loadAll()" class="nav-btn">📂 Wczytaj</button>
     <button onclick="openApiSettings()" class="nav-btn nav-btn-settings" title="Ustawienia API">⚙️</button>
@@ -64,11 +64,6 @@
       <div class="tile-icon">🏆</div>
       <div class="tile-title">Postępy</div>
       <div class="tile-desc">Moje wyniki i odznaki</div>
-    </div>
-    <div class="tile tile-cyan" onclick="window.location.href='french/'">
-      <div class="tile-icon">🇫🇷</div>
-      <div class="tile-title">Francuski</div>
-      <div class="tile-desc">Przejdź do nauki francuskiego</div>
     </div>
   </div>
   <div class="home-recent" id="home-recent"></div>
@@ -112,8 +107,8 @@
     <div class="bulk-area">
       <details>
         <summary>📋 Wklej wiele słówek naraz</summary>
-        <p class="hint">Wpisz każde słówko w osobnej linii w formacie: <code>angielski = polski</code></p>
-        <textarea id="bulk-input" rows="8" placeholder="red = czerwony&#10;blue = niebieski&#10;green = zielony"></textarea>
+        <p class="hint">Wpisz każde słówko w osobnej linii w formacie: <code>francuski = polski</code></p>
+        <textarea id="bulk-input" rows="8" placeholder="rouge = czerwony&#10;bleu = niebieski&#10;vert = zielony"></textarea>
         <button class="btn btn-secondary" onclick="parseBulk()">Dodaj wszystkie</button>
       </details>
     </div>
@@ -302,8 +297,8 @@
       <input type="text" id="song-yt-input" placeholder="Wklej link YouTube lub cały kod &lt;iframe&gt; z opcji Udostępnij" class="big-input" />
     </div>
     <div class="form-row">
-      <label>Tekst piosenki — po angielsku (każda zwrotka w osobnym bloku, oddzielone pustą linią)</label>
-      <textarea id="song-en-input" rows="12" placeholder="The snow glows white on the mountain tonight&#10;Not a footprint to be seen&#10;&#10;A kingdom of isolation&#10;And it looks like I'm the queen"></textarea>
+      <label>Tekst piosenki — po francusku (każda zwrotka w osobnym bloku, oddzielone pustą linią)</label>
+      <textarea id="song-en-input" rows="12" placeholder="Non, rien de rien&#10;Non, je ne regrette rien&#10;&#10;Ni le bien qu'on m'a fait&#10;Ni le mal, tout ça m'est bien égal"></textarea>
     </div>
     <div class="form-row">
       <label>Tłumaczenie — po polsku (te same zwrotki w tej samej kolejności)</label>
@@ -342,7 +337,7 @@
     <button class="btn btn-ghost" onclick="showView('song-detail', {id: currentSongId})">← Wróć</button>
     <h1 id="translate-title">✍️ Tłumacz</h1>
   </div>
-  <p class="hint" style="margin-bottom:20px">Przeczytaj każdą zwrotkę po angielsku i wpisz swoje tłumaczenie. Na końcu możesz je zapisać!</p>
+  <p class="hint" style="margin-bottom:20px">Przeczytaj każdą zwrotkę po francusku i wpisz swoje tłumaczenie. Na końcu możesz je zapisać!</p>
   <div id="translate-yt-player" class="yt-player"></div>
   <div id="translate-verses" class="song-verses"></div>
   <div class="edit-actions" style="margin-top:24px">
@@ -356,7 +351,7 @@
     <button class="btn btn-ghost" id="extract-back-btn" onclick="showView('song-detail', {id: currentSongId})">← Wróć</button>
     <h1>📚 Wyciągnij słówka</h1>
   </div>
-  <p class="hint">Kliknij na słowa angielskie, które chcesz dodać do zestawu słówek:</p>
+  <p class="hint">Kliknij na słowa francuskie, które chcesz dodać do zestawu słówek:</p>
   <div id="extract-text" class="extract-text"></div>
   <div id="extract-selected" class="extract-selected">
     <h3>Wybrane słówka:</h3>
@@ -395,7 +390,7 @@
     <button class="btn btn-secondary" id="chat-hint-btn" onclick="requestChatHint()">💡 Pomóż mi</button>
   </div>
   <div class="chat-input-row">
-    <input type="text" id="chat-input" class="big-input" placeholder="Napisz po angielsku..."
+    <input type="text" id="chat-input" class="big-input" placeholder="Napisz po francusku..."
       autocomplete="off" autocorrect="off" spellcheck="false" />
     <button class="btn btn-primary" id="chat-send-btn" onclick="sendChatMessage()">Wyślij</button>
   </div>
@@ -446,7 +441,7 @@
     <div class="chat-info-bar" id="essay-info-bar"></div>
     <ul id="essay-requirements" class="essay-requirements"></ul>
   </div>
-  <textarea id="essay-textarea" class="essay-textarea" placeholder="Napisz tutaj swoje wypracowanie po angielsku..."
+  <textarea id="essay-textarea" class="essay-textarea" placeholder="Napisz tutaj swoje wypracowanie po francusku..."
     oninput="updateEssayWordCount()"></textarea>
   <div class="word-counter" id="essay-word-counter"></div>
   <div id="essay-error" class="chat-error" style="display:none"></div>
@@ -511,7 +506,6 @@
 <!-- ========== FLOATING TRANSLATE BUTTON ========== -->
 <div id="selection-translate-btn" style="display:none">🔍 Tłumacz</div>
 
-<script src="dict.js"></script>
 <script src="app.js"></script>
 <script>
   if ('serviceWorker' in navigator) {

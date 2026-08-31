@@ -1,10 +1,9 @@
-const CACHE = 'ala-v7';
+const CACHE = 'ala-fr-v1';
 const FILES = [
   './',
   './index.html',
   './app.js',
   './style.css',
-  './dict.js',
   './manifest.json',
   './icons/icon.svg',
   './icons/icon-maskable.svg',
