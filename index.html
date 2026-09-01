@@ -25,6 +25,7 @@
     <button onclick="showView('chat-setup')" class="nav-btn">💬 Pogadajmy</button>
     <button onclick="showView('essay-setup')" class="nav-btn">📝 Wypracowania</button>
     <button onclick="showView('progress')" class="nav-btn">🏆 Postępy</button>
+    <button onclick="showView('kids-home')" class="nav-btn">🧸 Dla najmłodszych</button>
     <a href="french/" class="nav-btn" style="text-decoration:none">🇫🇷 Francuski</a>
     <button onclick="saveAll()" class="nav-btn nav-btn-save">💾 Zapisz wszystko</button>
     <button onclick="loadAll()" class="nav-btn">📂 Wczytaj</button>
@@ -69,6 +70,11 @@
       <div class="tile-icon">🇫🇷</div>
       <div class="tile-title">Francuski</div>
       <div class="tile-desc">Przejdź do nauki francuskiego</div>
+    </div>
+    <div class="tile tile-orange" onclick="showView('kids-home')">
+      <div class="tile-icon">🧸</div>
+      <div class="tile-title">Dla najmłodszych</div>
+      <div class="tile-desc">Fiszki i zabawy ze słówkami</div>
     </div>
   </div>
   <div class="home-recent" id="home-recent"></div>
@@ -474,6 +480,72 @@
     <button class="btn btn-primary" onclick="saveEssayWords()">💾 Zapisz jako zestaw</button>
     <button class="btn btn-secondary" onclick="showView('essay-setup')">Napisz kolejne wypracowanie</button>
   </div>
+</div>
+
+<!-- ========== WIDOK: DLA NAJMŁODSZYCH — HOME ========== -->
+<div id="view-kids-home" class="view" style="display:none">
+  <div class="view-header">
+    <button class="btn btn-ghost" onclick="showView('home')">← Wróć</button>
+    <h1>🧸 Dla najmłodszych</h1>
+    <span class="kids-stars-badge">⭐ <span class="kids-stars-value">0</span></span>
+  </div>
+  <p class="hint" style="text-align:center;font-size:1.1rem">Wybierz, czego chcesz się dziś nauczyć! 🌈</p>
+  <div class="kids-category-grid" id="kids-category-grid"></div>
+</div>
+
+<!-- ========== WIDOK: DLA NAJMŁODSZYCH — KATEGORIA ========== -->
+<div id="view-kids-category" class="view" style="display:none">
+  <div class="view-header">
+    <button class="btn btn-ghost" onclick="showView('kids-home')">← Wróć</button>
+    <h1 id="kids-category-title">🧸</h1>
+  </div>
+  <div class="kids-mode-grid">
+    <div class="kids-mode-card" onclick="startKidsFlashcards()">
+      <div class="kids-mode-icon">🃏</div>
+      <div class="kids-mode-title">Fiszki</div>
+    </div>
+    <div class="kids-mode-card" onclick="startKidsQuiz()">
+      <div class="kids-mode-icon">🎯</div>
+      <div class="kids-mode-title">Zgadnij</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== WIDOK: DLA NAJMŁODSZYCH — FISZKI ========== -->
+<div id="view-kids-flashcards" class="view" style="display:none">
+  <div class="view-header">
+    <button class="btn btn-ghost" onclick="exitKids('kids-category')">← Wróć</button>
+    <h1>🃏 Fiszki</h1>
+    <span class="kids-counter" id="kids-flash-counter"></span>
+  </div>
+  <div class="kids-flashcard">
+    <div class="kids-flash-emoji" id="kids-flash-emoji" onclick="replayKidsFlashAudio()">🎈</div>
+    <div class="kids-flash-word" id="kids-flash-word"></div>
+    <div class="kids-flash-pl" id="kids-flash-pl" style="display:none"></div>
+    <div class="kids-flash-actions">
+      <button class="kids-big-btn" onclick="replayKidsFlashAudio()" title="Posłuchaj">🔊</button>
+      <button class="kids-big-btn" onclick="revealKidsTranslation()" title="Po polsku">🇵🇱</button>
+    </div>
+  </div>
+  <div class="kids-nav-actions">
+    <button class="kids-nav-btn" onclick="prevKidsFlashcard()">⬅️</button>
+    <button class="kids-nav-btn" onclick="nextKidsFlashcard()">➡️</button>
+  </div>
+</div>
+
+<!-- ========== WIDOK: DLA NAJMŁODSZYCH — ZGADNIJ ========== -->
+<div id="view-kids-quiz" class="view" style="display:none">
+  <div class="view-header">
+    <button class="btn btn-ghost" onclick="exitKids('kids-category')">← Wróć</button>
+    <h1>🎯 Zgadnij</h1>
+    <span class="kids-stars-badge">⭐ <span class="kids-stars-value">0</span></span>
+  </div>
+  <p class="hint" style="text-align:center;font-size:1.1rem">Posłuchaj i kliknij właściwy obrazek! 👇</p>
+  <div style="text-align:center;margin-bottom:24px">
+    <button class="kids-big-btn kids-replay-btn" onclick="replayKidsQuizAudio()">🔊</button>
+  </div>
+  <div class="kids-quiz-options" id="kids-quiz-options"></div>
+  <div class="kids-quiz-feedback" id="kids-quiz-feedback" style="display:none"></div>
 </div>
 
 <!-- ========== WIDOK: POSTĘPY ========== -->

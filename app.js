@@ -597,6 +597,73 @@ let essaySetupState = { level: null };
 let currentEssay = null;
 let essayVocabWords = {};
 
+// ===== KIDS MODE (Dla najmłodszych) =====
+const KIDS_CATEGORIES = [
+  { id: 'colors', icon: '🎨', title: 'Kolory', words: [
+    { emoji: '🔴', en: 'red', pl: 'czerwony' },
+    { emoji: '🟠', en: 'orange', pl: 'pomarańczowy' },
+    { emoji: '🟡', en: 'yellow', pl: 'żółty' },
+    { emoji: '🟢', en: 'green', pl: 'zielony' },
+    { emoji: '🔵', en: 'blue', pl: 'niebieski' },
+    { emoji: '🟣', en: 'purple', pl: 'fioletowy' },
+    { emoji: '⚫', en: 'black', pl: 'czarny' },
+    { emoji: '⚪', en: 'white', pl: 'biały' },
+    { emoji: '🟤', en: 'brown', pl: 'brązowy' },
+    { emoji: '🩷', en: 'pink', pl: 'różowy' },
+  ]},
+  { id: 'animals', icon: '🐾', title: 'Zwierzątka', words: [
+    { emoji: '🐶', en: 'dog', pl: 'pies' },
+    { emoji: '🐱', en: 'cat', pl: 'kot' },
+    { emoji: '🐰', en: 'rabbit', pl: 'królik' },
+    { emoji: '🐻', en: 'bear', pl: 'miś' },
+    { emoji: '🦁', en: 'lion', pl: 'lew' },
+    { emoji: '🐘', en: 'elephant', pl: 'słoń' },
+    { emoji: '🐸', en: 'frog', pl: 'żaba' },
+    { emoji: '🐦', en: 'bird', pl: 'ptak' },
+    { emoji: '🐟', en: 'fish', pl: 'ryba' },
+    { emoji: '🐴', en: 'horse', pl: 'koń' },
+  ]},
+  { id: 'numbers', icon: '🔢', title: 'Liczby', words: [
+    { emoji: '1️⃣', en: 'one', pl: 'jeden' },
+    { emoji: '2️⃣', en: 'two', pl: 'dwa' },
+    { emoji: '3️⃣', en: 'three', pl: 'trzy' },
+    { emoji: '4️⃣', en: 'four', pl: 'cztery' },
+    { emoji: '5️⃣', en: 'five', pl: 'pięć' },
+    { emoji: '6️⃣', en: 'six', pl: 'sześć' },
+    { emoji: '7️⃣', en: 'seven', pl: 'siedem' },
+    { emoji: '8️⃣', en: 'eight', pl: 'osiem' },
+    { emoji: '9️⃣', en: 'nine', pl: 'dziewięć' },
+    { emoji: '🔟', en: 'ten', pl: 'dziesięć' },
+  ]},
+  { id: 'family', icon: '👪', title: 'Rodzina', words: [
+    { emoji: '👩', en: 'mum', pl: 'mama' },
+    { emoji: '👨', en: 'dad', pl: 'tata' },
+    { emoji: '👧', en: 'sister', pl: 'siostra' },
+    { emoji: '👦', en: 'brother', pl: 'brat' },
+    { emoji: '👵', en: 'grandma', pl: 'babcia' },
+    { emoji: '👴', en: 'grandpa', pl: 'dziadek' },
+    { emoji: '👶', en: 'baby', pl: 'dziecko' },
+    { emoji: '👪', en: 'family', pl: 'rodzina' },
+  ]},
+  { id: 'food', icon: '🍎', title: 'Jedzenie', words: [
+    { emoji: '🍎', en: 'apple', pl: 'jabłko' },
+    { emoji: '🍌', en: 'banana', pl: 'banan' },
+    { emoji: '🍕', en: 'pizza', pl: 'pizza' },
+    { emoji: '🍦', en: 'ice cream', pl: 'lody' },
+    { emoji: '🍪', en: 'cookie', pl: 'ciasteczko' },
+    { emoji: '🥛', en: 'milk', pl: 'mleko' },
+    { emoji: '🍞', en: 'bread', pl: 'chleb' },
+    { emoji: '🧀', en: 'cheese', pl: 'ser' },
+    { emoji: '🍇', en: 'grapes', pl: 'winogrona' },
+    { emoji: '🍓', en: 'strawberry', pl: 'truskawka' },
+  ]},
+];
+
+let kidsCategoryId  = null;
+let kidsFlashIndex  = 0;
+let kidsQuizWord    = null;
+let kidsStars       = parseInt(localStorage.getItem('kids_stars') || '0', 10);
+
 // ===== STORAGE =====
 const DB = {
   get: (key) => { try { return JSON.parse(localStorage.getItem(key)) || null; } catch { return null; } },
@@ -654,6 +721,10 @@ function showView(name, params = {}) {
   if (name === 'essay-setup') renderEssaySetup();
   if (name === 'essay-write') {} // initialized by startEssay()
   if (name === 'essay-result'){} // initialized by submitEssayForCheck()
+  if (name === 'kids-home')       renderKidsHome();
+  if (name === 'kids-category')   {} // initialized by pickKidsCategory()
+  if (name === 'kids-flashcards') {} // initialized by startKidsFlashcards()
+  if (name === 'kids-quiz')       {} // initialized by startKidsQuiz()
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -2033,6 +2104,131 @@ function recordEssayCompletion(level, topicTitle, mistakeCount) {
   prog.essays.unshift({ date: today(), level, topic: topicTitle, mistakeCount });
   prog.essays = prog.essays.slice(0, 50);
   saveProgress(prog);
+}
+
+// ===== KIDS MODE (Dla najmłodszych) =====
+function speakKids(text, lang) {
+  try {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = lang;
+    utter.rate = 0.8;
+    window.speechSynthesis.speak(utter);
+  } catch {}
+}
+
+function updateKidsStarsDisplay() {
+  document.querySelectorAll('.kids-stars-value').forEach(el => el.textContent = kidsStars);
+}
+
+function addKidsStar() {
+  kidsStars++;
+  localStorage.setItem('kids_stars', kidsStars);
+  updateKidsStarsDisplay();
+}
+
+function exitKids(view) {
+  try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch {}
+  showView(view);
+}
+
+function renderKidsHome() {
+  updateKidsStarsDisplay();
+  document.getElementById('kids-category-grid').innerHTML = KIDS_CATEGORIES.map(c => `
+    <div class="kids-category-card" onclick="pickKidsCategory('${c.id}')">
+      <div class="kids-category-icon">${c.icon}</div>
+      <div class="kids-category-title">${esc(c.title)}</div>
+    </div>`).join('');
+}
+
+function pickKidsCategory(id) {
+  kidsCategoryId = id;
+  const cat = KIDS_CATEGORIES.find(c => c.id === id);
+  document.getElementById('kids-category-title').textContent = `${cat.icon} ${cat.title}`;
+  showView('kids-category');
+}
+
+function startKidsFlashcards() {
+  kidsFlashIndex = 0;
+  showView('kids-flashcards');
+  document.getElementById('kids-flash-pl').style.display = 'none';
+  renderKidsFlashcard();
+}
+
+function renderKidsFlashcard() {
+  const cat  = KIDS_CATEGORIES.find(c => c.id === kidsCategoryId);
+  const word = cat.words[kidsFlashIndex];
+  document.getElementById('kids-flash-emoji').textContent = word.emoji;
+  document.getElementById('kids-flash-word').textContent = word.en;
+  document.getElementById('kids-flash-counter').textContent = `${kidsFlashIndex + 1} / ${cat.words.length}`;
+  document.getElementById('kids-flash-pl').style.display = 'none';
+  speakKids(word.en, 'en-US');
+}
+
+function replayKidsFlashAudio() {
+  const cat  = KIDS_CATEGORIES.find(c => c.id === kidsCategoryId);
+  speakKids(cat.words[kidsFlashIndex].en, 'en-US');
+}
+
+function revealKidsTranslation() {
+  const cat  = KIDS_CATEGORIES.find(c => c.id === kidsCategoryId);
+  const word = cat.words[kidsFlashIndex];
+  document.getElementById('kids-flash-pl').textContent = word.pl;
+  document.getElementById('kids-flash-pl').style.display = '';
+  speakKids(word.pl, 'pl-PL');
+}
+
+function nextKidsFlashcard() {
+  const cat = KIDS_CATEGORIES.find(c => c.id === kidsCategoryId);
+  kidsFlashIndex = (kidsFlashIndex + 1) % cat.words.length;
+  renderKidsFlashcard();
+}
+
+function prevKidsFlashcard() {
+  const cat = KIDS_CATEGORIES.find(c => c.id === kidsCategoryId);
+  kidsFlashIndex = (kidsFlashIndex - 1 + cat.words.length) % cat.words.length;
+  renderKidsFlashcard();
+}
+
+function startKidsQuiz() {
+  showView('kids-quiz');
+  updateKidsStarsDisplay();
+  document.getElementById('kids-quiz-feedback').style.display = 'none';
+  nextKidsQuizRound();
+}
+
+function nextKidsQuizRound() {
+  const cat     = KIDS_CATEGORIES.find(c => c.id === kidsCategoryId);
+  const shuffled = shuffle([...cat.words]);
+  kidsQuizWord   = shuffled[0];
+  const options  = shuffle(shuffled.slice(0, 3));
+  document.getElementById('kids-quiz-options').innerHTML = options.map(w => `
+    <div class="kids-option" onclick="checkKidsQuizAnswer('${w.en}', this)">${w.emoji}</div>`).join('');
+  document.getElementById('kids-quiz-feedback').style.display = 'none';
+  setTimeout(() => speakKids(kidsQuizWord.en, 'en-US'), 300);
+}
+
+function replayKidsQuizAudio() {
+  if (kidsQuizWord) speakKids(kidsQuizWord.en, 'en-US');
+}
+
+function checkKidsQuizAnswer(en, el) {
+  const feedback = document.getElementById('kids-quiz-feedback');
+  if (en === kidsQuizWord.en) {
+    el.classList.add('correct');
+    addKidsStar();
+    feedback.textContent = '🎉 Brawo!';
+    feedback.className = 'kids-quiz-feedback good';
+    feedback.style.display = '';
+    setTimeout(nextKidsQuizRound, 1400);
+  } else {
+    el.classList.add('wrong');
+    setTimeout(() => el.classList.remove('wrong'), 500);
+    feedback.textContent = '🙂 Spróbuj jeszcze raz!';
+    feedback.className = 'kids-quiz-feedback retry';
+    feedback.style.display = '';
+  }
 }
 
 // ===== PROGRESS =====
