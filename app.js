@@ -699,26 +699,112 @@ const KIDS_CATEGORIES = [
   ]},
 ];
 
-const KIDS_SENTENCES = [
-  { emoji: '👋', en: 'Hello!', pl: 'Cześć!' },
-  { emoji: '🙋', en: 'My name is Ala.', pl: 'Mam na imię Ala.' },
-  { emoji: '🪑', en: 'This is a chair.', pl: 'To jest krzesło.' },
-  { emoji: '🐶', en: 'This is a dog.', pl: 'To jest pies.' },
-  { emoji: '😊', en: 'I am happy.', pl: 'Jestem szczęśliwy.' },
-  { emoji: '🍎', en: 'I like apples.', pl: 'Lubię jabłka.' },
-  { emoji: '💧', en: 'I want water.', pl: 'Chcę wodę.' },
-  { emoji: '🙏', en: 'Thank you!', pl: 'Dziękuję!' },
-  { emoji: '🤗', en: 'I love you.', pl: 'Kocham cię.' },
-  { emoji: '👍', en: 'Good job!', pl: 'Dobra robota!' },
-  { emoji: '😴', en: 'I am tired.', pl: 'Jestem zmęczony.' },
-  { emoji: '🎂', en: 'Happy birthday!', pl: 'Wszystkiego najlepszego!' },
+const KIDS_SENTENCE_CATEGORIES = [
+  { id: 'general', icon: '👋', title: 'Ogólne', sentences: [
+    { emoji: '👋', en: 'Hello!', pl: 'Cześć!' },
+    { emoji: '🚪', en: 'Goodbye!', pl: 'Do widzenia!' },
+    { emoji: '🤲', en: 'Please.', pl: 'Proszę.' },
+    { emoji: '🙏', en: 'Thank you!', pl: 'Dziękuję!' },
+    { emoji: '🙋', en: 'My name is Ala.', pl: 'Mam na imię Ala.' },
+    { emoji: '❓', en: 'How are you?', pl: 'Jak się masz?' },
+    { emoji: '😊', en: 'I am fine.', pl: 'Czuję się dobrze.' },
+    { emoji: '✅', en: 'Yes.', pl: 'Tak.' },
+    { emoji: '❌', en: 'No.', pl: 'Nie.' },
+    { emoji: '👍', en: 'Good job!', pl: 'Dobra robota!' },
+  ]},
+  { id: 'home', icon: '🏠', title: 'W domu', sentences: [
+    { emoji: '🛏️', en: 'This is my room.', pl: 'To jest mój pokój.' },
+    { emoji: '🍽️', en: 'I am hungry.', pl: 'Jestem głodny.' },
+    { emoji: '💧', en: 'I want water.', pl: 'Chcę wodę.' },
+    { emoji: '👩', en: 'Where is mum?', pl: 'Gdzie jest mama?' },
+    { emoji: '😴', en: 'I am tired.', pl: 'Jestem zmęczony.' },
+    { emoji: '🧸', en: "Let's play!", pl: 'Pobawmy się!' },
+    { emoji: '🌙', en: 'Good night.', pl: 'Dobranoc.' },
+    { emoji: '❤️', en: 'I love you.', pl: 'Kocham cię.' },
+    { emoji: '🧼', en: 'Wash your hands.', pl: 'Umyj ręce.' },
+    { emoji: '🚗', en: 'This is my toy.', pl: 'To jest moja zabawka.' },
+  ]},
+  { id: 'school', icon: '🎒', title: 'W szkole', sentences: [
+    { emoji: '👩‍🏫', en: 'This is my teacher.', pl: 'To jest moja pani.' },
+    { emoji: '✏️', en: 'I have a pencil.', pl: 'Mam ołówek.' },
+    { emoji: '🚻', en: 'Can I go to the toilet?', pl: 'Czy mogę iść do toalety?' },
+    { emoji: '🎨', en: 'I like drawing.', pl: 'Lubię rysować.' },
+    { emoji: '🧑‍🤝‍🧑', en: 'This is my friend.', pl: 'To jest mój przyjaciel.' },
+    { emoji: '🪑', en: 'Sit down, please.', pl: 'Usiądź, proszę.' },
+    { emoji: '🧍', en: 'Stand up, please.', pl: 'Wstań, proszę.' },
+    { emoji: '🤔', en: "I don't understand.", pl: 'Nie rozumiem.' },
+    { emoji: '📋', en: 'Look at the board.', pl: 'Popatrz na tablicę.' },
+    { emoji: '🔔', en: "It's time for a break.", pl: 'Czas na przerwę.' },
+  ]},
+  { id: 'trip', icon: '🚌', title: 'Na wycieczce', sentences: [
+    { emoji: '🗺️', en: 'Where are we going?', pl: 'Dokąd jedziemy?' },
+    { emoji: '🌳', en: 'I see a tree.', pl: 'Widzę drzewo.' },
+    { emoji: '🐦', en: 'Look at the bird!', pl: 'Popatrz na ptaka!' },
+    { emoji: '😴', en: 'I am tired.', pl: 'Jestem zmęczony.' },
+    { emoji: '🛑', en: 'Can we stop?', pl: 'Czy możemy się zatrzymać?' },
+    { emoji: '😍', en: "It's beautiful!", pl: 'Jest piękne!' },
+    { emoji: '📸', en: "Let's take a photo.", pl: 'Zróbmy zdjęcie.' },
+    { emoji: '🌊', en: 'I see the sea.', pl: 'Widzę morze.' },
+    { emoji: '📍', en: 'We are here!', pl: 'Jesteśmy na miejscu!' },
+    { emoji: '⛰️', en: 'I like the mountains.', pl: 'Lubię góry.' },
+  ]},
+  { id: 'restaurant', icon: '🍽️', title: 'W restauracji', sentences: [
+    { emoji: '🍽️', en: 'I am hungry.', pl: 'Jestem głodny.' },
+    { emoji: '🍕', en: 'I want pizza.', pl: 'Chcę pizzę.' },
+    { emoji: '💧', en: 'Can I have water?', pl: 'Czy mogę prosić o wodę?' },
+    { emoji: '😋', en: 'This is delicious!', pl: 'To jest pyszne!' },
+    { emoji: '🙅', en: 'No, thank you.', pl: 'Nie, dziękuję.' },
+    { emoji: '🍦', en: 'I want ice cream.', pl: 'Chcę lody.' },
+    { emoji: '🤤', en: 'Yummy!', pl: 'Pycha!' },
+    { emoji: '🙂', en: 'I am full.', pl: 'Jestem najedzony.' },
+    { emoji: '🙏', en: 'Thank you for the food.', pl: 'Dziękuję za jedzenie.' },
+    { emoji: '🍴', en: 'Can I have a fork?', pl: 'Czy mogę prosić widelec?' },
+  ]},
+  { id: 'playground', icon: '🛝', title: 'Na placu zabaw', sentences: [
+    { emoji: '🎉', en: "Let's play!", pl: 'Pobawmy się!' },
+    { emoji: '🙋', en: 'Can I play too?', pl: 'Czy mogę się bawić?' },
+    { emoji: '🛝', en: 'I like the slide.', pl: 'Lubię zjeżdżalnię.' },
+    { emoji: '👀', en: 'Watch me!', pl: 'Popatrz na mnie!' },
+    { emoji: '⚠️', en: 'Be careful!', pl: 'Uważaj!' },
+    { emoji: '☝️', en: "It's my turn.", pl: 'Teraz moja kolej.' },
+    { emoji: '🥇', en: 'I am first!', pl: 'Jestem pierwszy!' },
+    { emoji: '🏃', en: "Let's run!", pl: 'Pobiegnijmy!' },
+    { emoji: '😀', en: 'I am happy.', pl: 'Jestem szczęśliwy.' },
+    { emoji: '😄', en: 'That was fun!', pl: 'To było fajne!' },
+  ]},
+  { id: 'weather', icon: '☀️', title: 'Pogoda', sentences: [
+    { emoji: '☀️', en: 'It is sunny.', pl: 'Jest słonecznie.' },
+    { emoji: '🌧️', en: 'It is raining.', pl: 'Pada deszcz.' },
+    { emoji: '❄️', en: 'It is cold.', pl: 'Jest zimno.' },
+    { emoji: '🥵', en: 'It is hot.', pl: 'Jest gorąco.' },
+    { emoji: '🧥', en: 'I need a jacket.', pl: 'Potrzebuję kurtki.' },
+    { emoji: '⛄', en: 'I like the snow.', pl: 'Lubię śnieg.' },
+    { emoji: '💨', en: 'It is windy.', pl: 'Jest wietrznie.' },
+    { emoji: '🚪', en: "Let's go outside!", pl: 'Chodźmy na dwór!' },
+    { emoji: '😊', en: 'It is a nice day.', pl: 'Jest ładny dzień.' },
+    { emoji: '🌈', en: 'I see a rainbow.', pl: 'Widzę tęczę.' },
+  ]},
+  { id: 'birthday', icon: '🎂', title: 'Urodziny', sentences: [
+    { emoji: '🎂', en: 'Happy birthday!', pl: 'Wszystkiego najlepszego!' },
+    { emoji: '🎁', en: 'I have a present.', pl: 'Mam prezent.' },
+    { emoji: '🎵', en: "Let's sing!", pl: 'Zaśpiewajmy!' },
+    { emoji: '🍰', en: 'I want cake.', pl: 'Chcę tort.' },
+    { emoji: '🎉', en: 'This is fun!', pl: 'To jest fajne!' },
+    { emoji: '🙏', en: 'Thank you for coming.', pl: 'Dziękuję, że przyszłaś.' },
+    { emoji: '🕯️', en: "Let's blow the candles.", pl: 'Zdmuchnijmy świeczki.' },
+    { emoji: '🎈', en: 'I like the balloons.', pl: 'Lubię balony.' },
+    { emoji: '👋', en: 'See you soon!', pl: 'Do zobaczenia wkrótce!' },
+    { emoji: '🥳', en: 'I am so happy!', pl: 'Jestem taki szczęśliwy!' },
+  ]},
 ];
 
 let kidsCategoryId  = null;
 let kidsFlashIndex  = 0;
 let kidsQuizWord    = null;
 let kidsTFCurrent   = null;
+let kidsSentenceCategoryId = null;
 let kidsSentenceIndex = 0;
+let kidsSentenceQuizItem = null;
 let kidsStars       = parseInt(localStorage.getItem('kids_stars') || '0', 10);
 
 // ===== STORAGE =====
@@ -783,7 +869,10 @@ function showView(name, params = {}) {
   if (name === 'kids-flashcards') {} // initialized by startKidsFlashcards()
   if (name === 'kids-quiz')       {} // initialized by startKidsQuiz()
   if (name === 'kids-truefalse')  {} // initialized by startKidsTrueFalse()
+  if (name === 'kids-sentence-categories') renderKidsSentenceCategories();
+  if (name === 'kids-sentence-mode')  {} // initialized by pickKidsSentenceCategory()
   if (name === 'kids-sentences')  {} // initialized by startKidsSentences()
+  if (name === 'kids-sentence-quiz') {} // initialized by startKidsSentenceQuiz()
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -2333,6 +2422,21 @@ function answerKidsTrueFalse(answer) {
   setTimeout(nextKidsTrueFalseRound, 1600);
 }
 
+function renderKidsSentenceCategories() {
+  document.getElementById('kids-sentence-category-grid').innerHTML = KIDS_SENTENCE_CATEGORIES.map(c => `
+    <div class="kids-category-card" onclick="pickKidsSentenceCategory('${c.id}')">
+      <div class="kids-category-icon">${c.icon}</div>
+      <div class="kids-category-title">${esc(c.title)}</div>
+    </div>`).join('');
+}
+
+function pickKidsSentenceCategory(id) {
+  kidsSentenceCategoryId = id;
+  const cat = KIDS_SENTENCE_CATEGORIES.find(c => c.id === id);
+  document.getElementById('kids-sentence-mode-title').textContent = `${cat.icon} ${cat.title}`;
+  showView('kids-sentence-mode');
+}
+
 function startKidsSentences() {
   kidsSentenceIndex = 0;
   showView('kids-sentences');
@@ -2340,33 +2444,78 @@ function startKidsSentences() {
 }
 
 function renderKidsSentence() {
-  const s = KIDS_SENTENCES[kidsSentenceIndex];
+  const cat = KIDS_SENTENCE_CATEGORIES.find(c => c.id === kidsSentenceCategoryId);
+  const s   = cat.sentences[kidsSentenceIndex];
   document.getElementById('kids-sentence-emoji').textContent = s.emoji;
   document.getElementById('kids-sentence-en').textContent = s.en;
-  document.getElementById('kids-sentence-counter').textContent = `${kidsSentenceIndex + 1} / ${KIDS_SENTENCES.length}`;
+  document.getElementById('kids-sentence-counter').textContent = `${kidsSentenceIndex + 1} / ${cat.sentences.length}`;
   document.getElementById('kids-sentence-pl').style.display = 'none';
   speakKids(s.en, 'en-US');
 }
 
 function replayKidsSentenceAudio() {
-  speakKids(KIDS_SENTENCES[kidsSentenceIndex].en, 'en-US');
+  const cat = KIDS_SENTENCE_CATEGORIES.find(c => c.id === kidsSentenceCategoryId);
+  speakKids(cat.sentences[kidsSentenceIndex].en, 'en-US');
 }
 
 function revealKidsSentenceTranslation() {
-  const s = KIDS_SENTENCES[kidsSentenceIndex];
+  const cat = KIDS_SENTENCE_CATEGORIES.find(c => c.id === kidsSentenceCategoryId);
+  const s   = cat.sentences[kidsSentenceIndex];
   document.getElementById('kids-sentence-pl').textContent = s.pl;
   document.getElementById('kids-sentence-pl').style.display = '';
   speakKids(s.pl, 'pl-PL');
 }
 
 function nextKidsSentence() {
-  kidsSentenceIndex = (kidsSentenceIndex + 1) % KIDS_SENTENCES.length;
+  const cat = KIDS_SENTENCE_CATEGORIES.find(c => c.id === kidsSentenceCategoryId);
+  kidsSentenceIndex = (kidsSentenceIndex + 1) % cat.sentences.length;
   renderKidsSentence();
 }
 
 function prevKidsSentence() {
-  kidsSentenceIndex = (kidsSentenceIndex - 1 + KIDS_SENTENCES.length) % KIDS_SENTENCES.length;
+  const cat = KIDS_SENTENCE_CATEGORIES.find(c => c.id === kidsSentenceCategoryId);
+  kidsSentenceIndex = (kidsSentenceIndex - 1 + cat.sentences.length) % cat.sentences.length;
   renderKidsSentence();
+}
+
+function startKidsSentenceQuiz() {
+  showView('kids-sentence-quiz');
+  updateKidsStarsDisplay();
+  document.getElementById('kids-sentence-quiz-feedback').style.display = 'none';
+  nextKidsSentenceQuizRound();
+}
+
+function nextKidsSentenceQuizRound() {
+  const cat      = KIDS_SENTENCE_CATEGORIES.find(c => c.id === kidsSentenceCategoryId);
+  const shuffled = shuffle([...cat.sentences]);
+  kidsSentenceQuizItem = shuffled[0];
+  const options  = shuffle(shuffled.slice(0, 3));
+  document.getElementById('kids-sentence-quiz-options').innerHTML = options.map(s => `
+    <div class="kids-option" onclick="checkKidsSentenceQuizAnswer('${s.emoji}', this)">${s.emoji}</div>`).join('');
+  document.getElementById('kids-sentence-quiz-feedback').style.display = 'none';
+  setTimeout(() => speakKids(kidsSentenceQuizItem.en, 'en-US'), 300);
+}
+
+function replayKidsSentenceQuizAudio() {
+  if (kidsSentenceQuizItem) speakKids(kidsSentenceQuizItem.en, 'en-US');
+}
+
+function checkKidsSentenceQuizAnswer(emoji, el) {
+  const feedback = document.getElementById('kids-sentence-quiz-feedback');
+  if (emoji === kidsSentenceQuizItem.emoji) {
+    el.classList.add('correct');
+    addKidsStar();
+    feedback.textContent = '🎉 Brawo, rozumiesz!';
+    feedback.className = 'kids-quiz-feedback good';
+    feedback.style.display = '';
+    setTimeout(nextKidsSentenceQuizRound, 1400);
+  } else {
+    el.classList.add('wrong');
+    setTimeout(() => el.classList.remove('wrong'), 500);
+    feedback.textContent = '🙂 Posłuchaj jeszcze raz!';
+    feedback.className = 'kids-quiz-feedback retry';
+    feedback.style.display = '';
+  }
 }
 
 // ===== PROGRESS =====

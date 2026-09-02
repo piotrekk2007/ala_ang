@@ -493,9 +493,37 @@
   <div class="kids-category-grid" id="kids-category-grid"></div>
   <p class="hint" style="text-align:center;font-size:1.1rem;margin-top:32px">Zabawy językowe 🎉</p>
   <div class="kids-mode-grid">
-    <div class="kids-mode-card" onclick="startKidsSentences()">
+    <div class="kids-mode-card" onclick="showView('kids-sentence-categories')">
       <div class="kids-mode-icon">💬</div>
       <div class="kids-mode-title">Proste zdania</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== WIDOK: DLA NAJMŁODSZYCH — KATEGORIE ZDAŃ ========== -->
+<div id="view-kids-sentence-categories" class="view" style="display:none">
+  <div class="view-header">
+    <button class="btn btn-ghost" onclick="showView('kids-home')">← Wróć</button>
+    <h1>💬 Proste zdania</h1>
+  </div>
+  <p class="hint" style="text-align:center;font-size:1.1rem">Wybierz temat:</p>
+  <div class="kids-category-grid" id="kids-sentence-category-grid"></div>
+</div>
+
+<!-- ========== WIDOK: DLA NAJMŁODSZYCH — TRYB ZDAŃ ========== -->
+<div id="view-kids-sentence-mode" class="view" style="display:none">
+  <div class="view-header">
+    <button class="btn btn-ghost" onclick="showView('kids-sentence-categories')">← Wróć</button>
+    <h1 id="kids-sentence-mode-title">💬</h1>
+  </div>
+  <div class="kids-mode-grid">
+    <div class="kids-mode-card" onclick="startKidsSentences()">
+      <div class="kids-mode-icon">🗣️</div>
+      <div class="kids-mode-title">Powtarzaj</div>
+    </div>
+    <div class="kids-mode-card" onclick="startKidsSentenceQuiz()">
+      <div class="kids-mode-icon">🎯</div>
+      <div class="kids-mode-title">Zrozum</div>
     </div>
   </div>
 </div>
@@ -584,8 +612,8 @@
 <!-- ========== WIDOK: DLA NAJMŁODSZYCH — PROSTE ZDANIA ========== -->
 <div id="view-kids-sentences" class="view" style="display:none">
   <div class="view-header">
-    <button class="btn btn-ghost" onclick="exitKids('kids-home')">← Wróć</button>
-    <h1>💬 Proste zdania</h1>
+    <button class="btn btn-ghost" onclick="exitKids('kids-sentence-mode')">← Wróć</button>
+    <h1>🗣️ Powtarzaj</h1>
     <span class="kids-counter" id="kids-sentence-counter"></span>
   </div>
   <div class="kids-flashcard">
@@ -601,6 +629,21 @@
     <button class="kids-nav-btn" onclick="prevKidsSentence()">⬅️</button>
     <button class="kids-nav-btn" onclick="nextKidsSentence()">➡️</button>
   </div>
+</div>
+
+<!-- ========== WIDOK: DLA NAJMŁODSZYCH — ZROZUM ZDANIE ========== -->
+<div id="view-kids-sentence-quiz" class="view" style="display:none">
+  <div class="view-header">
+    <button class="btn btn-ghost" onclick="exitKids('kids-sentence-mode')">← Wróć</button>
+    <h1>🎯 Zrozum</h1>
+    <span class="kids-stars-badge">⭐ <span class="kids-stars-value">0</span></span>
+  </div>
+  <p class="hint" style="text-align:center;font-size:1.1rem">Posłuchaj zdania i wybierz właściwy obrazek! 👇</p>
+  <div style="text-align:center;margin-bottom:24px">
+    <button class="kids-big-btn kids-replay-btn" onclick="replayKidsSentenceQuizAudio()">🔊</button>
+  </div>
+  <div class="kids-quiz-options" id="kids-sentence-quiz-options"></div>
+  <div class="kids-quiz-feedback" id="kids-sentence-quiz-feedback" style="display:none"></div>
 </div>
 
 <!-- ========== WIDOK: POSTĘPY ========== -->
