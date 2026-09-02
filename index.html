@@ -491,6 +491,13 @@
   </div>
   <p class="hint" style="text-align:center;font-size:1.1rem">Wybierz, czego chcesz się dziś nauczyć! 🌈</p>
   <div class="kids-category-grid" id="kids-category-grid"></div>
+  <p class="hint" style="text-align:center;font-size:1.1rem;margin-top:32px">Zabawy językowe 🎉</p>
+  <div class="kids-mode-grid">
+    <div class="kids-mode-card" onclick="startKidsSentences()">
+      <div class="kids-mode-icon">💬</div>
+      <div class="kids-mode-title">Proste zdania</div>
+    </div>
+  </div>
 </div>
 
 <!-- ========== WIDOK: DLA NAJMŁODSZYCH — KATEGORIA ========== -->
@@ -507,6 +514,10 @@
     <div class="kids-mode-card" onclick="startKidsQuiz()">
       <div class="kids-mode-icon">🎯</div>
       <div class="kids-mode-title">Zgadnij</div>
+    </div>
+    <div class="kids-mode-card" onclick="startKidsTrueFalse()">
+      <div class="kids-mode-icon">✅❌</div>
+      <div class="kids-mode-title">Prawda czy fałsz</div>
     </div>
   </div>
 </div>
@@ -546,6 +557,50 @@
   </div>
   <div class="kids-quiz-options" id="kids-quiz-options"></div>
   <div class="kids-quiz-feedback" id="kids-quiz-feedback" style="display:none"></div>
+</div>
+
+<!-- ========== WIDOK: DLA NAJMŁODSZYCH — PRAWDA CZY FAŁSZ ========== -->
+<div id="view-kids-truefalse" class="view" style="display:none">
+  <div class="view-header">
+    <button class="btn btn-ghost" onclick="exitKids('kids-category')">← Wróć</button>
+    <h1>✅❌ Prawda czy fałsz</h1>
+    <span class="kids-stars-badge">⭐ <span class="kids-stars-value">0</span></span>
+  </div>
+  <p class="hint" style="text-align:center;font-size:1.1rem">Czy to słowo pasuje do obrazka?</p>
+  <div class="kids-flashcard">
+    <div class="kids-flash-emoji" id="kids-tf-emoji" onclick="replayKidsTrueFalseAudio()">🎈</div>
+    <div class="kids-flash-word" id="kids-tf-word"></div>
+    <div class="kids-flash-actions">
+      <button class="kids-big-btn" onclick="replayKidsTrueFalseAudio()" title="Posłuchaj">🔊</button>
+    </div>
+  </div>
+  <div class="kids-tf-actions">
+    <button class="kids-tf-btn kids-tf-true" onclick="answerKidsTrueFalse(true)">✅</button>
+    <button class="kids-tf-btn kids-tf-false" onclick="answerKidsTrueFalse(false)">❌</button>
+  </div>
+  <div class="kids-quiz-feedback" id="kids-tf-feedback" style="display:none"></div>
+</div>
+
+<!-- ========== WIDOK: DLA NAJMŁODSZYCH — PROSTE ZDANIA ========== -->
+<div id="view-kids-sentences" class="view" style="display:none">
+  <div class="view-header">
+    <button class="btn btn-ghost" onclick="exitKids('kids-home')">← Wróć</button>
+    <h1>💬 Proste zdania</h1>
+    <span class="kids-counter" id="kids-sentence-counter"></span>
+  </div>
+  <div class="kids-flashcard">
+    <div class="kids-flash-emoji" id="kids-sentence-emoji" onclick="replayKidsSentenceAudio()">👋</div>
+    <div class="kids-flash-word kids-sentence-text" id="kids-sentence-en"></div>
+    <div class="kids-flash-pl" id="kids-sentence-pl" style="display:none"></div>
+    <div class="kids-flash-actions">
+      <button class="kids-big-btn" onclick="replayKidsSentenceAudio()" title="Posłuchaj">🔊</button>
+      <button class="kids-big-btn" onclick="revealKidsSentenceTranslation()" title="Po polsku">🇵🇱</button>
+    </div>
+  </div>
+  <div class="kids-nav-actions">
+    <button class="kids-nav-btn" onclick="prevKidsSentence()">⬅️</button>
+    <button class="kids-nav-btn" onclick="nextKidsSentence()">➡️</button>
+  </div>
 </div>
 
 <!-- ========== WIDOK: POSTĘPY ========== -->

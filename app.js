@@ -657,11 +657,68 @@ const KIDS_CATEGORIES = [
     { emoji: '🍇', en: 'grapes', pl: 'winogrona' },
     { emoji: '🍓', en: 'strawberry', pl: 'truskawka' },
   ]},
+  { id: 'clothes', icon: '👕', title: 'Ubrania', words: [
+    { emoji: '👕', en: 't-shirt', pl: 'koszulka' },
+    { emoji: '👖', en: 'trousers', pl: 'spodnie' },
+    { emoji: '👗', en: 'dress', pl: 'sukienka' },
+    { emoji: '🧦', en: 'socks', pl: 'skarpetki' },
+    { emoji: '👟', en: 'shoes', pl: 'buty' },
+    { emoji: '🧢', en: 'cap', pl: 'czapka' },
+    { emoji: '🧥', en: 'jacket', pl: 'kurtka' },
+    { emoji: '🧤', en: 'gloves', pl: 'rękawiczki' },
+  ]},
+  { id: 'toys', icon: '🧸', title: 'Zabawki', words: [
+    { emoji: '⚽', en: 'ball', pl: 'piłka' },
+    { emoji: '🧸', en: 'teddy bear', pl: 'miś' },
+    { emoji: '🪁', en: 'kite', pl: 'latawiec' },
+    { emoji: '🎈', en: 'balloon', pl: 'balon' },
+    { emoji: '🧩', en: 'puzzle', pl: 'puzzle' },
+    { emoji: '🧱', en: 'blocks', pl: 'klocki' },
+    { emoji: '🥁', en: 'drum', pl: 'bębenek' },
+    { emoji: '🤖', en: 'robot', pl: 'robot' },
+  ]},
+  { id: 'vehicles', icon: '🚗', title: 'Pojazdy', words: [
+    { emoji: '🚗', en: 'car', pl: 'samochód' },
+    { emoji: '🚌', en: 'bus', pl: 'autobus' },
+    { emoji: '🚂', en: 'train', pl: 'pociąg' },
+    { emoji: '✈️', en: 'plane', pl: 'samolot' },
+    { emoji: '🚲', en: 'bike', pl: 'rower' },
+    { emoji: '🚁', en: 'helicopter', pl: 'helikopter' },
+    { emoji: '🚤', en: 'boat', pl: 'łódka' },
+    { emoji: '🚚', en: 'truck', pl: 'ciężarówka' },
+  ]},
+  { id: 'emotions', icon: '😀', title: 'Emocje', words: [
+    { emoji: '😀', en: 'happy', pl: 'wesoły' },
+    { emoji: '😢', en: 'sad', pl: 'smutny' },
+    { emoji: '😠', en: 'angry', pl: 'zły' },
+    { emoji: '😴', en: 'sleepy', pl: 'śpiący' },
+    { emoji: '😲', en: 'surprised', pl: 'zaskoczony' },
+    { emoji: '😨', en: 'scared', pl: 'przestraszony' },
+    { emoji: '🤩', en: 'excited', pl: 'podekscytowany' },
+    { emoji: '😳', en: 'shy', pl: 'nieśmiały' },
+  ]},
+];
+
+const KIDS_SENTENCES = [
+  { emoji: '👋', en: 'Hello!', pl: 'Cześć!' },
+  { emoji: '🙋', en: 'My name is Ala.', pl: 'Mam na imię Ala.' },
+  { emoji: '🪑', en: 'This is a chair.', pl: 'To jest krzesło.' },
+  { emoji: '🐶', en: 'This is a dog.', pl: 'To jest pies.' },
+  { emoji: '😊', en: 'I am happy.', pl: 'Jestem szczęśliwy.' },
+  { emoji: '🍎', en: 'I like apples.', pl: 'Lubię jabłka.' },
+  { emoji: '💧', en: 'I want water.', pl: 'Chcę wodę.' },
+  { emoji: '🙏', en: 'Thank you!', pl: 'Dziękuję!' },
+  { emoji: '🤗', en: 'I love you.', pl: 'Kocham cię.' },
+  { emoji: '👍', en: 'Good job!', pl: 'Dobra robota!' },
+  { emoji: '😴', en: 'I am tired.', pl: 'Jestem zmęczony.' },
+  { emoji: '🎂', en: 'Happy birthday!', pl: 'Wszystkiego najlepszego!' },
 ];
 
 let kidsCategoryId  = null;
 let kidsFlashIndex  = 0;
 let kidsQuizWord    = null;
+let kidsTFCurrent   = null;
+let kidsSentenceIndex = 0;
 let kidsStars       = parseInt(localStorage.getItem('kids_stars') || '0', 10);
 
 // ===== STORAGE =====
@@ -725,6 +782,8 @@ function showView(name, params = {}) {
   if (name === 'kids-category')   {} // initialized by pickKidsCategory()
   if (name === 'kids-flashcards') {} // initialized by startKidsFlashcards()
   if (name === 'kids-quiz')       {} // initialized by startKidsQuiz()
+  if (name === 'kids-truefalse')  {} // initialized by startKidsTrueFalse()
+  if (name === 'kids-sentences')  {} // initialized by startKidsSentences()
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -2229,6 +2288,85 @@ function checkKidsQuizAnswer(en, el) {
     feedback.className = 'kids-quiz-feedback retry';
     feedback.style.display = '';
   }
+}
+
+function startKidsTrueFalse() {
+  showView('kids-truefalse');
+  updateKidsStarsDisplay();
+  document.getElementById('kids-tf-feedback').style.display = 'none';
+  nextKidsTrueFalseRound();
+}
+
+function nextKidsTrueFalseRound() {
+  const cat   = KIDS_CATEGORIES.find(c => c.id === kidsCategoryId);
+  const words = cat.words;
+  const word  = words[Math.floor(Math.random() * words.length)];
+  const isTrue = Math.random() < 0.5;
+  let shownWord = word.en;
+  if (!isTrue) {
+    const others = words.filter(w => w.en !== word.en);
+    shownWord = others[Math.floor(Math.random() * others.length)].en;
+  }
+  kidsTFCurrent = { word, shownWord, isTrue };
+  document.getElementById('kids-tf-emoji').textContent = word.emoji;
+  document.getElementById('kids-tf-word').textContent = shownWord;
+  document.getElementById('kids-tf-feedback').style.display = 'none';
+  setTimeout(() => speakKids(shownWord, 'en-US'), 300);
+}
+
+function replayKidsTrueFalseAudio() {
+  if (kidsTFCurrent) speakKids(kidsTFCurrent.shownWord, 'en-US');
+}
+
+function answerKidsTrueFalse(answer) {
+  const feedback = document.getElementById('kids-tf-feedback');
+  const correct  = answer === kidsTFCurrent.isTrue;
+  if (correct) {
+    addKidsStar();
+    feedback.textContent = '🎉 Brawo! Dobrze!';
+    feedback.className = 'kids-quiz-feedback good';
+  } else {
+    feedback.textContent = `🙂 To było "${kidsTFCurrent.word.en}"`;
+    feedback.className = 'kids-quiz-feedback retry';
+  }
+  feedback.style.display = '';
+  setTimeout(nextKidsTrueFalseRound, 1600);
+}
+
+function startKidsSentences() {
+  kidsSentenceIndex = 0;
+  showView('kids-sentences');
+  renderKidsSentence();
+}
+
+function renderKidsSentence() {
+  const s = KIDS_SENTENCES[kidsSentenceIndex];
+  document.getElementById('kids-sentence-emoji').textContent = s.emoji;
+  document.getElementById('kids-sentence-en').textContent = s.en;
+  document.getElementById('kids-sentence-counter').textContent = `${kidsSentenceIndex + 1} / ${KIDS_SENTENCES.length}`;
+  document.getElementById('kids-sentence-pl').style.display = 'none';
+  speakKids(s.en, 'en-US');
+}
+
+function replayKidsSentenceAudio() {
+  speakKids(KIDS_SENTENCES[kidsSentenceIndex].en, 'en-US');
+}
+
+function revealKidsSentenceTranslation() {
+  const s = KIDS_SENTENCES[kidsSentenceIndex];
+  document.getElementById('kids-sentence-pl').textContent = s.pl;
+  document.getElementById('kids-sentence-pl').style.display = '';
+  speakKids(s.pl, 'pl-PL');
+}
+
+function nextKidsSentence() {
+  kidsSentenceIndex = (kidsSentenceIndex + 1) % KIDS_SENTENCES.length;
+  renderKidsSentence();
+}
+
+function prevKidsSentence() {
+  kidsSentenceIndex = (kidsSentenceIndex - 1 + KIDS_SENTENCES.length) % KIDS_SENTENCES.length;
+  renderKidsSentence();
 }
 
 // ===== PROGRESS =====

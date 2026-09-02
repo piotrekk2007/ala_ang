@@ -1214,9 +1214,24 @@ code { background: var(--gray-light); padding: 2px 6px; border-radius: 4px; font
 .kids-quiz-feedback.good { color: var(--green); }
 .kids-quiz-feedback.retry { color: var(--purple); }
 
+.kids-tf-actions { display: flex; justify-content: center; gap: 50px; margin-top: 24px; }
+.kids-tf-btn {
+  font-size: 4.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform .15s;
+  line-height: 1;
+}
+.kids-tf-btn:active { transform: scale(0.85); }
+
+.kids-sentence-text { font-size: 1.6rem; text-transform: none; line-height: 1.4; }
+
 @media (max-width: 600px) {
   .kids-flash-emoji { font-size: 5rem; }
   .kids-option { font-size: 3rem; }
+  .kids-sentence-text { font-size: 1.3rem; }
+  .kids-tf-btn { font-size: 3.5rem; }
 }
 
 /* ===== RESPONSIVE ===== */
