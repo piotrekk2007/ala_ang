@@ -597,6 +597,280 @@ let essaySetupState = { level: null };
 let currentEssay = null;
 let essayVocabWords = {};
 
+// ===== KIDS MODE (Dla najmłodszych) =====
+const KIDS_CATEGORIES = [
+  { id: 'colors', icon: '🎨', title: 'Kolory', words: [
+    { emoji: '🔴', en: 'rouge', pl: 'czerwony' },
+    { emoji: '🟠', en: 'orange', pl: 'pomarańczowy' },
+    { emoji: '🟡', en: 'jaune', pl: 'żółty' },
+    { emoji: '🟢', en: 'vert', pl: 'zielony' },
+    { emoji: '🔵', en: 'bleu', pl: 'niebieski' },
+    { emoji: '🟣', en: 'violet', pl: 'fioletowy' },
+    { emoji: '⚫', en: 'noir', pl: 'czarny' },
+    { emoji: '⚪', en: 'blanc', pl: 'biały' },
+    { emoji: '🟤', en: 'marron', pl: 'brązowy' },
+    { emoji: '🩷', en: 'rose', pl: 'różowy' },
+  ]},
+  { id: 'animals', icon: '🐾', title: 'Zwierzątka', words: [
+    { emoji: '🐶', en: 'chien', pl: 'pies' },
+    { emoji: '🐱', en: 'chat', pl: 'kot' },
+    { emoji: '🐰', en: 'lapin', pl: 'królik' },
+    { emoji: '🐻', en: 'ours', pl: 'miś' },
+    { emoji: '🦁', en: 'lion', pl: 'lew' },
+    { emoji: '🐘', en: 'éléphant', pl: 'słoń' },
+    { emoji: '🐸', en: 'grenouille', pl: 'żaba' },
+    { emoji: '🐦', en: 'oiseau', pl: 'ptak' },
+    { emoji: '🐟', en: 'poisson', pl: 'ryba' },
+    { emoji: '🐴', en: 'cheval', pl: 'koń' },
+  ]},
+  { id: 'numbers', icon: '🔢', title: 'Liczby', words: [
+    { emoji: '1️⃣', en: 'un', pl: 'jeden' },
+    { emoji: '2️⃣', en: 'deux', pl: 'dwa' },
+    { emoji: '3️⃣', en: 'trois', pl: 'trzy' },
+    { emoji: '4️⃣', en: 'quatre', pl: 'cztery' },
+    { emoji: '5️⃣', en: 'cinq', pl: 'pięć' },
+    { emoji: '6️⃣', en: 'six', pl: 'sześć' },
+    { emoji: '7️⃣', en: 'sept', pl: 'siedem' },
+    { emoji: '8️⃣', en: 'huit', pl: 'osiem' },
+    { emoji: '9️⃣', en: 'neuf', pl: 'dziewięć' },
+    { emoji: '🔟', en: 'dix', pl: 'dziesięć' },
+  ]},
+  { id: 'family', icon: '👪', title: 'Rodzina', words: [
+    { emoji: '👩', en: 'maman', pl: 'mama' },
+    { emoji: '👨', en: 'papa', pl: 'tata' },
+    { emoji: '👧', en: 'sœur', pl: 'siostra' },
+    { emoji: '👦', en: 'frère', pl: 'brat' },
+    { emoji: '👵', en: 'mamie', pl: 'babcia' },
+    { emoji: '👴', en: 'papi', pl: 'dziadek' },
+    { emoji: '👶', en: 'bébé', pl: 'dziecko' },
+    { emoji: '👪', en: 'famille', pl: 'rodzina' },
+  ]},
+  { id: 'food', icon: '🍎', title: 'Jedzenie', words: [
+    { emoji: '🍎', en: 'pomme', pl: 'jabłko' },
+    { emoji: '🍌', en: 'banane', pl: 'banan' },
+    { emoji: '🍕', en: 'pizza', pl: 'pizza' },
+    { emoji: '🍦', en: 'glace', pl: 'lody' },
+    { emoji: '🍪', en: 'biscuit', pl: 'ciasteczko' },
+    { emoji: '🥛', en: 'lait', pl: 'mleko' },
+    { emoji: '🍞', en: 'pain', pl: 'chleb' },
+    { emoji: '🧀', en: 'fromage', pl: 'ser' },
+    { emoji: '🍇', en: 'raisin', pl: 'winogrona' },
+    { emoji: '🍓', en: 'fraise', pl: 'truskawka' },
+  ]},
+  { id: 'clothes', icon: '👕', title: 'Ubrania', words: [
+    { emoji: '👕', en: 't-shirt', pl: 'koszulka' },
+    { emoji: '👖', en: 'pantalon', pl: 'spodnie' },
+    { emoji: '👗', en: 'robe', pl: 'sukienka' },
+    { emoji: '🧦', en: 'chaussettes', pl: 'skarpetki' },
+    { emoji: '👟', en: 'chaussures', pl: 'buty' },
+    { emoji: '🧢', en: 'casquette', pl: 'czapka' },
+    { emoji: '🧥', en: 'veste', pl: 'kurtka' },
+    { emoji: '🧤', en: 'gants', pl: 'rękawiczki' },
+  ]},
+  { id: 'toys', icon: '🧸', title: 'Zabawki', words: [
+    { emoji: '⚽', en: 'balle', pl: 'piłka' },
+    { emoji: '🧸', en: 'ours en peluche', pl: 'miś' },
+    { emoji: '🪁', en: 'cerf-volant', pl: 'latawiec' },
+    { emoji: '🎈', en: 'ballon', pl: 'balon' },
+    { emoji: '🧩', en: 'puzzle', pl: 'puzzle' },
+    { emoji: '🧱', en: 'cubes', pl: 'klocki' },
+    { emoji: '🥁', en: 'tambour', pl: 'bębenek' },
+    { emoji: '🤖', en: 'robot', pl: 'robot' },
+  ]},
+  { id: 'vehicles', icon: '🚗', title: 'Pojazdy', words: [
+    { emoji: '🚗', en: 'voiture', pl: 'samochód' },
+    { emoji: '🚌', en: 'bus', pl: 'autobus' },
+    { emoji: '🚂', en: 'train', pl: 'pociąg' },
+    { emoji: '✈️', en: 'avion', pl: 'samolot' },
+    { emoji: '🚲', en: 'vélo', pl: 'rower' },
+    { emoji: '🚁', en: 'hélicoptère', pl: 'helikopter' },
+    { emoji: '🚤', en: 'bateau', pl: 'łódka' },
+    { emoji: '🚚', en: 'camion', pl: 'ciężarówka' },
+  ]},
+  { id: 'emotions', icon: '😀', title: 'Emocje', words: [
+    { emoji: '😀', en: 'content', pl: 'wesoły' },
+    { emoji: '😢', en: 'triste', pl: 'smutny' },
+    { emoji: '😠', en: 'fâché', pl: 'zły' },
+    { emoji: '😴', en: 'fatigué', pl: 'śpiący' },
+    { emoji: '😲', en: 'surpris', pl: 'zaskoczony' },
+    { emoji: '😨', en: 'effrayé', pl: 'przestraszony' },
+    { emoji: '🤩', en: 'excité', pl: 'podekscytowany' },
+    { emoji: '😳', en: 'timide', pl: 'nieśmiały' },
+  ]},
+];
+
+const KIDS_SENTENCE_CATEGORIES = [
+  { id: 'general', icon: '👋', title: 'Ogólne', sentences: [
+    { emoji: '👋', en: 'Bonjour !', pl: 'Cześć!' },
+    { emoji: '🚪', en: 'Au revoir !', pl: 'Do widzenia!' },
+    { emoji: '🤲', en: "S'il te plaît.", pl: 'Proszę.' },
+    { emoji: '🙏', en: 'Merci !', pl: 'Dziękuję!' },
+    { emoji: '🙋', en: "Je m'appelle Ala.", pl: 'Mam na imię Ala.' },
+    { emoji: '❓', en: 'Comment ça va ?', pl: 'Jak się masz?' },
+    { emoji: '😊', en: 'Je vais bien.', pl: 'Czuję się dobrze.' },
+    { emoji: '✅', en: 'Oui.', pl: 'Tak.' },
+    { emoji: '❌', en: 'Non.', pl: 'Nie.' },
+    { emoji: '👍', en: 'Bravo !', pl: 'Dobra robota!' },
+  ]},
+  { id: 'home', icon: '🏠', title: 'W domu', sentences: [
+    { emoji: '🛏️', en: 'C\'est ma chambre.', pl: 'To jest mój pokój.' },
+    { emoji: '🍽️', en: "J'ai faim.", pl: 'Jestem głodny.' },
+    { emoji: '💧', en: "Je veux de l'eau.", pl: 'Chcę wodę.' },
+    { emoji: '👩', en: 'Où est maman ?', pl: 'Gdzie jest mama?' },
+    { emoji: '😴', en: 'Je suis fatigué.', pl: 'Jestem zmęczony.' },
+    { emoji: '🧸', en: 'Jouons !', pl: 'Pobawmy się!' },
+    { emoji: '🌙', en: 'Bonne nuit.', pl: 'Dobranoc.' },
+    { emoji: '❤️', en: "Je t'aime.", pl: 'Kocham cię.' },
+    { emoji: '🧼', en: 'Lave-toi les mains.', pl: 'Umyj ręce.' },
+    { emoji: '🚗', en: "C'est mon jouet.", pl: 'To jest moja zabawka.' },
+  ]},
+  { id: 'school', icon: '🎒', title: 'W szkole', sentences: [
+    { emoji: '👩‍🏫', en: "C'est ma maîtresse.", pl: 'To jest moja pani.' },
+    { emoji: '✏️', en: "J'ai un crayon.", pl: 'Mam ołówek.' },
+    { emoji: '🚻', en: 'Puis-je aller aux toilettes ?', pl: 'Czy mogę iść do toalety?' },
+    { emoji: '🎨', en: "J'aime dessiner.", pl: 'Lubię rysować.' },
+    { emoji: '🧑‍🤝‍🧑', en: "C'est mon ami.", pl: 'To jest mój przyjaciel.' },
+    { emoji: '🪑', en: "Assieds-toi, s'il te plaît.", pl: 'Usiądź, proszę.' },
+    { emoji: '🧍', en: "Lève-toi, s'il te plaît.", pl: 'Wstań, proszę.' },
+    { emoji: '🤔', en: 'Je ne comprends pas.', pl: 'Nie rozumiem.' },
+    { emoji: '📋', en: 'Regarde le tableau.', pl: 'Popatrz na tablicę.' },
+    { emoji: '🔔', en: "C'est l'heure de la récréation.", pl: 'Czas na przerwę.' },
+  ]},
+  { id: 'trip', icon: '🚌', title: 'Na wycieczce', sentences: [
+    { emoji: '🗺️', en: 'Où allons-nous ?', pl: 'Dokąd jedziemy?' },
+    { emoji: '🌳', en: 'Je vois un arbre.', pl: 'Widzę drzewo.' },
+    { emoji: '🐦', en: "Regarde l'oiseau !", pl: 'Popatrz na ptaka!' },
+    { emoji: '😴', en: 'Je suis fatigué.', pl: 'Jestem zmęczony.' },
+    { emoji: '🛑', en: 'Pouvons-nous nous arrêter ?', pl: 'Czy możemy się zatrzymać?' },
+    { emoji: '😍', en: "C'est beau !", pl: 'Jest piękne!' },
+    { emoji: '📸', en: 'Prenons une photo.', pl: 'Zróbmy zdjęcie.' },
+    { emoji: '🌊', en: 'Je vois la mer.', pl: 'Widzę morze.' },
+    { emoji: '📍', en: 'Nous sommes arrivés !', pl: 'Jesteśmy na miejscu!' },
+    { emoji: '⛰️', en: "J'aime les montagnes.", pl: 'Lubię góry.' },
+  ]},
+  { id: 'restaurant', icon: '🍽️', title: 'W restauracji', sentences: [
+    { emoji: '🍽️', en: "J'ai faim.", pl: 'Jestem głodny.' },
+    { emoji: '🍕', en: 'Je veux une pizza.', pl: 'Chcę pizzę.' },
+    { emoji: '💧', en: "Puis-je avoir de l'eau ?", pl: 'Czy mogę prosić o wodę?' },
+    { emoji: '😋', en: "C'est délicieux !", pl: 'To jest pyszne!' },
+    { emoji: '🙅', en: 'Non, merci.', pl: 'Nie, dziękuję.' },
+    { emoji: '🍦', en: 'Je veux une glace.', pl: 'Chcę lody.' },
+    { emoji: '🤤', en: 'Miam !', pl: 'Pycha!' },
+    { emoji: '🙂', en: "Je n'ai plus faim.", pl: 'Jestem najedzony.' },
+    { emoji: '🙏', en: 'Merci pour le repas.', pl: 'Dziękuję za jedzenie.' },
+    { emoji: '🍴', en: 'Puis-je avoir une fourchette ?', pl: 'Czy mogę prosić widelec?' },
+  ]},
+  { id: 'playground', icon: '🛝', title: 'Na placu zabaw', sentences: [
+    { emoji: '🎉', en: 'Jouons !', pl: 'Pobawmy się!' },
+    { emoji: '🙋', en: 'Puis-je jouer aussi ?', pl: 'Czy mogę się bawić?' },
+    { emoji: '🛝', en: "J'aime le toboggan.", pl: 'Lubię zjeżdżalnię.' },
+    { emoji: '👀', en: 'Regarde-moi !', pl: 'Popatrz na mnie!' },
+    { emoji: '⚠️', en: 'Fais attention !', pl: 'Uważaj!' },
+    { emoji: '☝️', en: "C'est mon tour.", pl: 'Teraz moja kolej.' },
+    { emoji: '🥇', en: 'Je suis premier !', pl: 'Jestem pierwszy!' },
+    { emoji: '🏃', en: 'Courons !', pl: 'Pobiegnijmy!' },
+    { emoji: '😀', en: 'Je suis content.', pl: 'Jestem szczęśliwy.' },
+    { emoji: '😄', en: "C'était amusant !", pl: 'To było fajne!' },
+  ]},
+  { id: 'weather', icon: '☀️', title: 'Pogoda', sentences: [
+    { emoji: '☀️', en: 'Il fait soleil.', pl: 'Jest słonecznie.' },
+    { emoji: '🌧️', en: 'Il pleut.', pl: 'Pada deszcz.' },
+    { emoji: '❄️', en: 'Il fait froid.', pl: 'Jest zimno.' },
+    { emoji: '🥵', en: 'Il fait chaud.', pl: 'Jest gorąco.' },
+    { emoji: '🧥', en: "J'ai besoin d'une veste.", pl: 'Potrzebuję kurtki.' },
+    { emoji: '⛄', en: "J'aime la neige.", pl: 'Lubię śnieg.' },
+    { emoji: '💨', en: 'Il y a du vent.', pl: 'Jest wietrznie.' },
+    { emoji: '🚪', en: 'Allons dehors !', pl: 'Chodźmy na dwór!' },
+    { emoji: '😊', en: 'C\'est une belle journée.', pl: 'Jest ładny dzień.' },
+    { emoji: '🌈', en: 'Je vois un arc-en-ciel.', pl: 'Widzę tęczę.' },
+  ]},
+  { id: 'birthday', icon: '🎂', title: 'Urodziny', sentences: [
+    { emoji: '🎂', en: 'Joyeux anniversaire !', pl: 'Wszystkiego najlepszego!' },
+    { emoji: '🎁', en: "J'ai un cadeau.", pl: 'Mam prezent.' },
+    { emoji: '🎵', en: 'Chantons !', pl: 'Zaśpiewajmy!' },
+    { emoji: '🍰', en: 'Je veux du gâteau.', pl: 'Chcę tort.' },
+    { emoji: '🎉', en: "C'est amusant !", pl: 'To jest fajne!' },
+    { emoji: '🙏', en: "Merci d'être venue.", pl: 'Dziękuję, że przyszłaś.' },
+    { emoji: '🕯️', en: 'Soufflons les bougies.', pl: 'Zdmuchnijmy świeczki.' },
+    { emoji: '🎈', en: "J'aime les ballons.", pl: 'Lubię balony.' },
+    { emoji: '👋', en: 'À bientôt !', pl: 'Do zobaczenia wkrótce!' },
+    { emoji: '🥳', en: 'Je suis tellement content !', pl: 'Jestem taki szczęśliwy!' },
+  ]},
+];
+
+let kidsCategoryId  = null;
+let kidsFlashIndex  = 0;
+let kidsQuizWord    = null;
+let kidsTFCurrent   = null;
+let kidsSentenceCategoryId = null;
+let kidsSentenceIndex = 0;
+let kidsSentenceQuizItem = null;
+let kidsStars       = parseInt(localStorage.getItem('fr_kids_stars') || '0', 10);
+
+// ---- Ubierz misia ----
+const KIDS_BEAR_CATEGORIES = [
+  { id: 'top',       label: 'Góra' },
+  { id: 'bottom',    label: 'Dół' },
+  { id: 'feet',      label: 'Buty' },
+  { id: 'accessory', label: 'Dodatki' },
+  { id: 'weather',   label: 'Na pogodę' },
+];
+const KIDS_BEAR_SLOTS = KIDS_BEAR_CATEGORIES.map(c => c.id);
+const KIDS_BEAR_ITEMS = [
+  { id: 'tshirt',     emoji: '👕',  en: 't-shirt',              pl: 'koszulka',                  category: 'top' },
+  { id: 'jacket',     emoji: '🧥',  en: 'veste',                pl: 'kurtka',                    category: 'top' },
+  { id: 'dress',      emoji: '👗',  en: 'robe',                 pl: 'sukienka',                  category: 'top' },
+  { id: 'trousers',   emoji: '👖',  en: 'pantalon',             pl: 'spodnie',                   category: 'bottom' },
+  { id: 'shorts',     emoji: '🩳',  en: 'short',                pl: 'szorty',                    category: 'bottom' },
+  { id: 'shoes',      emoji: '👟',  en: 'chaussures',           pl: 'buty',                      category: 'feet' },
+  { id: 'boots',      emoji: '🥾',  en: 'bottes',               pl: 'kozaki',                    category: 'feet' },
+  { id: 'sandals',    emoji: '👡',  en: 'sandales',             pl: 'sandałki',                  category: 'feet' },
+  { id: 'cap',        emoji: '🧢',  en: 'casquette',            pl: 'czapka',                    category: 'accessory' },
+  { id: 'bow',        emoji: '🎀',  en: 'nœud',                 pl: 'kokardka',                  category: 'accessory' },
+  { id: 'backpack',   emoji: '🎒',  en: 'sac à dos',            pl: 'plecak',                    category: 'accessory' },
+  { id: 'sunglasses', emoji: '🕶️', en: 'lunettes de soleil',   pl: 'okulary przeciwsłoneczne', category: 'weather', weather: 'sunny' },
+  { id: 'umbrella',   emoji: '☂️',  en: 'parapluie',            pl: 'parasol',                   category: 'weather', weather: 'rainy' },
+  { id: 'scarf',      emoji: '🧣',  en: 'écharpe',              pl: 'szalik',                    category: 'weather', weather: 'snowy' },
+];
+const KIDS_WEATHER_DATA = {
+  sunny: { icon: '☀️', label: 'Słonecznie', en: 'Il fait soleil ! Mets mes lunettes de soleil !', pl: 'Jest słonecznie! Załóż mi okulary!', itemId: 'sunglasses', bg: '#fff7d6' },
+  rainy: { icon: '🌧️', label: 'Deszczowo',  en: 'Il pleut ! Donne-moi mon parapluie !',            pl: 'Pada deszcz! Podaj mi parasol!',    itemId: 'umbrella',   bg: '#dbeefb' },
+  snowy: { icon: '❄️', label: 'Śnieżnie',   en: 'Il neige ! Mets mon écharpe !',                   pl: 'Pada śnieg! Załóż mi szalik!',      itemId: 'scarf',      bg: '#eef3f7' },
+};
+
+let kidsBearOutfit = { top: null, bottom: null, feet: null, accessory: null, weather: null };
+let kidsBearMode = 'free'; // 'free' | 'challenge'
+let kidsWeather  = null;
+let kidsBearDrag = null;
+
+// ---- Znajdź parę ----
+let kidsMemoryCards   = [];
+let kidsMemoryFirst   = null;
+let kidsMemoryMatched = 0;
+
+// ---- Kolorowanka ----
+const KIDS_PALETTE = [
+  { hex: '#e53935', en: 'rouge', pl: 'czerwony' },
+  { hex: '#fb8c00', en: 'orange', pl: 'pomarańczowy' },
+  { hex: '#fdd835', en: 'jaune', pl: 'żółty' },
+  { hex: '#43a047', en: 'vert', pl: 'zielony' },
+  { hex: '#1e88e5', en: 'bleu', pl: 'niebieski' },
+  { hex: '#8e24aa', en: 'violet', pl: 'fioletowy' },
+  { hex: '#000000', en: 'noir', pl: 'czarny' },
+  { hex: '#6d4c41', en: 'marron', pl: 'brązowy' },
+  { hex: '#f06292', en: 'rose', pl: 'różowy' },
+];
+const KIDS_COLORING_REGIONS = {
+  apple:  ['apple-body', 'apple-stem', 'apple-leaf-left', 'apple-leaf-right'],
+  house:  ['house-roof', 'house-walls', 'house-window-left', 'house-window-right', 'house-door', 'house-chimney'],
+  sun:    ['sun-rays-a', 'sun-rays-b', 'sun-face'],
+  flower: ['flower-stem', 'flower-leaf-left', 'flower-leaf-right', 'flower-petals', 'flower-center'],
+};
+const KIDS_COLORING_TITLES = { apple: '🍎 Jabłko', house: '🏠 Domek', sun: '☀️ Słoneczko', flower: '🌼 Kwiatek' };
+let kidsSelectedColor   = null;
+let kidsColoringPicture = null;
+let kidsColoringWasComplete = false;
+
 // ===== STORAGE =====
 const DB = {
   get: (key) => { try { return JSON.parse(localStorage.getItem(key)) || null; } catch { return null; } },
@@ -654,6 +928,19 @@ function showView(name, params = {}) {
   if (name === 'essay-setup') renderEssaySetup();
   if (name === 'essay-write') {} // initialized by startEssay()
   if (name === 'essay-result'){} // initialized by submitEssayForCheck()
+  if (name === 'kids-home')       renderKidsHome();
+  if (name === 'kids-category')   {} // initialized by pickKidsCategory()
+  if (name === 'kids-flashcards') {} // initialized by startKidsFlashcards()
+  if (name === 'kids-quiz')       {} // initialized by startKidsQuiz()
+  if (name === 'kids-truefalse')  {} // initialized by startKidsTrueFalse()
+  if (name === 'kids-sentence-categories') renderKidsSentenceCategories();
+  if (name === 'kids-sentence-mode')  {} // initialized by pickKidsSentenceCategory()
+  if (name === 'kids-sentences')  {} // initialized by startKidsSentences()
+  if (name === 'kids-sentence-quiz') {} // initialized by startKidsSentenceQuiz()
+  if (name === 'kids-dressbear') {} // initialized by startKidsDressBear()
+  if (name === 'kids-memory')    {} // initialized by startKidsMemory()
+  if (name === 'kids-coloring-pick') {}
+  if (name === 'kids-coloring')  {} // initialized by startKidsColoring()
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -2033,6 +2320,647 @@ function recordEssayCompletion(level, topicTitle, mistakeCount) {
   prog.essays.unshift({ date: today(), level, topic: topicTitle, mistakeCount });
   prog.essays = prog.essays.slice(0, 50);
   saveProgress(prog);
+}
+
+// ===== KIDS MODE (Dla najmłodszych) =====
+function speakKids(text, lang) {
+  try {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = lang;
+    utter.rate = 0.8;
+    window.speechSynthesis.speak(utter);
+  } catch {}
+}
+
+function updateKidsStarsDisplay() {
+  document.querySelectorAll('.kids-stars-value').forEach(el => el.textContent = kidsStars);
+}
+
+function addKidsStar() {
+  kidsStars++;
+  localStorage.setItem('fr_kids_stars', kidsStars);
+  updateKidsStarsDisplay();
+}
+
+function exitKids(view) {
+  try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch {}
+  showView(view);
+}
+
+function renderKidsHome() {
+  updateKidsStarsDisplay();
+  document.getElementById('kids-category-grid').innerHTML = KIDS_CATEGORIES.map(c => `
+    <div class="kids-category-card" onclick="pickKidsCategory('${c.id}')">
+      <div class="kids-category-icon">${c.icon}</div>
+      <div class="kids-category-title">${esc(c.title)}</div>
+    </div>`).join('');
+}
+
+function pickKidsCategory(id) {
+  kidsCategoryId = id;
+  const cat = KIDS_CATEGORIES.find(c => c.id === id);
+  document.getElementById('kids-category-title').textContent = `${cat.icon} ${cat.title}`;
+  showView('kids-category');
+}
+
+function startKidsFlashcards() {
+  kidsFlashIndex = 0;
+  showView('kids-flashcards');
+  document.getElementById('kids-flash-pl').style.display = 'none';
+  renderKidsFlashcard();
+}
+
+function renderKidsFlashcard() {
+  const cat  = KIDS_CATEGORIES.find(c => c.id === kidsCategoryId);
+  const word = cat.words[kidsFlashIndex];
+  document.getElementById('kids-flash-emoji').textContent = word.emoji;
+  document.getElementById('kids-flash-word').textContent = word.en;
+  document.getElementById('kids-flash-counter').textContent = `${kidsFlashIndex + 1} / ${cat.words.length}`;
+  document.getElementById('kids-flash-pl').style.display = 'none';
+  speakKids(word.en, 'fr-FR');
+}
+
+function replayKidsFlashAudio() {
+  const cat  = KIDS_CATEGORIES.find(c => c.id === kidsCategoryId);
+  speakKids(cat.words[kidsFlashIndex].en, 'fr-FR');
+}
+
+function revealKidsTranslation() {
+  const cat  = KIDS_CATEGORIES.find(c => c.id === kidsCategoryId);
+  const word = cat.words[kidsFlashIndex];
+  document.getElementById('kids-flash-pl').textContent = word.pl;
+  document.getElementById('kids-flash-pl').style.display = '';
+  speakKids(word.pl, 'pl-PL');
+}
+
+function nextKidsFlashcard() {
+  const cat = KIDS_CATEGORIES.find(c => c.id === kidsCategoryId);
+  kidsFlashIndex = (kidsFlashIndex + 1) % cat.words.length;
+  renderKidsFlashcard();
+}
+
+function prevKidsFlashcard() {
+  const cat = KIDS_CATEGORIES.find(c => c.id === kidsCategoryId);
+  kidsFlashIndex = (kidsFlashIndex - 1 + cat.words.length) % cat.words.length;
+  renderKidsFlashcard();
+}
+
+function startKidsQuiz() {
+  showView('kids-quiz');
+  updateKidsStarsDisplay();
+  document.getElementById('kids-quiz-feedback').style.display = 'none';
+  nextKidsQuizRound();
+}
+
+function nextKidsQuizRound() {
+  const cat     = KIDS_CATEGORIES.find(c => c.id === kidsCategoryId);
+  const shuffled = shuffle([...cat.words]);
+  kidsQuizWord   = shuffled[0];
+  const options  = shuffle(shuffled.slice(0, 3));
+  document.getElementById('kids-quiz-options').innerHTML = options.map(w => `
+    <div class="kids-option" onclick="checkKidsQuizAnswer('${w.en}', this)">${w.emoji}</div>`).join('');
+  document.getElementById('kids-quiz-feedback').style.display = 'none';
+  setTimeout(() => speakKids(kidsQuizWord.en, 'fr-FR'), 300);
+}
+
+function replayKidsQuizAudio() {
+  if (kidsQuizWord) speakKids(kidsQuizWord.en, 'fr-FR');
+}
+
+function checkKidsQuizAnswer(en, el) {
+  const feedback = document.getElementById('kids-quiz-feedback');
+  if (en === kidsQuizWord.en) {
+    el.classList.add('correct');
+    addKidsStar();
+    feedback.textContent = '🎉 Brawo!';
+    feedback.className = 'kids-quiz-feedback good';
+    feedback.style.display = '';
+    setTimeout(nextKidsQuizRound, 1400);
+  } else {
+    el.classList.add('wrong');
+    setTimeout(() => el.classList.remove('wrong'), 500);
+    feedback.textContent = '🙂 Spróbuj jeszcze raz!';
+    feedback.className = 'kids-quiz-feedback retry';
+    feedback.style.display = '';
+  }
+}
+
+function startKidsTrueFalse() {
+  showView('kids-truefalse');
+  updateKidsStarsDisplay();
+  document.getElementById('kids-tf-feedback').style.display = 'none';
+  nextKidsTrueFalseRound();
+}
+
+function nextKidsTrueFalseRound() {
+  const cat   = KIDS_CATEGORIES.find(c => c.id === kidsCategoryId);
+  const words = cat.words;
+  const word  = words[Math.floor(Math.random() * words.length)];
+  const isTrue = Math.random() < 0.5;
+  let shownWord = word.en;
+  if (!isTrue) {
+    const others = words.filter(w => w.en !== word.en);
+    shownWord = others[Math.floor(Math.random() * others.length)].en;
+  }
+  kidsTFCurrent = { word, shownWord, isTrue };
+  document.getElementById('kids-tf-emoji').textContent = word.emoji;
+  document.getElementById('kids-tf-word').textContent = shownWord;
+  document.getElementById('kids-tf-feedback').style.display = 'none';
+  setTimeout(() => speakKids(shownWord, 'fr-FR'), 300);
+}
+
+function replayKidsTrueFalseAudio() {
+  if (kidsTFCurrent) speakKids(kidsTFCurrent.shownWord, 'fr-FR');
+}
+
+function answerKidsTrueFalse(answer) {
+  const feedback = document.getElementById('kids-tf-feedback');
+  const correct  = answer === kidsTFCurrent.isTrue;
+  if (correct) {
+    addKidsStar();
+    feedback.textContent = '🎉 Brawo! Dobrze!';
+    feedback.className = 'kids-quiz-feedback good';
+  } else {
+    feedback.textContent = `🙂 To było "${kidsTFCurrent.word.en}"`;
+    feedback.className = 'kids-quiz-feedback retry';
+  }
+  feedback.style.display = '';
+  setTimeout(nextKidsTrueFalseRound, 1600);
+}
+
+function renderKidsSentenceCategories() {
+  document.getElementById('kids-sentence-category-grid').innerHTML = KIDS_SENTENCE_CATEGORIES.map(c => `
+    <div class="kids-category-card" onclick="pickKidsSentenceCategory('${c.id}')">
+      <div class="kids-category-icon">${c.icon}</div>
+      <div class="kids-category-title">${esc(c.title)}</div>
+    </div>`).join('');
+}
+
+function pickKidsSentenceCategory(id) {
+  kidsSentenceCategoryId = id;
+  const cat = KIDS_SENTENCE_CATEGORIES.find(c => c.id === id);
+  document.getElementById('kids-sentence-mode-title').textContent = `${cat.icon} ${cat.title}`;
+  showView('kids-sentence-mode');
+}
+
+function startKidsSentences() {
+  kidsSentenceIndex = 0;
+  showView('kids-sentences');
+  renderKidsSentence();
+}
+
+function renderKidsSentence() {
+  const cat = KIDS_SENTENCE_CATEGORIES.find(c => c.id === kidsSentenceCategoryId);
+  const s   = cat.sentences[kidsSentenceIndex];
+  document.getElementById('kids-sentence-emoji').textContent = s.emoji;
+  document.getElementById('kids-sentence-en').textContent = s.en;
+  document.getElementById('kids-sentence-counter').textContent = `${kidsSentenceIndex + 1} / ${cat.sentences.length}`;
+  document.getElementById('kids-sentence-pl').style.display = 'none';
+  speakKids(s.en, 'fr-FR');
+}
+
+function replayKidsSentenceAudio() {
+  const cat = KIDS_SENTENCE_CATEGORIES.find(c => c.id === kidsSentenceCategoryId);
+  speakKids(cat.sentences[kidsSentenceIndex].en, 'fr-FR');
+}
+
+function revealKidsSentenceTranslation() {
+  const cat = KIDS_SENTENCE_CATEGORIES.find(c => c.id === kidsSentenceCategoryId);
+  const s   = cat.sentences[kidsSentenceIndex];
+  document.getElementById('kids-sentence-pl').textContent = s.pl;
+  document.getElementById('kids-sentence-pl').style.display = '';
+  speakKids(s.pl, 'pl-PL');
+}
+
+function nextKidsSentence() {
+  const cat = KIDS_SENTENCE_CATEGORIES.find(c => c.id === kidsSentenceCategoryId);
+  kidsSentenceIndex = (kidsSentenceIndex + 1) % cat.sentences.length;
+  renderKidsSentence();
+}
+
+function prevKidsSentence() {
+  const cat = KIDS_SENTENCE_CATEGORIES.find(c => c.id === kidsSentenceCategoryId);
+  kidsSentenceIndex = (kidsSentenceIndex - 1 + cat.sentences.length) % cat.sentences.length;
+  renderKidsSentence();
+}
+
+function startKidsSentenceQuiz() {
+  showView('kids-sentence-quiz');
+  updateKidsStarsDisplay();
+  document.getElementById('kids-sentence-quiz-feedback').style.display = 'none';
+  nextKidsSentenceQuizRound();
+}
+
+function nextKidsSentenceQuizRound() {
+  const cat      = KIDS_SENTENCE_CATEGORIES.find(c => c.id === kidsSentenceCategoryId);
+  const shuffled = shuffle([...cat.sentences]);
+  kidsSentenceQuizItem = shuffled[0];
+  const options  = shuffle(shuffled.slice(0, 3));
+  document.getElementById('kids-sentence-quiz-options').innerHTML = options.map(s => `
+    <div class="kids-option" onclick="checkKidsSentenceQuizAnswer('${s.emoji}', this)">${s.emoji}</div>`).join('');
+  document.getElementById('kids-sentence-quiz-feedback').style.display = 'none';
+  setTimeout(() => speakKids(kidsSentenceQuizItem.en, 'fr-FR'), 300);
+}
+
+function replayKidsSentenceQuizAudio() {
+  if (kidsSentenceQuizItem) speakKids(kidsSentenceQuizItem.en, 'fr-FR');
+}
+
+function checkKidsSentenceQuizAnswer(emoji, el) {
+  const feedback = document.getElementById('kids-sentence-quiz-feedback');
+  if (emoji === kidsSentenceQuizItem.emoji) {
+    el.classList.add('correct');
+    addKidsStar();
+    feedback.textContent = '🎉 Brawo, rozumiesz!';
+    feedback.className = 'kids-quiz-feedback good';
+    feedback.style.display = '';
+    setTimeout(nextKidsSentenceQuizRound, 1400);
+  } else {
+    el.classList.add('wrong');
+    setTimeout(() => el.classList.remove('wrong'), 500);
+    feedback.textContent = '🙂 Posłuchaj jeszcze raz!';
+    feedback.className = 'kids-quiz-feedback retry';
+    feedback.style.display = '';
+  }
+}
+
+// ---- Ubierz misia ----
+function isKidsBearComplete() {
+  return KIDS_BEAR_SLOTS.every(slot => kidsBearOutfit[slot]);
+}
+
+function startKidsDressBear() {
+  kidsBearOutfit = { top: null, bottom: null, feet: null, accessory: null, weather: null };
+  kidsBearMode   = 'free';
+  showView('kids-dressbear');
+  updateKidsStarsDisplay();
+  document.getElementById('kids-bear-celebration').style.display = 'none';
+  document.getElementById('kids-challenge-feedback').style.display = 'none';
+  document.getElementById('kids-bear-mode-free').classList.add('active');
+  document.getElementById('kids-bear-mode-challenge').classList.remove('active');
+  document.getElementById('kids-weather-banner').style.display = 'none';
+  document.getElementById('view-kids-dressbear').style.background = '';
+  renderKidsBearSlots();
+  renderKidsBearWardrobe();
+}
+
+function exitKidsBear() {
+  if (kidsBearDrag) endKidsBearDrag(null);
+  exitKids('kids-home');
+}
+
+function renderKidsBearSlots() {
+  KIDS_BEAR_SLOTS.forEach(slot => {
+    const el   = document.getElementById('kids-bear-slot-' + slot);
+    const item = kidsBearOutfit[slot];
+    el.textContent = item ? item.emoji : '➕';
+    el.classList.toggle('filled', !!item);
+  });
+}
+
+function renderKidsBearWardrobe() {
+  const el = document.getElementById('kids-bear-wardrobe');
+  if (kidsBearMode === 'challenge') {
+    const items = KIDS_BEAR_ITEMS.filter(i => i.category === 'weather');
+    el.innerHTML = `<div class="kids-wardrobe-row">${items.map(renderKidsWardrobeItemHtml).join('')}</div>`;
+    return;
+  }
+  el.innerHTML = KIDS_BEAR_CATEGORIES.map(cat => `
+    <div class="kids-wardrobe-cat">
+      <div class="kids-wardrobe-cat-label">${esc(cat.label)}</div>
+      <div class="kids-wardrobe-row">
+        ${KIDS_BEAR_ITEMS.filter(i => i.category === cat.id).map(renderKidsWardrobeItemHtml).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function renderKidsWardrobeItemHtml(item) {
+  return `<div class="kids-wardrobe-item" data-item-id="${item.id}" onpointerdown="startKidsBearDrag(event, '${item.id}')">${item.emoji}</div>`;
+}
+
+// -- Tryb / pogoda --
+function setKidsBearMode(mode) {
+  kidsBearMode = mode;
+  document.getElementById('kids-bear-mode-free').classList.toggle('active', mode === 'free');
+  document.getElementById('kids-bear-mode-challenge').classList.toggle('active', mode === 'challenge');
+  document.getElementById('kids-challenge-feedback').style.display = 'none';
+  if (mode === 'challenge') {
+    document.getElementById('kids-weather-banner').style.display = '';
+    pickKidsWeatherRound();
+  } else {
+    document.getElementById('kids-weather-banner').style.display = 'none';
+    document.getElementById('view-kids-dressbear').style.background = '';
+    renderKidsBearWardrobe();
+  }
+}
+
+function pickKidsWeatherRound() {
+  const keys = Object.keys(KIDS_WEATHER_DATA).filter(k => k !== kidsWeather);
+  kidsWeather = keys[Math.floor(Math.random() * keys.length)];
+  const w = KIDS_WEATHER_DATA[kidsWeather];
+  document.getElementById('kids-weather-icon').textContent = w.icon;
+  document.getElementById('kids-weather-label').textContent = w.label;
+  document.getElementById('kids-weather-prompt-pl').textContent = w.pl;
+  document.getElementById('view-kids-dressbear').style.background = w.bg;
+  renderKidsBearWardrobe();
+  setTimeout(() => speakKids(w.en, 'fr-FR'), 300);
+}
+
+function replayKidsWeatherPrompt() {
+  if (kidsWeather) speakKids(KIDS_WEATHER_DATA[kidsWeather].en, 'fr-FR');
+}
+
+// -- Przeciąganie (mysz + dotyk przez Pointer Events) --
+function startKidsBearDrag(e, itemId) {
+  if (e.button !== undefined && e.button !== 0) return;
+  e.preventDefault();
+  const item = KIDS_BEAR_ITEMS.find(i => i.id === itemId);
+  const ghost = document.createElement('div');
+  ghost.className = 'kids-drag-ghost';
+  ghost.textContent = item.emoji;
+  document.body.appendChild(ghost);
+  kidsBearDrag = { item, ghost, startX: e.clientX, startY: e.clientY, moved: false };
+  moveKidsBearGhost(e.clientX, e.clientY);
+  document.addEventListener('pointermove', onKidsBearDragMove);
+  document.addEventListener('pointerup', onKidsBearDragUp);
+}
+
+function moveKidsBearGhost(x, y) {
+  kidsBearDrag.ghost.style.left = x + 'px';
+  kidsBearDrag.ghost.style.top  = y + 'px';
+}
+
+function onKidsBearDragMove(e) {
+  if (!kidsBearDrag) return;
+  if (Math.abs(e.clientX - kidsBearDrag.startX) > 8 || Math.abs(e.clientY - kidsBearDrag.startY) > 8) {
+    kidsBearDrag.moved = true;
+  }
+  moveKidsBearGhost(e.clientX, e.clientY);
+  const target = document.elementFromPoint(e.clientX, e.clientY);
+  const stage  = document.getElementById('kids-bear-stage');
+  stage.classList.toggle('drag-over', !!(target && target.closest('#kids-bear-stage')));
+}
+
+function onKidsBearDragUp(e) {
+  if (!kidsBearDrag) return;
+  endKidsBearDrag(e);
+}
+
+function endKidsBearDrag(e) {
+  const drag = kidsBearDrag;
+  document.removeEventListener('pointermove', onKidsBearDragMove);
+  document.removeEventListener('pointerup', onKidsBearDragUp);
+  document.getElementById('kids-bear-stage').classList.remove('drag-over');
+  drag.ghost.remove();
+  kidsBearDrag = null;
+  if (!e) return;
+
+  const target  = document.elementFromPoint(e.clientX, e.clientY);
+  const onStage = !!(target && target.closest('#kids-bear-stage'));
+  if (drag.moved && !onStage) return; // puszczone poza misiem podczas przeciągania - nic się nie dzieje
+  handleKidsBearItemDrop(drag.item);
+}
+
+function handleKidsBearItemDrop(item) {
+  if (kidsBearMode === 'challenge') {
+    handleKidsChallengeAttempt(item);
+  } else {
+    equipKidsBearItem(item);
+  }
+}
+
+function equipKidsBearItem(item) {
+  const wasComplete = isKidsBearComplete();
+  kidsBearOutfit[item.category] = item;
+  speakKids(item.en, 'fr-FR');
+  renderKidsBearSlots();
+  showKidsBearWordOverlay(item);
+  if (!wasComplete && isKidsBearComplete()) {
+    setTimeout(showKidsBearCelebration, 400);
+  }
+}
+
+function showKidsBearWordOverlay(item) {
+  const el = document.getElementById('kids-bear-word-overlay');
+  el.textContent = item.en.charAt(0).toUpperCase() + item.en.slice(1);
+  el.classList.remove('show');
+  void el.offsetWidth;
+  el.classList.add('show');
+}
+
+function handleKidsChallengeAttempt(item) {
+  const w = KIDS_WEATHER_DATA[kidsWeather];
+  const feedback = document.getElementById('kids-challenge-feedback');
+  if (item.id === w.itemId) {
+    kidsBearOutfit.weather = item;
+    renderKidsBearSlots();
+    speakKids(item.en, 'fr-FR');
+    addKidsStar();
+    feedback.textContent = '🎉 Brawo, dobrze dobrane!';
+    feedback.className = 'kids-quiz-feedback good';
+    feedback.style.display = '';
+    setTimeout(pickKidsWeatherRound, 1600);
+  } else {
+    feedback.textContent = `🙈 Ups! To nie pasuje, gdy jest ${w.label.toLowerCase()}. Spróbuj jeszcze raz!`;
+    feedback.className = 'kids-quiz-feedback retry';
+    feedback.style.display = '';
+    const wardrobeEl = document.querySelector(`.kids-wardrobe-item[data-item-id="${item.id}"]`);
+    if (wardrobeEl) {
+      wardrobeEl.classList.add('bounce-back');
+      setTimeout(() => wardrobeEl.classList.remove('bounce-back'), 500);
+    }
+  }
+}
+
+function resetKidsDressBear() {
+  kidsBearOutfit = { top: null, bottom: null, feet: null, accessory: null, weather: null };
+  document.getElementById('kids-bear-celebration').style.display = 'none';
+  document.getElementById('kids-challenge-feedback').style.display = 'none';
+  renderKidsBearSlots();
+  if (kidsBearMode === 'challenge') pickKidsWeatherRound();
+}
+
+// -- Celebracja --
+function showKidsBearCelebration() {
+  document.getElementById('kids-bear-celebration').style.display = '';
+  addKidsStar();
+  spawnKidsConfetti();
+}
+
+function spawnKidsConfetti() {
+  const layer = document.getElementById('kids-confetti-layer');
+  layer.innerHTML = '';
+  const emojis = ['🎉', '⭐', '🎈', '✨', '🌟'];
+  for (let i = 0; i < 24; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'kids-confetti-piece';
+    piece.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    piece.style.left = Math.random() * 100 + '%';
+    piece.style.animationDelay = (Math.random() * 0.5) + 's';
+    piece.style.animationDuration = (1.8 + Math.random() * 1.2) + 's';
+    layer.appendChild(piece);
+  }
+  setTimeout(() => { layer.innerHTML = ''; }, 3200);
+}
+
+function downloadKidsBearPhoto() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 500;
+  canvas.height = 500;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#fff7ec';
+  ctx.fillRect(0, 0, 500, 500);
+  ctx.textAlign = 'center';
+  ctx.font = '180px sans-serif';
+  ctx.fillText('🐻', 250, 260);
+  ctx.font = '58px sans-serif';
+  KIDS_BEAR_SLOTS.forEach((slot, i) => {
+    const item = kidsBearOutfit[slot];
+    if (item) ctx.fillText(item.emoji, 70 + i * 90, 420);
+  });
+  ctx.font = 'bold 28px sans-serif';
+  ctx.fillStyle = '#7c3aed';
+  ctx.fillText('Mój miś! 🐻', 250, 470);
+  canvas.toBlob(blob => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'moj_mis.png';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+}
+
+// ---- Znajdź parę ----
+function startKidsMemory() {
+  const cat   = KIDS_CATEGORIES.find(c => c.id === kidsCategoryId);
+  const words = shuffle([...cat.words]).slice(0, 6);
+  kidsMemoryCards   = shuffle([...words, ...words]).map(w => ({ ...w, flipped: false, matched: false }));
+  kidsMemoryFirst   = null;
+  kidsMemoryMatched = 0;
+  showView('kids-memory');
+  updateKidsStarsDisplay();
+  document.getElementById('kids-memory-complete').style.display = 'none';
+  renderKidsMemory();
+}
+
+function renderKidsMemory() {
+  document.getElementById('kids-memory-grid').innerHTML = kidsMemoryCards.map((c, i) => `
+    <div class="kids-memory-card" id="kids-memory-card-${i}" onclick="flipKidsMemoryCard(${i})">
+      <div class="kids-memory-back">❓</div>
+    </div>`).join('');
+  document.getElementById('kids-memory-progress').textContent = `${kidsMemoryMatched} / ${kidsMemoryCards.length / 2}`;
+}
+
+function flipKidsMemoryCard(i) {
+  const card = kidsMemoryCards[i];
+  if (card.matched || card.flipped || kidsMemoryFirst === i) return;
+
+  card.flipped = true;
+  const el = document.getElementById('kids-memory-card-' + i);
+  el.innerHTML = `<div class="kids-memory-front">${card.emoji}</div>`;
+  el.classList.add('flipped');
+  speakKids(card.en, 'fr-FR');
+
+  if (kidsMemoryFirst === null) {
+    kidsMemoryFirst = i;
+    return;
+  }
+
+  const firstIdx  = kidsMemoryFirst;
+  const firstCard = kidsMemoryCards[firstIdx];
+  kidsMemoryFirst = null;
+
+  if (firstCard.en === card.en) {
+    firstCard.matched = true;
+    card.matched = true;
+    kidsMemoryMatched++;
+    document.getElementById('kids-memory-progress').textContent = `${kidsMemoryMatched} / ${kidsMemoryCards.length / 2}`;
+    document.getElementById('kids-memory-card-' + firstIdx).classList.add('matched');
+    document.getElementById('kids-memory-card-' + i).classList.add('matched');
+    addKidsStar();
+    if (kidsMemoryMatched === kidsMemoryCards.length / 2) {
+      setTimeout(() => { document.getElementById('kids-memory-complete').style.display = ''; }, 400);
+    }
+  } else {
+    setTimeout(() => {
+      firstCard.flipped = false;
+      card.flipped = false;
+      const elF = document.getElementById('kids-memory-card-' + firstIdx);
+      const elS = document.getElementById('kids-memory-card-' + i);
+      if (elF) { elF.innerHTML = '<div class="kids-memory-back">❓</div>'; elF.classList.remove('flipped'); }
+      if (elS) { elS.innerHTML = '<div class="kids-memory-back">❓</div>'; elS.classList.remove('flipped'); }
+    }, 900);
+  }
+}
+
+// ---- Kolorowanka ----
+function startKidsColoring(pic) {
+  kidsColoringPicture = pic;
+  kidsColoringWasComplete = false;
+  showView('kids-coloring');
+  document.querySelectorAll('.kids-coloring-svg').forEach(svg => svg.style.display = 'none');
+  document.getElementById('kids-svg-' + pic).style.display = '';
+  document.getElementById('kids-coloring-title').textContent = KIDS_COLORING_TITLES[pic];
+  resetKidsColoring();
+  renderKidsPalette();
+  pickKidsColor(0);
+}
+
+function renderKidsPalette() {
+  document.getElementById('kids-palette').innerHTML = KIDS_PALETTE.map((c, i) => `
+    <div class="kids-swatch" style="background:${c.hex}" onclick="pickKidsColor(${i})"></div>`).join('');
+}
+
+function pickKidsColor(i) {
+  kidsSelectedColor = KIDS_PALETTE[i];
+  document.querySelectorAll('.kids-swatch').forEach((el, idx) => el.classList.toggle('selected', idx === i));
+  speakKids(kidsSelectedColor.en, 'fr-FR');
+}
+
+function setKidsRegionFill(regionId, hex) {
+  const region = document.getElementById(regionId);
+  if (!region) return;
+  if (region.tagName.toLowerCase() === 'g') {
+    Array.from(region.children).forEach(child => child.setAttribute('fill', hex));
+  } else {
+    region.setAttribute('fill', hex);
+  }
+}
+
+function colorKidsRegion(regionId) {
+  if (!kidsSelectedColor) return;
+  setKidsRegionFill(regionId, kidsSelectedColor.hex);
+  speakKids(kidsSelectedColor.en, 'fr-FR');
+  checkKidsColoringComplete();
+}
+
+function resetKidsColoring() {
+  const regions = KIDS_COLORING_REGIONS[kidsColoringPicture] || [];
+  regions.forEach(id => setKidsRegionFill(id, '#ffffff'));
+  kidsColoringWasComplete = false;
+  const complete = document.getElementById('kids-coloring-complete');
+  if (complete) complete.style.display = 'none';
+}
+
+function isKidsRegionColored(regionId) {
+  const region = document.getElementById(regionId);
+  if (!region) return false;
+  if (region.tagName.toLowerCase() === 'g') {
+    return Array.from(region.children).every(c => c.getAttribute('fill') !== '#ffffff');
+  }
+  return region.getAttribute('fill') !== '#ffffff';
+}
+
+function checkKidsColoringComplete() {
+  const regions = KIDS_COLORING_REGIONS[kidsColoringPicture] || [];
+  const allColored = regions.every(isKidsRegionColored);
+  if (allColored && !kidsColoringWasComplete) {
+    kidsColoringWasComplete = true;
+    addKidsStar();
+    document.getElementById('kids-coloring-complete').style.display = '';
+  }
 }
 
 // ===== PROGRESS =====
