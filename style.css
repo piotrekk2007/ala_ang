@@ -1379,7 +1379,7 @@ code { background: var(--gray-light); padding: 2px 6px; border-radius: 4px; font
 
 /* ---- Kolorowanka ---- */
 .kids-coloring-stage { display: flex; justify-content: center; margin: 10px auto 4px; }
-.kids-coloring-svg { width: 260px; height: 260px; max-width: 85vw; }
+.kids-coloring-svg { width: 380px; height: 380px; max-width: 92vw; }
 .kids-coloring-svg [id] { cursor: pointer; }
 
 .kids-palette { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; max-width: 480px; margin: 0 auto; }
@@ -1399,7 +1399,7 @@ code { background: var(--gray-light); padding: 2px 6px; border-radius: 4px; font
   .kids-bear-emoji { font-size: 6rem; }
   .kids-bear-slot { width: 52px; height: 52px; font-size: 1.6rem; }
   .kids-memory-grid { grid-template-columns: repeat(3, 1fr); }
-  .kids-coloring-svg { width: 220px; height: 220px; }
+  .kids-coloring-svg { width: 300px; height: 300px; }
 }
 
 /* ===== RESPONSIVE ===== */

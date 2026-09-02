@@ -721,40 +721,58 @@
   </div>
   <div class="kids-coloring-stage">
     <svg id="kids-svg-apple" class="kids-coloring-svg" viewBox="0 0 200 200" style="display:none">
-      <ellipse id="apple-body" onclick="colorKidsRegion('apple-body')" cx="100" cy="120" rx="58" ry="62" fill="#ffffff" stroke="#333" stroke-width="3"/>
-      <rect id="apple-stem" onclick="colorKidsRegion('apple-stem')" x="94" y="42" width="12" height="28" rx="5" fill="#ffffff" stroke="#333" stroke-width="3"/>
-      <path id="apple-leaf" onclick="colorKidsRegion('apple-leaf')" d="M105,55 Q135,35 138,65 Q112,72 105,55 Z" fill="#ffffff" stroke="#333" stroke-width="3"/>
+      <ellipse id="apple-body" onclick="colorKidsRegion('apple-body')" cx="100" cy="122" rx="60" ry="64" fill="#ffffff" stroke="#333" stroke-width="4"/>
+      <rect id="apple-stem" onclick="colorKidsRegion('apple-stem')" x="93" y="38" width="14" height="30" rx="5" fill="#ffffff" stroke="#333" stroke-width="4"/>
+      <path id="apple-leaf-right" onclick="colorKidsRegion('apple-leaf-right')" d="M107,52 Q142,28 148,60 Q118,70 107,52 Z" fill="#ffffff" stroke="#333" stroke-width="4"/>
+      <path id="apple-leaf-left" onclick="colorKidsRegion('apple-leaf-left')" d="M93,52 Q58,28 52,60 Q82,70 93,52 Z" fill="#ffffff" stroke="#333" stroke-width="4"/>
+      <ellipse cx="78" cy="98" rx="14" ry="20" fill="#ffffff" opacity="0.55" pointer-events="none"/>
     </svg>
     <svg id="kids-svg-house" class="kids-coloring-svg" viewBox="0 0 200 200" style="display:none">
-      <polygon id="house-roof" onclick="colorKidsRegion('house-roof')" points="35,100 100,45 165,100" fill="#ffffff" stroke="#333" stroke-width="3"/>
-      <rect id="house-walls" onclick="colorKidsRegion('house-walls')" x="50" y="100" width="100" height="80" fill="#ffffff" stroke="#333" stroke-width="3"/>
-      <rect id="house-window" onclick="colorKidsRegion('house-window')" x="115" y="115" width="25" height="25" fill="#ffffff" stroke="#333" stroke-width="3"/>
-      <rect id="house-door" onclick="colorKidsRegion('house-door')" x="65" y="140" width="25" height="40" fill="#ffffff" stroke="#333" stroke-width="3"/>
+      <polygon id="house-roof" onclick="colorKidsRegion('house-roof')" points="25,102 100,32 175,102" fill="#ffffff" stroke="#333" stroke-width="4"/>
+      <rect id="house-walls" onclick="colorKidsRegion('house-walls')" x="42" y="102" width="116" height="82" fill="#ffffff" stroke="#333" stroke-width="4"/>
+      <rect id="house-window-left" onclick="colorKidsRegion('house-window-left')" x="55" y="118" width="26" height="26" fill="#ffffff" stroke="#333" stroke-width="4"/>
+      <rect id="house-window-right" onclick="colorKidsRegion('house-window-right')" x="119" y="118" width="26" height="26" fill="#ffffff" stroke="#333" stroke-width="4"/>
+      <line x1="68" y1="118" x2="68" y2="144" stroke="#333" stroke-width="2" pointer-events="none"/>
+      <line x1="55" y1="131" x2="81" y2="131" stroke="#333" stroke-width="2" pointer-events="none"/>
+      <line x1="132" y1="118" x2="132" y2="144" stroke="#333" stroke-width="2" pointer-events="none"/>
+      <line x1="119" y1="131" x2="145" y2="131" stroke="#333" stroke-width="2" pointer-events="none"/>
+      <rect id="house-door" onclick="colorKidsRegion('house-door')" x="87" y="146" width="26" height="38" fill="#ffffff" stroke="#333" stroke-width="4"/>
+      <circle cx="105" cy="166" r="2.5" fill="#333" pointer-events="none"/>
+      <rect id="house-chimney" onclick="colorKidsRegion('house-chimney')" x="128" y="45" width="18" height="38" fill="#ffffff" stroke="#333" stroke-width="4"/>
     </svg>
     <svg id="kids-svg-sun" class="kids-coloring-svg" viewBox="0 0 200 200" style="display:none">
-      <g id="sun-rays" onclick="colorKidsRegion('sun-rays')">
-        <rect x="93" y="8" width="14" height="30" fill="#ffffff" stroke="#333" stroke-width="3"/>
-        <rect x="93" y="8" width="14" height="30" transform="rotate(45 100 100)" fill="#ffffff" stroke="#333" stroke-width="3"/>
-        <rect x="93" y="8" width="14" height="30" transform="rotate(90 100 100)" fill="#ffffff" stroke="#333" stroke-width="3"/>
-        <rect x="93" y="8" width="14" height="30" transform="rotate(135 100 100)" fill="#ffffff" stroke="#333" stroke-width="3"/>
-        <rect x="93" y="8" width="14" height="30" transform="rotate(180 100 100)" fill="#ffffff" stroke="#333" stroke-width="3"/>
-        <rect x="93" y="8" width="14" height="30" transform="rotate(225 100 100)" fill="#ffffff" stroke="#333" stroke-width="3"/>
-        <rect x="93" y="8" width="14" height="30" transform="rotate(270 100 100)" fill="#ffffff" stroke="#333" stroke-width="3"/>
-        <rect x="93" y="8" width="14" height="30" transform="rotate(315 100 100)" fill="#ffffff" stroke="#333" stroke-width="3"/>
+      <g id="sun-rays-a" onclick="colorKidsRegion('sun-rays-a')">
+        <rect x="92" y="4" width="16" height="34" fill="#ffffff" stroke="#333" stroke-width="4"/>
+        <rect x="92" y="4" width="16" height="34" transform="rotate(90 100 100)" fill="#ffffff" stroke="#333" stroke-width="4"/>
+        <rect x="92" y="4" width="16" height="34" transform="rotate(180 100 100)" fill="#ffffff" stroke="#333" stroke-width="4"/>
+        <rect x="92" y="4" width="16" height="34" transform="rotate(270 100 100)" fill="#ffffff" stroke="#333" stroke-width="4"/>
       </g>
-      <circle id="sun-face" onclick="colorKidsRegion('sun-face')" cx="100" cy="100" r="48" fill="#ffffff" stroke="#333" stroke-width="3"/>
+      <g id="sun-rays-b" onclick="colorKidsRegion('sun-rays-b')">
+        <rect x="94" y="12" width="12" height="28" transform="rotate(45 100 100)" fill="#ffffff" stroke="#333" stroke-width="4"/>
+        <rect x="94" y="12" width="12" height="28" transform="rotate(135 100 100)" fill="#ffffff" stroke="#333" stroke-width="4"/>
+        <rect x="94" y="12" width="12" height="28" transform="rotate(225 100 100)" fill="#ffffff" stroke="#333" stroke-width="4"/>
+        <rect x="94" y="12" width="12" height="28" transform="rotate(315 100 100)" fill="#ffffff" stroke="#333" stroke-width="4"/>
+      </g>
+      <circle id="sun-face" onclick="colorKidsRegion('sun-face')" cx="100" cy="100" r="50" fill="#ffffff" stroke="#333" stroke-width="4"/>
+      <circle cx="84" cy="94" r="5" fill="#333" pointer-events="none"/>
+      <circle cx="116" cy="94" r="5" fill="#333" pointer-events="none"/>
+      <path d="M78,114 Q100,134 122,114" stroke="#333" stroke-width="4" fill="none" stroke-linecap="round" pointer-events="none"/>
     </svg>
     <svg id="kids-svg-flower" class="kids-coloring-svg" viewBox="0 0 200 200" style="display:none">
-      <rect id="flower-stem" onclick="colorKidsRegion('flower-stem')" x="95" y="115" width="10" height="65" fill="#ffffff" stroke="#333" stroke-width="3"/>
-      <path id="flower-leaf" onclick="colorKidsRegion('flower-leaf')" d="M104,150 Q135,145 128,172 Q100,170 104,150 Z" fill="#ffffff" stroke="#333" stroke-width="3"/>
+      <rect id="flower-stem" onclick="colorKidsRegion('flower-stem')" x="94" y="118" width="12" height="66" fill="#ffffff" stroke="#333" stroke-width="4"/>
+      <path id="flower-leaf-right" onclick="colorKidsRegion('flower-leaf-right')" d="M106,152 Q142,146 134,176 Q102,174 106,152 Z" fill="#ffffff" stroke="#333" stroke-width="4"/>
+      <path id="flower-leaf-left" onclick="colorKidsRegion('flower-leaf-left')" d="M94,152 Q58,146 66,176 Q98,174 94,152 Z" fill="#ffffff" stroke="#333" stroke-width="4"/>
       <g id="flower-petals" onclick="colorKidsRegion('flower-petals')">
-        <ellipse cx="100" cy="62" rx="18" ry="28" fill="#ffffff" stroke="#333" stroke-width="3"/>
-        <ellipse cx="100" cy="62" rx="18" ry="28" transform="rotate(72 100 100)" fill="#ffffff" stroke="#333" stroke-width="3"/>
-        <ellipse cx="100" cy="62" rx="18" ry="28" transform="rotate(144 100 100)" fill="#ffffff" stroke="#333" stroke-width="3"/>
-        <ellipse cx="100" cy="62" rx="18" ry="28" transform="rotate(216 100 100)" fill="#ffffff" stroke="#333" stroke-width="3"/>
-        <ellipse cx="100" cy="62" rx="18" ry="28" transform="rotate(288 100 100)" fill="#ffffff" stroke="#333" stroke-width="3"/>
+        <ellipse cx="100" cy="58" rx="20" ry="30" fill="#ffffff" stroke="#333" stroke-width="4"/>
+        <ellipse cx="100" cy="58" rx="20" ry="30" transform="rotate(72 100 100)" fill="#ffffff" stroke="#333" stroke-width="4"/>
+        <ellipse cx="100" cy="58" rx="20" ry="30" transform="rotate(144 100 100)" fill="#ffffff" stroke="#333" stroke-width="4"/>
+        <ellipse cx="100" cy="58" rx="20" ry="30" transform="rotate(216 100 100)" fill="#ffffff" stroke="#333" stroke-width="4"/>
+        <ellipse cx="100" cy="58" rx="20" ry="30" transform="rotate(288 100 100)" fill="#ffffff" stroke="#333" stroke-width="4"/>
       </g>
-      <circle id="flower-center" onclick="colorKidsRegion('flower-center')" cx="100" cy="100" r="20" fill="#ffffff" stroke="#333" stroke-width="3"/>
+      <circle id="flower-center" onclick="colorKidsRegion('flower-center')" cx="100" cy="100" r="22" fill="#ffffff" stroke="#333" stroke-width="4"/>
+      <circle cx="92" cy="96" r="2.5" fill="#333" pointer-events="none"/>
+      <circle cx="108" cy="96" r="2.5" fill="#333" pointer-events="none"/>
+      <path d="M90,106 Q100,113 110,106" stroke="#333" stroke-width="2.5" fill="none" stroke-linecap="round" pointer-events="none"/>
     </svg>
   </div>
   <div class="kids-coloring-complete" id="kids-coloring-complete" style="display:none">🎉 Piękna kolorowanka!</div>

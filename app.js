@@ -861,10 +861,10 @@ const KIDS_PALETTE = [
   { hex: '#f06292', en: 'pink', pl: 'różowy' },
 ];
 const KIDS_COLORING_REGIONS = {
-  apple:  ['apple-body', 'apple-stem', 'apple-leaf'],
-  house:  ['house-roof', 'house-walls', 'house-window', 'house-door'],
-  sun:    ['sun-rays', 'sun-face'],
-  flower: ['flower-stem', 'flower-leaf', 'flower-petals', 'flower-center'],
+  apple:  ['apple-body', 'apple-stem', 'apple-leaf-left', 'apple-leaf-right'],
+  house:  ['house-roof', 'house-walls', 'house-window-left', 'house-window-right', 'house-door', 'house-chimney'],
+  sun:    ['sun-rays-a', 'sun-rays-b', 'sun-face'],
+  flower: ['flower-stem', 'flower-leaf-left', 'flower-leaf-right', 'flower-petals', 'flower-center'],
 };
 const KIDS_COLORING_TITLES = { apple: '🍎 Jabłko', house: '🏠 Domek', sun: '☀️ Słoneczko', flower: '🌼 Kwiatek' };
 let kidsSelectedColor   = null;
