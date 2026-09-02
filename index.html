@@ -497,6 +497,14 @@
       <div class="kids-mode-icon">💬</div>
       <div class="kids-mode-title">Proste zdania</div>
     </div>
+    <div class="kids-mode-card" onclick="startKidsDressBear()">
+      <div class="kids-mode-icon">🐻</div>
+      <div class="kids-mode-title">Ubierz misia</div>
+    </div>
+    <div class="kids-mode-card" onclick="showView('kids-coloring-pick')">
+      <div class="kids-mode-icon">🖍️</div>
+      <div class="kids-mode-title">Kolorowanka</div>
+    </div>
   </div>
 </div>
 
@@ -546,6 +554,10 @@
     <div class="kids-mode-card" onclick="startKidsTrueFalse()">
       <div class="kids-mode-icon">✅❌</div>
       <div class="kids-mode-title">Prawda czy fałsz</div>
+    </div>
+    <div class="kids-mode-card" onclick="startKidsMemory()">
+      <div class="kids-mode-icon">🧩</div>
+      <div class="kids-mode-title">Znajdź parę</div>
     </div>
   </div>
 </div>
@@ -607,6 +619,120 @@
     <button class="kids-tf-btn kids-tf-false" onclick="answerKidsTrueFalse(false)">❌</button>
   </div>
   <div class="kids-quiz-feedback" id="kids-tf-feedback" style="display:none"></div>
+</div>
+
+<!-- ========== WIDOK: DLA NAJMŁODSZYCH — ZNAJDŹ PARĘ ========== -->
+<div id="view-kids-memory" class="view" style="display:none">
+  <div class="view-header">
+    <button class="btn btn-ghost" onclick="exitKids('kids-category')">← Wróć</button>
+    <h1>🧩 Znajdź parę</h1>
+    <span class="kids-stars-badge">⭐ <span class="kids-stars-value">0</span></span>
+  </div>
+  <p class="kids-memory-progress" id="kids-memory-progress"></p>
+  <div class="kids-memory-grid" id="kids-memory-grid"></div>
+  <div class="kids-coloring-complete" id="kids-memory-complete" style="display:none">🎉 Wszystkie pary znalezione!</div>
+</div>
+
+<!-- ========== WIDOK: DLA NAJMŁODSZYCH — UBIERZ MISIA ========== -->
+<div id="view-kids-dressbear" class="view" style="display:none">
+  <div class="view-header">
+    <button class="btn btn-ghost" onclick="exitKids('kids-home')">← Wróć</button>
+    <h1>🐻 Ubierz misia</h1>
+    <span class="kids-stars-badge">⭐ <span class="kids-stars-value">0</span></span>
+  </div>
+  <p class="hint" style="text-align:center;font-size:1.1rem">Kliknij ubranko, żeby ubrać misia! 👇</p>
+  <div class="kids-bear-stage">
+    <div class="kids-bear-emoji">🐻</div>
+    <div class="kids-bear-outfit">
+      <div class="kids-bear-slot" id="kids-bear-slot-head" title="Głowa">➕</div>
+      <div class="kids-bear-slot" id="kids-bear-slot-body" title="Ciało">➕</div>
+      <div class="kids-bear-slot" id="kids-bear-slot-hands" title="Ręce">➕</div>
+      <div class="kids-bear-slot" id="kids-bear-slot-feet" title="Nogi">➕</div>
+    </div>
+  </div>
+  <div class="kids-coloring-complete" id="kids-dressbear-complete" style="display:none">🎉 Miś jest ubrany! Brawo!</div>
+  <div class="kids-wardrobe" id="kids-bear-wardrobe"></div>
+  <div style="text-align:center;margin-top:20px">
+    <button class="btn btn-secondary" onclick="resetKidsDressBear()">🔄 Rozbierz misia</button>
+  </div>
+</div>
+
+<!-- ========== WIDOK: DLA NAJMŁODSZYCH — KOLOROWANKA: WYBÓR ========== -->
+<div id="view-kids-coloring-pick" class="view" style="display:none">
+  <div class="view-header">
+    <button class="btn btn-ghost" onclick="showView('kids-home')">← Wróć</button>
+    <h1>🖍️ Kolorowanka</h1>
+  </div>
+  <p class="hint" style="text-align:center;font-size:1.1rem">Wybierz obrazek do pokolorowania:</p>
+  <div class="kids-category-grid">
+    <div class="kids-category-card" onclick="startKidsColoring('apple')">
+      <div class="kids-category-icon">🍎</div>
+      <div class="kids-category-title">Jabłko</div>
+    </div>
+    <div class="kids-category-card" onclick="startKidsColoring('house')">
+      <div class="kids-category-icon">🏠</div>
+      <div class="kids-category-title">Domek</div>
+    </div>
+    <div class="kids-category-card" onclick="startKidsColoring('sun')">
+      <div class="kids-category-icon">☀️</div>
+      <div class="kids-category-title">Słoneczko</div>
+    </div>
+    <div class="kids-category-card" onclick="startKidsColoring('flower')">
+      <div class="kids-category-icon">🌼</div>
+      <div class="kids-category-title">Kwiatek</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== WIDOK: DLA NAJMŁODSZYCH — KOLOROWANKA ========== -->
+<div id="view-kids-coloring" class="view" style="display:none">
+  <div class="view-header">
+    <button class="btn btn-ghost" onclick="exitKids('kids-coloring-pick')">← Wróć</button>
+    <h1 id="kids-coloring-title">🖍️ Kolorowanka</h1>
+  </div>
+  <div class="kids-coloring-stage">
+    <svg id="kids-svg-apple" class="kids-coloring-svg" viewBox="0 0 200 200" style="display:none">
+      <ellipse id="apple-body" onclick="colorKidsRegion('apple-body')" cx="100" cy="120" rx="58" ry="62" fill="#ffffff" stroke="#333" stroke-width="3"/>
+      <rect id="apple-stem" onclick="colorKidsRegion('apple-stem')" x="94" y="42" width="12" height="28" rx="5" fill="#ffffff" stroke="#333" stroke-width="3"/>
+      <path id="apple-leaf" onclick="colorKidsRegion('apple-leaf')" d="M105,55 Q135,35 138,65 Q112,72 105,55 Z" fill="#ffffff" stroke="#333" stroke-width="3"/>
+    </svg>
+    <svg id="kids-svg-house" class="kids-coloring-svg" viewBox="0 0 200 200" style="display:none">
+      <polygon id="house-roof" onclick="colorKidsRegion('house-roof')" points="35,100 100,45 165,100" fill="#ffffff" stroke="#333" stroke-width="3"/>
+      <rect id="house-walls" onclick="colorKidsRegion('house-walls')" x="50" y="100" width="100" height="80" fill="#ffffff" stroke="#333" stroke-width="3"/>
+      <rect id="house-window" onclick="colorKidsRegion('house-window')" x="115" y="115" width="25" height="25" fill="#ffffff" stroke="#333" stroke-width="3"/>
+      <rect id="house-door" onclick="colorKidsRegion('house-door')" x="65" y="140" width="25" height="40" fill="#ffffff" stroke="#333" stroke-width="3"/>
+    </svg>
+    <svg id="kids-svg-sun" class="kids-coloring-svg" viewBox="0 0 200 200" style="display:none">
+      <g id="sun-rays" onclick="colorKidsRegion('sun-rays')">
+        <rect x="93" y="8" width="14" height="30" fill="#ffffff" stroke="#333" stroke-width="3"/>
+        <rect x="93" y="8" width="14" height="30" transform="rotate(45 100 100)" fill="#ffffff" stroke="#333" stroke-width="3"/>
+        <rect x="93" y="8" width="14" height="30" transform="rotate(90 100 100)" fill="#ffffff" stroke="#333" stroke-width="3"/>
+        <rect x="93" y="8" width="14" height="30" transform="rotate(135 100 100)" fill="#ffffff" stroke="#333" stroke-width="3"/>
+        <rect x="93" y="8" width="14" height="30" transform="rotate(180 100 100)" fill="#ffffff" stroke="#333" stroke-width="3"/>
+        <rect x="93" y="8" width="14" height="30" transform="rotate(225 100 100)" fill="#ffffff" stroke="#333" stroke-width="3"/>
+        <rect x="93" y="8" width="14" height="30" transform="rotate(270 100 100)" fill="#ffffff" stroke="#333" stroke-width="3"/>
+        <rect x="93" y="8" width="14" height="30" transform="rotate(315 100 100)" fill="#ffffff" stroke="#333" stroke-width="3"/>
+      </g>
+      <circle id="sun-face" onclick="colorKidsRegion('sun-face')" cx="100" cy="100" r="48" fill="#ffffff" stroke="#333" stroke-width="3"/>
+    </svg>
+    <svg id="kids-svg-flower" class="kids-coloring-svg" viewBox="0 0 200 200" style="display:none">
+      <rect id="flower-stem" onclick="colorKidsRegion('flower-stem')" x="95" y="115" width="10" height="65" fill="#ffffff" stroke="#333" stroke-width="3"/>
+      <path id="flower-leaf" onclick="colorKidsRegion('flower-leaf')" d="M104,150 Q135,145 128,172 Q100,170 104,150 Z" fill="#ffffff" stroke="#333" stroke-width="3"/>
+      <g id="flower-petals" onclick="colorKidsRegion('flower-petals')">
+        <ellipse cx="100" cy="62" rx="18" ry="28" fill="#ffffff" stroke="#333" stroke-width="3"/>
+        <ellipse cx="100" cy="62" rx="18" ry="28" transform="rotate(72 100 100)" fill="#ffffff" stroke="#333" stroke-width="3"/>
+        <ellipse cx="100" cy="62" rx="18" ry="28" transform="rotate(144 100 100)" fill="#ffffff" stroke="#333" stroke-width="3"/>
+        <ellipse cx="100" cy="62" rx="18" ry="28" transform="rotate(216 100 100)" fill="#ffffff" stroke="#333" stroke-width="3"/>
+        <ellipse cx="100" cy="62" rx="18" ry="28" transform="rotate(288 100 100)" fill="#ffffff" stroke="#333" stroke-width="3"/>
+      </g>
+      <circle id="flower-center" onclick="colorKidsRegion('flower-center')" cx="100" cy="100" r="20" fill="#ffffff" stroke="#333" stroke-width="3"/>
+    </svg>
+  </div>
+  <div class="kids-coloring-complete" id="kids-coloring-complete" style="display:none">🎉 Piękna kolorowanka!</div>
+  <div class="kids-palette" id="kids-palette"></div>
+  <div style="text-align:center;margin-top:16px">
+    <button class="btn btn-secondary" onclick="resetKidsColoring()">🔄 Wyczyść</button>
+  </div>
 </div>
 
 <!-- ========== WIDOK: DLA NAJMŁODSZYCH — PROSTE ZDANIA ========== -->

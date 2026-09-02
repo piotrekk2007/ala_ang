@@ -807,6 +807,48 @@ let kidsSentenceIndex = 0;
 let kidsSentenceQuizItem = null;
 let kidsStars       = parseInt(localStorage.getItem('kids_stars') || '0', 10);
 
+// ---- Ubierz misia ----
+const KIDS_DRESS_ITEMS = [
+  { emoji: '🧢', en: 'cap', pl: 'czapka', slot: 'head' },
+  { emoji: '👕', en: 't-shirt', pl: 'koszulka', slot: 'body' },
+  { emoji: '👗', en: 'dress', pl: 'sukienka', slot: 'body' },
+  { emoji: '🧥', en: 'jacket', pl: 'kurtka', slot: 'body' },
+  { emoji: '🧦', en: 'socks', pl: 'skarpetki', slot: 'feet' },
+  { emoji: '👟', en: 'shoes', pl: 'buty', slot: 'feet' },
+  { emoji: '🧤', en: 'gloves', pl: 'rękawiczki', slot: 'hands' },
+  { emoji: '👖', en: 'trousers', pl: 'spodnie', slot: 'body' },
+];
+const KIDS_BEAR_SLOTS = ['head', 'body', 'hands', 'feet'];
+let kidsBearOutfit = { head: null, body: null, hands: null, feet: null };
+
+// ---- Znajdź parę ----
+let kidsMemoryCards   = [];
+let kidsMemoryFirst   = null;
+let kidsMemoryMatched = 0;
+
+// ---- Kolorowanka ----
+const KIDS_PALETTE = [
+  { hex: '#e53935', en: 'red', pl: 'czerwony' },
+  { hex: '#fb8c00', en: 'orange', pl: 'pomarańczowy' },
+  { hex: '#fdd835', en: 'yellow', pl: 'żółty' },
+  { hex: '#43a047', en: 'green', pl: 'zielony' },
+  { hex: '#1e88e5', en: 'blue', pl: 'niebieski' },
+  { hex: '#8e24aa', en: 'purple', pl: 'fioletowy' },
+  { hex: '#000000', en: 'black', pl: 'czarny' },
+  { hex: '#6d4c41', en: 'brown', pl: 'brązowy' },
+  { hex: '#f06292', en: 'pink', pl: 'różowy' },
+];
+const KIDS_COLORING_REGIONS = {
+  apple:  ['apple-body', 'apple-stem', 'apple-leaf'],
+  house:  ['house-roof', 'house-walls', 'house-window', 'house-door'],
+  sun:    ['sun-rays', 'sun-face'],
+  flower: ['flower-stem', 'flower-leaf', 'flower-petals', 'flower-center'],
+};
+const KIDS_COLORING_TITLES = { apple: '🍎 Jabłko', house: '🏠 Domek', sun: '☀️ Słoneczko', flower: '🌼 Kwiatek' };
+let kidsSelectedColor   = null;
+let kidsColoringPicture = null;
+let kidsColoringWasComplete = false;
+
 // ===== STORAGE =====
 const DB = {
   get: (key) => { try { return JSON.parse(localStorage.getItem(key)) || null; } catch { return null; } },
@@ -873,6 +915,10 @@ function showView(name, params = {}) {
   if (name === 'kids-sentence-mode')  {} // initialized by pickKidsSentenceCategory()
   if (name === 'kids-sentences')  {} // initialized by startKidsSentences()
   if (name === 'kids-sentence-quiz') {} // initialized by startKidsSentenceQuiz()
+  if (name === 'kids-dressbear') {} // initialized by startKidsDressBear()
+  if (name === 'kids-memory')    {} // initialized by startKidsMemory()
+  if (name === 'kids-coloring-pick') {}
+  if (name === 'kids-coloring')  {} // initialized by startKidsColoring()
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -2515,6 +2561,179 @@ function checkKidsSentenceQuizAnswer(emoji, el) {
     feedback.textContent = '🙂 Posłuchaj jeszcze raz!';
     feedback.className = 'kids-quiz-feedback retry';
     feedback.style.display = '';
+  }
+}
+
+// ---- Ubierz misia ----
+function isKidsBearComplete() {
+  return KIDS_BEAR_SLOTS.every(slot => kidsBearOutfit[slot]);
+}
+
+function startKidsDressBear() {
+  kidsBearOutfit = { head: null, body: null, hands: null, feet: null };
+  showView('kids-dressbear');
+  updateKidsStarsDisplay();
+  document.getElementById('kids-dressbear-complete').style.display = 'none';
+  renderKidsDressBear();
+}
+
+function renderKidsDressBear() {
+  KIDS_BEAR_SLOTS.forEach(slot => {
+    const el = document.getElementById('kids-bear-slot-' + slot);
+    const item = kidsBearOutfit[slot];
+    el.textContent = item ? item.emoji : '➕';
+    el.classList.toggle('filled', !!item);
+  });
+  document.getElementById('kids-bear-wardrobe').innerHTML = KIDS_DRESS_ITEMS.map((item, i) => `
+    <div class="kids-wardrobe-item" onclick="pickKidsDressItem(${i})">${item.emoji}</div>`).join('');
+}
+
+function pickKidsDressItem(index) {
+  const item = KIDS_DRESS_ITEMS[index];
+  const wasComplete = isKidsBearComplete();
+  kidsBearOutfit[item.slot] = item;
+  speakKids(item.en, 'en-US');
+  renderKidsDressBear();
+  if (!wasComplete && isKidsBearComplete()) {
+    addKidsStar();
+    document.getElementById('kids-dressbear-complete').style.display = '';
+  }
+}
+
+function resetKidsDressBear() {
+  kidsBearOutfit = { head: null, body: null, hands: null, feet: null };
+  document.getElementById('kids-dressbear-complete').style.display = 'none';
+  renderKidsDressBear();
+}
+
+// ---- Znajdź parę ----
+function startKidsMemory() {
+  const cat   = KIDS_CATEGORIES.find(c => c.id === kidsCategoryId);
+  const words = shuffle([...cat.words]).slice(0, 6);
+  kidsMemoryCards   = shuffle([...words, ...words]).map(w => ({ ...w, flipped: false, matched: false }));
+  kidsMemoryFirst   = null;
+  kidsMemoryMatched = 0;
+  showView('kids-memory');
+  updateKidsStarsDisplay();
+  document.getElementById('kids-memory-complete').style.display = 'none';
+  renderKidsMemory();
+}
+
+function renderKidsMemory() {
+  document.getElementById('kids-memory-grid').innerHTML = kidsMemoryCards.map((c, i) => `
+    <div class="kids-memory-card" id="kids-memory-card-${i}" onclick="flipKidsMemoryCard(${i})">
+      <div class="kids-memory-back">❓</div>
+    </div>`).join('');
+  document.getElementById('kids-memory-progress').textContent = `${kidsMemoryMatched} / ${kidsMemoryCards.length / 2}`;
+}
+
+function flipKidsMemoryCard(i) {
+  const card = kidsMemoryCards[i];
+  if (card.matched || card.flipped || kidsMemoryFirst === i) return;
+
+  card.flipped = true;
+  const el = document.getElementById('kids-memory-card-' + i);
+  el.innerHTML = `<div class="kids-memory-front">${card.emoji}</div>`;
+  el.classList.add('flipped');
+  speakKids(card.en, 'en-US');
+
+  if (kidsMemoryFirst === null) {
+    kidsMemoryFirst = i;
+    return;
+  }
+
+  const firstIdx  = kidsMemoryFirst;
+  const firstCard = kidsMemoryCards[firstIdx];
+  kidsMemoryFirst = null;
+
+  if (firstCard.en === card.en) {
+    firstCard.matched = true;
+    card.matched = true;
+    kidsMemoryMatched++;
+    document.getElementById('kids-memory-progress').textContent = `${kidsMemoryMatched} / ${kidsMemoryCards.length / 2}`;
+    document.getElementById('kids-memory-card-' + firstIdx).classList.add('matched');
+    document.getElementById('kids-memory-card-' + i).classList.add('matched');
+    addKidsStar();
+    if (kidsMemoryMatched === kidsMemoryCards.length / 2) {
+      setTimeout(() => { document.getElementById('kids-memory-complete').style.display = ''; }, 400);
+    }
+  } else {
+    setTimeout(() => {
+      firstCard.flipped = false;
+      card.flipped = false;
+      const elF = document.getElementById('kids-memory-card-' + firstIdx);
+      const elS = document.getElementById('kids-memory-card-' + i);
+      if (elF) { elF.innerHTML = '<div class="kids-memory-back">❓</div>'; elF.classList.remove('flipped'); }
+      if (elS) { elS.innerHTML = '<div class="kids-memory-back">❓</div>'; elS.classList.remove('flipped'); }
+    }, 900);
+  }
+}
+
+// ---- Kolorowanka ----
+function startKidsColoring(pic) {
+  kidsColoringPicture = pic;
+  kidsColoringWasComplete = false;
+  showView('kids-coloring');
+  document.querySelectorAll('.kids-coloring-svg').forEach(svg => svg.style.display = 'none');
+  document.getElementById('kids-svg-' + pic).style.display = '';
+  document.getElementById('kids-coloring-title').textContent = KIDS_COLORING_TITLES[pic];
+  resetKidsColoring();
+  renderKidsPalette();
+  pickKidsColor(0);
+}
+
+function renderKidsPalette() {
+  document.getElementById('kids-palette').innerHTML = KIDS_PALETTE.map((c, i) => `
+    <div class="kids-swatch" style="background:${c.hex}" onclick="pickKidsColor(${i})"></div>`).join('');
+}
+
+function pickKidsColor(i) {
+  kidsSelectedColor = KIDS_PALETTE[i];
+  document.querySelectorAll('.kids-swatch').forEach((el, idx) => el.classList.toggle('selected', idx === i));
+  speakKids(kidsSelectedColor.en, 'en-US');
+}
+
+function setKidsRegionFill(regionId, hex) {
+  const region = document.getElementById(regionId);
+  if (!region) return;
+  if (region.tagName.toLowerCase() === 'g') {
+    Array.from(region.children).forEach(child => child.setAttribute('fill', hex));
+  } else {
+    region.setAttribute('fill', hex);
+  }
+}
+
+function colorKidsRegion(regionId) {
+  if (!kidsSelectedColor) return;
+  setKidsRegionFill(regionId, kidsSelectedColor.hex);
+  speakKids(kidsSelectedColor.en, 'en-US');
+  checkKidsColoringComplete();
+}
+
+function resetKidsColoring() {
+  const regions = KIDS_COLORING_REGIONS[kidsColoringPicture] || [];
+  regions.forEach(id => setKidsRegionFill(id, '#ffffff'));
+  kidsColoringWasComplete = false;
+  const complete = document.getElementById('kids-coloring-complete');
+  if (complete) complete.style.display = 'none';
+}
+
+function isKidsRegionColored(regionId) {
+  const region = document.getElementById(regionId);
+  if (!region) return false;
+  if (region.tagName.toLowerCase() === 'g') {
+    return Array.from(region.children).every(c => c.getAttribute('fill') !== '#ffffff');
+  }
+  return region.getAttribute('fill') !== '#ffffff';
+}
+
+function checkKidsColoringComplete() {
+  const regions = KIDS_COLORING_REGIONS[kidsColoringPicture] || [];
+  const allColored = regions.every(isKidsRegionColored);
+  if (allColored && !kidsColoringWasComplete) {
+    kidsColoringWasComplete = true;
+    addKidsStar();
+    document.getElementById('kids-coloring-complete').style.display = '';
   }
 }
 

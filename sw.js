@@ -1,4 +1,4 @@
-const CACHE = 'ala-v10';
+const CACHE = 'ala-v11';
 const FILES = [
   './',
   './index.html',

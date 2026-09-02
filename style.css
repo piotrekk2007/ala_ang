@@ -1234,6 +1234,88 @@ code { background: var(--gray-light); padding: 2px 6px; border-radius: 4px; font
   .kids-tf-btn { font-size: 3.5rem; }
 }
 
+/* ---- Ubierz misia ---- */
+.kids-bear-stage { text-align: center; margin: 20px auto 0; }
+.kids-bear-emoji { font-size: 8rem; line-height: 1; }
+.kids-bear-outfit { display: flex; justify-content: center; gap: 16px; margin-top: 10px; }
+.kids-bear-slot {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--gray-light);
+  border: 3px dashed var(--gray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  transition: all .2s;
+}
+.kids-bear-slot.filled { background: var(--orange-light); border: 3px solid var(--orange); animation: kidsPulse .4s; }
+
+.kids-wardrobe { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin: 24px auto 0; max-width: 500px; }
+.kids-wardrobe-item {
+  font-size: 3rem;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px;
+  cursor: pointer;
+  transition: transform .15s;
+}
+.kids-wardrobe-item:active { transform: scale(0.9); }
+
+.kids-coloring-complete { text-align: center; font-size: 1.5rem; font-weight: 800; color: var(--green); margin: 16px 0; }
+
+/* ---- Znajdź parę ---- */
+.kids-memory-progress { text-align: center; font-size: 1.2rem; font-weight: 800; color: var(--purple); margin-bottom: 14px; }
+.kids-memory-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  max-width: 520px;
+  margin: 0 auto;
+}
+.kids-memory-card {
+  aspect-ratio: 1;
+  background: var(--purple-light);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: transform .15s;
+}
+.kids-memory-card:active { transform: scale(0.93); }
+.kids-memory-card.flipped { background: var(--white); }
+.kids-memory-card.matched { background: var(--green-light); cursor: default; opacity: .85; }
+
+/* ---- Kolorowanka ---- */
+.kids-coloring-stage { display: flex; justify-content: center; margin: 10px auto 4px; }
+.kids-coloring-svg { width: 260px; height: 260px; max-width: 85vw; }
+.kids-coloring-svg [id] { cursor: pointer; }
+
+.kids-palette { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; max-width: 480px; margin: 0 auto; }
+.kids-swatch {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 4px solid transparent;
+  box-shadow: var(--shadow);
+  transition: transform .15s;
+}
+.kids-swatch:active { transform: scale(0.9); }
+.kids-swatch.selected { border-color: var(--text); transform: scale(1.15); }
+
+@media (max-width: 600px) {
+  .kids-bear-emoji { font-size: 6rem; }
+  .kids-bear-slot { width: 52px; height: 52px; font-size: 1.6rem; }
+  .kids-memory-grid { grid-template-columns: repeat(3, 1fr); }
+  .kids-coloring-svg { width: 220px; height: 220px; }
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 600px) {
   .hero-greeting { font-size: 1.8rem; }
