@@ -1235,34 +1235,120 @@ code { background: var(--gray-light); padding: 2px 6px; border-radius: 4px; font
 }
 
 /* ---- Ubierz misia ---- */
-.kids-bear-stage { text-align: center; margin: 20px auto 0; }
+.kids-bear-mode-toggle { display: flex; justify-content: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.kids-bear-mode-btn {
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 10px 18px;
+  border-radius: 20px;
+  border: 2px solid var(--gray-light);
+  background: var(--white);
+  cursor: pointer;
+  transition: all .15s;
+}
+.kids-bear-mode-btn.active { background: var(--purple); color: #fff; border-color: var(--purple); }
+
+.kids-weather-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px 18px;
+  max-width: 520px;
+  margin: 0 auto 16px;
+}
+.kids-weather-icon { font-size: 2.6rem; }
+.kids-weather-text { flex: 1; }
+.kids-weather-label { font-weight: 800; color: var(--purple); }
+.kids-weather-prompt { font-size: 0.9rem; color: var(--text-light); }
+
+.kids-bear-stage {
+  text-align: center;
+  margin: 10px auto 0;
+  padding: 16px;
+  border-radius: var(--radius);
+  position: relative;
+  transition: background .3s;
+}
+.kids-bear-stage.drag-over { outline: 4px dashed var(--orange); outline-offset: -4px; }
 .kids-bear-emoji { font-size: 8rem; line-height: 1; }
-.kids-bear-outfit { display: flex; justify-content: center; gap: 16px; margin-top: 10px; }
+.kids-bear-word-overlay {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%) scale(0.8);
+  background: var(--purple);
+  color: #fff;
+  font-weight: 800;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 1.1rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: none;
+  white-space: nowrap;
+}
+.kids-bear-word-overlay.show { animation: kidsWordPop 1.4s ease; }
+@keyframes kidsWordPop {
+  0%   { opacity: 0; transform: translateX(-50%) scale(0.7); }
+  15%  { opacity: 1; transform: translateX(-50%) scale(1.05); }
+  25%  { transform: translateX(-50%) scale(1); }
+  80%  { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-50%) scale(1); }
+}
+
+.kids-bear-outfit { display: flex; justify-content: center; gap: 14px; margin-top: 10px; flex-wrap: wrap; }
 .kids-bear-slot {
-  width: 64px;
-  height: 64px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   background: var(--gray-light);
   border: 3px dashed var(--gray);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
+  font-size: 1.9rem;
   transition: all .2s;
 }
 .kids-bear-slot.filled { background: var(--orange-light); border: 3px solid var(--orange); animation: kidsPulse .4s; }
 
-.kids-wardrobe { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin: 24px auto 0; max-width: 500px; }
+.kids-bear-wardrobe { margin: 24px auto 0; max-width: 560px; }
+.kids-wardrobe-cat { margin-bottom: 18px; }
+.kids-wardrobe-cat-label { text-align: center; font-weight: 700; color: var(--text-light); font-size: 0.9rem; margin-bottom: 8px; }
+.kids-wardrobe-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
 .kids-wardrobe-item {
   font-size: 3rem;
   background: var(--white);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 14px;
-  cursor: pointer;
+  cursor: grab;
   transition: transform .15s;
+  touch-action: none;
+  user-select: none;
 }
-.kids-wardrobe-item:active { transform: scale(0.9); }
+.kids-wardrobe-item:active { transform: scale(0.9); cursor: grabbing; }
+.kids-wardrobe-item.bounce-back { animation: shake .5s; }
+
+.kids-drag-ghost {
+  position: fixed;
+  top: 0;
+  left: 0;
+  font-size: 3rem;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 999;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.25));
+}
+
+.kids-bear-celebration { text-align: center; margin-top: 20px; }
+.kids-bear-celebration-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
+
+.kids-confetti-layer { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 900; }
+.kids-confetti-piece { position: absolute; top: -40px; font-size: 1.8rem; animation-name: kidsConfettiFall; animation-timing-function: ease-in; animation-fill-mode: forwards; }
+@keyframes kidsConfettiFall { to { transform: translateY(110vh) rotate(360deg); opacity: 0.2; } }
 
 .kids-coloring-complete { text-align: center; font-size: 1.5rem; font-weight: 800; color: var(--green); margin: 16px 0; }
 

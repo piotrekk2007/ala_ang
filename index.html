@@ -636,24 +636,53 @@
 <!-- ========== WIDOK: DLA NAJMŁODSZYCH — UBIERZ MISIA ========== -->
 <div id="view-kids-dressbear" class="view" style="display:none">
   <div class="view-header">
-    <button class="btn btn-ghost" onclick="exitKids('kids-home')">← Wróć</button>
+    <button class="btn btn-ghost" onclick="exitKidsBear()">← Wróć</button>
     <h1>🐻 Ubierz misia</h1>
     <span class="kids-stars-badge">⭐ <span class="kids-stars-value">0</span></span>
   </div>
-  <p class="hint" style="text-align:center;font-size:1.1rem">Kliknij ubranko, żeby ubrać misia! 👇</p>
-  <div class="kids-bear-stage">
+
+  <div class="kids-bear-mode-toggle">
+    <button class="kids-bear-mode-btn active" id="kids-bear-mode-free" onclick="setKidsBearMode('free')">🎨 Swobodnie</button>
+    <button class="kids-bear-mode-btn" id="kids-bear-mode-challenge" onclick="setKidsBearMode('challenge')">🌦️ Wyzwanie pogodowe</button>
+  </div>
+
+  <div class="kids-weather-banner" id="kids-weather-banner" style="display:none">
+    <div class="kids-weather-icon" id="kids-weather-icon">☀️</div>
+    <div class="kids-weather-text">
+      <div class="kids-weather-label" id="kids-weather-label"></div>
+      <div class="kids-weather-prompt" id="kids-weather-prompt-pl"></div>
+    </div>
+    <button class="kids-big-btn" onclick="replayKidsWeatherPrompt()">🔊</button>
+  </div>
+
+  <p class="hint" style="text-align:center;font-size:1.05rem">Przeciągnij (albo kliknij) ubranko na misia! 👇</p>
+
+  <div class="kids-bear-stage" id="kids-bear-stage">
     <div class="kids-bear-emoji">🐻</div>
+    <div class="kids-bear-word-overlay" id="kids-bear-word-overlay"></div>
     <div class="kids-bear-outfit">
-      <div class="kids-bear-slot" id="kids-bear-slot-head" title="Głowa">➕</div>
-      <div class="kids-bear-slot" id="kids-bear-slot-body" title="Ciało">➕</div>
-      <div class="kids-bear-slot" id="kids-bear-slot-hands" title="Ręce">➕</div>
-      <div class="kids-bear-slot" id="kids-bear-slot-feet" title="Nogi">➕</div>
+      <div class="kids-bear-slot" id="kids-bear-slot-top" title="Góra">➕</div>
+      <div class="kids-bear-slot" id="kids-bear-slot-bottom" title="Dół">➕</div>
+      <div class="kids-bear-slot" id="kids-bear-slot-feet" title="Buty">➕</div>
+      <div class="kids-bear-slot" id="kids-bear-slot-accessory" title="Dodatki">➕</div>
+      <div class="kids-bear-slot" id="kids-bear-slot-weather" title="Na pogodę">➕</div>
     </div>
   </div>
-  <div class="kids-coloring-complete" id="kids-dressbear-complete" style="display:none">🎉 Miś jest ubrany! Brawo!</div>
-  <div class="kids-wardrobe" id="kids-bear-wardrobe"></div>
+
+  <div class="kids-quiz-feedback" id="kids-challenge-feedback" style="display:none"></div>
+
+  <div class="kids-bear-wardrobe" id="kids-bear-wardrobe"></div>
+
   <div style="text-align:center;margin-top:20px">
     <button class="btn btn-secondary" onclick="resetKidsDressBear()">🔄 Rozbierz misia</button>
+  </div>
+
+  <div class="kids-bear-celebration" id="kids-bear-celebration" style="display:none">
+    <div class="kids-coloring-complete">🎉 Miś jest ubrany! Brawo!</div>
+    <div class="kids-bear-celebration-actions">
+      <button class="btn btn-primary" onclick="downloadKidsBearPhoto()">📸 Zrób zdjęcie</button>
+      <button class="btn btn-secondary" onclick="resetKidsDressBear()">🔄 Ubierz jeszcze raz</button>
+    </div>
   </div>
 </div>
 
@@ -803,6 +832,9 @@
 
 <!-- ========== TOAST ========== -->
 <div id="toast" class="toast" style="display:none"></div>
+
+<!-- ========== KONFETTI (Dla najmłodszych) ========== -->
+<div id="kids-confetti-layer" class="kids-confetti-layer"></div>
 
 <!-- ========== FLOATING TRANSLATE BUTTON ========== -->
 <div id="selection-translate-btn" style="display:none">🔍 Tłumacz</div>

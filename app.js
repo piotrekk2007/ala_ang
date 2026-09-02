@@ -808,18 +808,40 @@ let kidsSentenceQuizItem = null;
 let kidsStars       = parseInt(localStorage.getItem('kids_stars') || '0', 10);
 
 // ---- Ubierz misia ----
-const KIDS_DRESS_ITEMS = [
-  { emoji: '🧢', en: 'cap', pl: 'czapka', slot: 'head' },
-  { emoji: '👕', en: 't-shirt', pl: 'koszulka', slot: 'body' },
-  { emoji: '👗', en: 'dress', pl: 'sukienka', slot: 'body' },
-  { emoji: '🧥', en: 'jacket', pl: 'kurtka', slot: 'body' },
-  { emoji: '🧦', en: 'socks', pl: 'skarpetki', slot: 'feet' },
-  { emoji: '👟', en: 'shoes', pl: 'buty', slot: 'feet' },
-  { emoji: '🧤', en: 'gloves', pl: 'rękawiczki', slot: 'hands' },
-  { emoji: '👖', en: 'trousers', pl: 'spodnie', slot: 'body' },
+const KIDS_BEAR_CATEGORIES = [
+  { id: 'top',       label: 'Góra' },
+  { id: 'bottom',    label: 'Dół' },
+  { id: 'feet',      label: 'Buty' },
+  { id: 'accessory', label: 'Dodatki' },
+  { id: 'weather',   label: 'Na pogodę' },
 ];
-const KIDS_BEAR_SLOTS = ['head', 'body', 'hands', 'feet'];
-let kidsBearOutfit = { head: null, body: null, hands: null, feet: null };
+const KIDS_BEAR_SLOTS = KIDS_BEAR_CATEGORIES.map(c => c.id);
+const KIDS_BEAR_ITEMS = [
+  { id: 'tshirt',     emoji: '👕',  en: 't-shirt',    pl: 'koszulka',                  category: 'top' },
+  { id: 'jacket',     emoji: '🧥',  en: 'jacket',     pl: 'kurtka',                    category: 'top' },
+  { id: 'dress',      emoji: '👗',  en: 'dress',      pl: 'sukienka',                  category: 'top' },
+  { id: 'trousers',   emoji: '👖',  en: 'trousers',   pl: 'spodnie',                   category: 'bottom' },
+  { id: 'shorts',     emoji: '🩳',  en: 'shorts',     pl: 'szorty',                    category: 'bottom' },
+  { id: 'shoes',      emoji: '👟',  en: 'shoes',      pl: 'buty',                      category: 'feet' },
+  { id: 'boots',      emoji: '🥾',  en: 'boots',      pl: 'kozaki',                    category: 'feet' },
+  { id: 'sandals',    emoji: '👡',  en: 'sandals',    pl: 'sandałki',                  category: 'feet' },
+  { id: 'cap',        emoji: '🧢',  en: 'cap',        pl: 'czapka',                    category: 'accessory' },
+  { id: 'bow',        emoji: '🎀',  en: 'bow',        pl: 'kokardka',                  category: 'accessory' },
+  { id: 'backpack',   emoji: '🎒',  en: 'backpack',   pl: 'plecak',                    category: 'accessory' },
+  { id: 'sunglasses', emoji: '🕶️', en: 'sunglasses', pl: 'okulary przeciwsłoneczne', category: 'weather', weather: 'sunny' },
+  { id: 'umbrella',   emoji: '☂️',  en: 'umbrella',   pl: 'parasol',                   category: 'weather', weather: 'rainy' },
+  { id: 'scarf',      emoji: '🧣',  en: 'scarf',      pl: 'szalik',                    category: 'weather', weather: 'snowy' },
+];
+const KIDS_WEATHER_DATA = {
+  sunny: { icon: '☀️', label: 'Słonecznie', en: "It's sunny! Put on my sunglasses!", pl: 'Jest słonecznie! Załóż mi okulary!', itemId: 'sunglasses', bg: '#fff7d6' },
+  rainy: { icon: '🌧️', label: 'Deszczowo',  en: "It's raining! Give me my umbrella!", pl: 'Pada deszcz! Podaj mi parasol!',    itemId: 'umbrella',   bg: '#dbeefb' },
+  snowy: { icon: '❄️', label: 'Śnieżnie',   en: "It's snowing! Put on my scarf!",     pl: 'Pada śnieg! Załóż mi szalik!',      itemId: 'scarf',      bg: '#eef3f7' },
+};
+
+let kidsBearOutfit = { top: null, bottom: null, feet: null, accessory: null, weather: null };
+let kidsBearMode = 'free'; // 'free' | 'challenge'
+let kidsWeather  = null;
+let kidsBearDrag = null;
 
 // ---- Znajdź parę ----
 let kidsMemoryCards   = [];
@@ -2570,40 +2592,244 @@ function isKidsBearComplete() {
 }
 
 function startKidsDressBear() {
-  kidsBearOutfit = { head: null, body: null, hands: null, feet: null };
+  kidsBearOutfit = { top: null, bottom: null, feet: null, accessory: null, weather: null };
+  kidsBearMode   = 'free';
   showView('kids-dressbear');
   updateKidsStarsDisplay();
-  document.getElementById('kids-dressbear-complete').style.display = 'none';
-  renderKidsDressBear();
+  document.getElementById('kids-bear-celebration').style.display = 'none';
+  document.getElementById('kids-challenge-feedback').style.display = 'none';
+  document.getElementById('kids-bear-mode-free').classList.add('active');
+  document.getElementById('kids-bear-mode-challenge').classList.remove('active');
+  document.getElementById('kids-weather-banner').style.display = 'none';
+  document.getElementById('view-kids-dressbear').style.background = '';
+  renderKidsBearSlots();
+  renderKidsBearWardrobe();
 }
 
-function renderKidsDressBear() {
+function exitKidsBear() {
+  if (kidsBearDrag) endKidsBearDrag(null);
+  exitKids('kids-home');
+}
+
+function renderKidsBearSlots() {
   KIDS_BEAR_SLOTS.forEach(slot => {
-    const el = document.getElementById('kids-bear-slot-' + slot);
+    const el   = document.getElementById('kids-bear-slot-' + slot);
     const item = kidsBearOutfit[slot];
     el.textContent = item ? item.emoji : '➕';
     el.classList.toggle('filled', !!item);
   });
-  document.getElementById('kids-bear-wardrobe').innerHTML = KIDS_DRESS_ITEMS.map((item, i) => `
-    <div class="kids-wardrobe-item" onclick="pickKidsDressItem(${i})">${item.emoji}</div>`).join('');
 }
 
-function pickKidsDressItem(index) {
-  const item = KIDS_DRESS_ITEMS[index];
+function renderKidsBearWardrobe() {
+  const el = document.getElementById('kids-bear-wardrobe');
+  if (kidsBearMode === 'challenge') {
+    const items = KIDS_BEAR_ITEMS.filter(i => i.category === 'weather');
+    el.innerHTML = `<div class="kids-wardrobe-row">${items.map(renderKidsWardrobeItemHtml).join('')}</div>`;
+    return;
+  }
+  el.innerHTML = KIDS_BEAR_CATEGORIES.map(cat => `
+    <div class="kids-wardrobe-cat">
+      <div class="kids-wardrobe-cat-label">${esc(cat.label)}</div>
+      <div class="kids-wardrobe-row">
+        ${KIDS_BEAR_ITEMS.filter(i => i.category === cat.id).map(renderKidsWardrobeItemHtml).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function renderKidsWardrobeItemHtml(item) {
+  return `<div class="kids-wardrobe-item" data-item-id="${item.id}" onpointerdown="startKidsBearDrag(event, '${item.id}')">${item.emoji}</div>`;
+}
+
+// -- Tryb / pogoda --
+function setKidsBearMode(mode) {
+  kidsBearMode = mode;
+  document.getElementById('kids-bear-mode-free').classList.toggle('active', mode === 'free');
+  document.getElementById('kids-bear-mode-challenge').classList.toggle('active', mode === 'challenge');
+  document.getElementById('kids-challenge-feedback').style.display = 'none';
+  if (mode === 'challenge') {
+    document.getElementById('kids-weather-banner').style.display = '';
+    pickKidsWeatherRound();
+  } else {
+    document.getElementById('kids-weather-banner').style.display = 'none';
+    document.getElementById('view-kids-dressbear').style.background = '';
+    renderKidsBearWardrobe();
+  }
+}
+
+function pickKidsWeatherRound() {
+  const keys = Object.keys(KIDS_WEATHER_DATA).filter(k => k !== kidsWeather);
+  kidsWeather = keys[Math.floor(Math.random() * keys.length)];
+  const w = KIDS_WEATHER_DATA[kidsWeather];
+  document.getElementById('kids-weather-icon').textContent = w.icon;
+  document.getElementById('kids-weather-label').textContent = w.label;
+  document.getElementById('kids-weather-prompt-pl').textContent = w.pl;
+  document.getElementById('view-kids-dressbear').style.background = w.bg;
+  renderKidsBearWardrobe();
+  setTimeout(() => speakKids(w.en, 'en-US'), 300);
+}
+
+function replayKidsWeatherPrompt() {
+  if (kidsWeather) speakKids(KIDS_WEATHER_DATA[kidsWeather].en, 'en-US');
+}
+
+// -- Przeciąganie (mysz + dotyk przez Pointer Events) --
+function startKidsBearDrag(e, itemId) {
+  if (e.button !== undefined && e.button !== 0) return;
+  e.preventDefault();
+  const item = KIDS_BEAR_ITEMS.find(i => i.id === itemId);
+  const ghost = document.createElement('div');
+  ghost.className = 'kids-drag-ghost';
+  ghost.textContent = item.emoji;
+  document.body.appendChild(ghost);
+  kidsBearDrag = { item, ghost, startX: e.clientX, startY: e.clientY, moved: false };
+  moveKidsBearGhost(e.clientX, e.clientY);
+  document.addEventListener('pointermove', onKidsBearDragMove);
+  document.addEventListener('pointerup', onKidsBearDragUp);
+}
+
+function moveKidsBearGhost(x, y) {
+  kidsBearDrag.ghost.style.left = x + 'px';
+  kidsBearDrag.ghost.style.top  = y + 'px';
+}
+
+function onKidsBearDragMove(e) {
+  if (!kidsBearDrag) return;
+  if (Math.abs(e.clientX - kidsBearDrag.startX) > 8 || Math.abs(e.clientY - kidsBearDrag.startY) > 8) {
+    kidsBearDrag.moved = true;
+  }
+  moveKidsBearGhost(e.clientX, e.clientY);
+  const target = document.elementFromPoint(e.clientX, e.clientY);
+  const stage  = document.getElementById('kids-bear-stage');
+  stage.classList.toggle('drag-over', !!(target && target.closest('#kids-bear-stage')));
+}
+
+function onKidsBearDragUp(e) {
+  if (!kidsBearDrag) return;
+  endKidsBearDrag(e);
+}
+
+function endKidsBearDrag(e) {
+  const drag = kidsBearDrag;
+  document.removeEventListener('pointermove', onKidsBearDragMove);
+  document.removeEventListener('pointerup', onKidsBearDragUp);
+  document.getElementById('kids-bear-stage').classList.remove('drag-over');
+  drag.ghost.remove();
+  kidsBearDrag = null;
+  if (!e) return;
+
+  const target  = document.elementFromPoint(e.clientX, e.clientY);
+  const onStage = !!(target && target.closest('#kids-bear-stage'));
+  if (drag.moved && !onStage) return; // puszczone poza misiem podczas przeciągania - nic się nie dzieje
+  handleKidsBearItemDrop(drag.item);
+}
+
+function handleKidsBearItemDrop(item) {
+  if (kidsBearMode === 'challenge') {
+    handleKidsChallengeAttempt(item);
+  } else {
+    equipKidsBearItem(item);
+  }
+}
+
+function equipKidsBearItem(item) {
   const wasComplete = isKidsBearComplete();
-  kidsBearOutfit[item.slot] = item;
+  kidsBearOutfit[item.category] = item;
   speakKids(item.en, 'en-US');
-  renderKidsDressBear();
+  renderKidsBearSlots();
+  showKidsBearWordOverlay(item);
   if (!wasComplete && isKidsBearComplete()) {
+    setTimeout(showKidsBearCelebration, 400);
+  }
+}
+
+function showKidsBearWordOverlay(item) {
+  const el = document.getElementById('kids-bear-word-overlay');
+  el.textContent = item.en.charAt(0).toUpperCase() + item.en.slice(1);
+  el.classList.remove('show');
+  void el.offsetWidth;
+  el.classList.add('show');
+}
+
+function handleKidsChallengeAttempt(item) {
+  const w = KIDS_WEATHER_DATA[kidsWeather];
+  const feedback = document.getElementById('kids-challenge-feedback');
+  if (item.id === w.itemId) {
+    kidsBearOutfit.weather = item;
+    renderKidsBearSlots();
+    speakKids(item.en, 'en-US');
     addKidsStar();
-    document.getElementById('kids-dressbear-complete').style.display = '';
+    feedback.textContent = '🎉 Brawo, dobrze dobrane!';
+    feedback.className = 'kids-quiz-feedback good';
+    feedback.style.display = '';
+    setTimeout(pickKidsWeatherRound, 1600);
+  } else {
+    feedback.textContent = `🙈 Ups! To nie pasuje, gdy jest ${w.label.toLowerCase()}. Spróbuj jeszcze raz!`;
+    feedback.className = 'kids-quiz-feedback retry';
+    feedback.style.display = '';
+    const wardrobeEl = document.querySelector(`.kids-wardrobe-item[data-item-id="${item.id}"]`);
+    if (wardrobeEl) {
+      wardrobeEl.classList.add('bounce-back');
+      setTimeout(() => wardrobeEl.classList.remove('bounce-back'), 500);
+    }
   }
 }
 
 function resetKidsDressBear() {
-  kidsBearOutfit = { head: null, body: null, hands: null, feet: null };
-  document.getElementById('kids-dressbear-complete').style.display = 'none';
-  renderKidsDressBear();
+  kidsBearOutfit = { top: null, bottom: null, feet: null, accessory: null, weather: null };
+  document.getElementById('kids-bear-celebration').style.display = 'none';
+  document.getElementById('kids-challenge-feedback').style.display = 'none';
+  renderKidsBearSlots();
+  if (kidsBearMode === 'challenge') pickKidsWeatherRound();
+}
+
+// -- Celebracja --
+function showKidsBearCelebration() {
+  document.getElementById('kids-bear-celebration').style.display = '';
+  addKidsStar();
+  spawnKidsConfetti();
+}
+
+function spawnKidsConfetti() {
+  const layer = document.getElementById('kids-confetti-layer');
+  layer.innerHTML = '';
+  const emojis = ['🎉', '⭐', '🎈', '✨', '🌟'];
+  for (let i = 0; i < 24; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'kids-confetti-piece';
+    piece.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    piece.style.left = Math.random() * 100 + '%';
+    piece.style.animationDelay = (Math.random() * 0.5) + 's';
+    piece.style.animationDuration = (1.8 + Math.random() * 1.2) + 's';
+    layer.appendChild(piece);
+  }
+  setTimeout(() => { layer.innerHTML = ''; }, 3200);
+}
+
+function downloadKidsBearPhoto() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 500;
+  canvas.height = 500;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#fff7ec';
+  ctx.fillRect(0, 0, 500, 500);
+  ctx.textAlign = 'center';
+  ctx.font = '180px sans-serif';
+  ctx.fillText('🐻', 250, 260);
+  ctx.font = '58px sans-serif';
+  KIDS_BEAR_SLOTS.forEach((slot, i) => {
+    const item = kidsBearOutfit[slot];
+    if (item) ctx.fillText(item.emoji, 70 + i * 90, 420);
+  });
+  ctx.font = 'bold 28px sans-serif';
+  ctx.fillStyle = '#7c3aed';
+  ctx.fillText('Mój miś! 🐻', 250, 470);
+  canvas.toBlob(blob => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'moj_mis.png';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
 }
 
 // ---- Znajdź parę ----
