@@ -3078,7 +3078,7 @@ function shuffle(arr) {
 // Some generated sets have far more words than a single learn/test round
 // should cover, so only a random sample is drawn each time (looked up by
 // name, not stored on the set, so it applies however/whenever the set was seeded).
-const SAMPLE_SIZE_BY_SET_NAME = { 'Liczby 1-100': 40, 'Tabliczka mnożenia': 20 };
+const SAMPLE_SIZE_BY_SET_NAME = { 'Liczby 1-100': 40, 'Tabliczka mnożenia': 40 };
 function sampleSetWords(set) {
   const shuffled = shuffle([...set.words]);
   const size = SAMPLE_SIZE_BY_SET_NAME[set.name];
@@ -3546,11 +3546,11 @@ function generateNumberWordsData() {
 
 // word.pl is the equation shown to the child (prompt only, never checked as
 // an answer because this set is fixedReverse); word.en is the English result
-// she has to type. a<=b to skip commutative duplicates (7x8 / 8x7).
+// she has to type. Full 10x10 grid (both 7x8 and 8x7) for 100 examples.
 function generateMultiplicationData() {
   const words = [];
   for (let a = 1; a <= 10; a++) {
-    for (let b = a; b <= 10; b++) {
+    for (let b = 1; b <= 10; b++) {
       words.push({ en: numberToEnglishWords(a * b), pl: `${a} × ${b} = ?` });
     }
   }
@@ -4009,6 +4009,29 @@ function seedDefaultSets() {
   DB.set('defaultSetsVersion', DEFAULT_SETS_VERSION);
 }
 
+// Keeps already-seeded generated sets (numbers, multiplication) in sync with
+// the current generator output, since seedDefaultSets() skips re-adding sets
+// that already exist by name and would otherwise leave old word counts stuck.
+function syncGeneratedSets() {
+  const generatorsByName = {
+    'Liczby 1-100': generateNumberWordsData,
+    'Tabliczka mnożenia': generateMultiplicationData,
+  };
+  const sets = getSets();
+  let changed = false;
+  sets.forEach(s => {
+    const gen = generatorsByName[s.name];
+    if (!gen) return;
+    const fresh = gen();
+    if (s.words.length !== fresh.length) {
+      s.words = fresh.map(w => ({ id: uid(), en: w.en, pl: w.pl }));
+      changed = true;
+    }
+  });
+  if (changed) saveSets(sets);
+}
+
 // ===== INIT =====
 seedDefaultSets();
+syncGeneratedSets();
 showView('home');
