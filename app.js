@@ -1208,7 +1208,7 @@ function startLearn(reverse) {
   if (!set || !set.words.length) { showToast('Brak słówek!'); return; }
   learnSetId   = currentSetId;
   learnReverse = set.fixedReverse ? true : (reverse || false);
-  learnQueue   = shuffle([...set.words]);
+  learnQueue   = sampleSetWords(set);
   learnCorrect = 0;
   learnTotal   = learnQueue.length;
 
@@ -1309,7 +1309,7 @@ function startTest(reverse) {
   if (!set || !set.words.length) { showToast('Brak słówek!'); return; }
   testSetId   = currentSetId;
   testReverse = set.fixedReverse ? true : (reverse || false);
-  testQueue   = shuffle([...set.words]);
+  testQueue   = sampleSetWords(set);
   testResults = [];
   testCurrent = 0;
 
@@ -3073,6 +3073,16 @@ function shuffle(arr) {
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
+}
+
+// Some generated sets have far more words than a single learn/test round
+// should cover, so only a random sample is drawn each time (looked up by
+// name, not stored on the set, so it applies however/whenever the set was seeded).
+const SAMPLE_SIZE_BY_SET_NAME = { 'Liczby 1-100': 40, 'Tabliczka mnożenia': 20 };
+function sampleSetWords(set) {
+  const shuffled = shuffle([...set.words]);
+  const size = SAMPLE_SIZE_BY_SET_NAME[set.name];
+  return size && shuffled.length > size ? shuffled.slice(0, size) : shuffled;
 }
 
 // Accept answer against expected (which may contain variants separated by '/')
