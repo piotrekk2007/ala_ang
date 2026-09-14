@@ -1207,18 +1207,21 @@ function startLearn(reverse) {
   const set = getSets().find(s => s.id === currentSetId);
   if (!set || !set.words.length) { showToast('Brak słówek!'); return; }
   learnSetId   = currentSetId;
-  learnReverse = reverse || false;
+  learnReverse = set.fixedReverse ? true : (reverse || false);
   learnQueue   = shuffle([...set.words]);
   learnCorrect = 0;
   learnTotal   = learnQueue.length;
 
   document.getElementById('learn-title').textContent = `📖 ${set.name}`;
+  document.getElementById('learn-swap-btn').style.display = set.fixedReverse ? 'none' : '';
   updateDirectionBadge('learn');
   showView('learn');
   showLearnWord();
 }
 
 function toggleLearnSwap() {
+  const set = getSets().find(s => s.id === learnSetId);
+  if (set && set.fixedReverse) return;
   learnReverse = !learnReverse;
   updateDirectionBadge('learn');
   learnQueue   = shuffle([...getSets().find(s => s.id === learnSetId).words]);
@@ -1305,18 +1308,21 @@ function startTest(reverse) {
   const set = getSets().find(s => s.id === currentSetId);
   if (!set || !set.words.length) { showToast('Brak słówek!'); return; }
   testSetId   = currentSetId;
-  testReverse = reverse || false;
+  testReverse = set.fixedReverse ? true : (reverse || false);
   testQueue   = shuffle([...set.words]);
   testResults = [];
   testCurrent = 0;
 
   document.getElementById('test-title').textContent = `✏️ ${set.name}`;
+  document.getElementById('test-swap-btn').style.display = set.fixedReverse ? 'none' : '';
   updateDirectionBadge('test');
   showView('test');
   showTestWord();
 }
 
 function toggleTestSwap() {
+  const set = getSets().find(s => s.id === testSetId);
+  if (set && set.fixedReverse) return;
   testReverse = !testReverse;
   updateDirectionBadge('test');
   testQueue   = shuffle([...getSets().find(s => s.id === testSetId).words]);
@@ -3496,7 +3502,52 @@ document.addEventListener('keydown', e => {
 })();
 
 // ===== DEFAULT SETS =====
-const DEFAULT_SETS_VERSION = 2;
+
+// Generates number-word pairs 1-100 so we don't have to hand-type them.
+function numberToEnglishWords(n) {
+  const ones = ['zero','one','two','three','four','five','six','seven','eight','nine','ten',
+    'eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+  const tens = ['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+  if (n === 100) return 'one hundred';
+  if (n < 20) return ones[n];
+  const t = Math.floor(n / 10), o = n % 10;
+  return o === 0 ? tens[t] : `${tens[t]}-${ones[o]}`;
+}
+
+function numberToPolishWords(n) {
+  const ones = ['zero','jeden','dwa','trzy','cztery','pięć','sześć','siedem','osiem','dziewięć','dziesięć',
+    'jedenaście','dwanaście','trzynaście','czternaście','piętnaście','szesnaście','siedemnaście','osiemnaście','dziewiętnaście'];
+  const tens = ['','','dwadzieścia','trzydzieści','czterdzieści','pięćdziesiąt','sześćdziesiąt','siedemdziesiąt','osiemdziesiąt','dziewięćdziesiąt'];
+  if (n === 100) return 'sto';
+  if (n < 20) return ones[n];
+  const t = Math.floor(n / 10), o = n % 10;
+  return o === 0 ? tens[t] : `${tens[t]} ${ones[o]}`;
+}
+
+// word.pl holds a Polish number name (never bare digits — isSimilar() strips
+// digits/symbols, so a purely-numeric expected answer would match anything).
+function generateNumberWordsData() {
+  const words = [];
+  for (let n = 1; n <= 100; n++) {
+    words.push({ en: numberToEnglishWords(n), pl: numberToPolishWords(n) });
+  }
+  return words;
+}
+
+// word.pl is the equation shown to the child (prompt only, never checked as
+// an answer because this set is fixedReverse); word.en is the English result
+// she has to type. a<=b to skip commutative duplicates (7x8 / 8x7).
+function generateMultiplicationData() {
+  const words = [];
+  for (let a = 1; a <= 10; a++) {
+    for (let b = a; b <= 10; b++) {
+      words.push({ en: numberToEnglishWords(a * b), pl: `${a} × ${b} = ?` });
+    }
+  }
+  return words;
+}
+
+const DEFAULT_SETS_VERSION = 3;
 const DEFAULT_SETS_DATA = [
   { name: 'Dom', icon: '🏠', words: [
     {en:'house',pl:'dom'},{en:'apartment',pl:'mieszkanie'},{en:'room',pl:'pokój'},
@@ -3924,6 +3975,8 @@ const DEFAULT_SETS_DATA = [
     {en:'plan',pl:'planować / plan'},{en:'enjoy',pl:'lubić / cieszyć się'},
     {en:'inspire',pl:'inspirować'},{en:'discover',pl:'odkrywać'},
   ]},
+  { name: 'Liczby 1-100', icon: '🔢', fixedReverse: true, words: generateNumberWordsData() },
+  { name: 'Tabliczka mnożenia', icon: '✖️', fixedReverse: true, words: generateMultiplicationData() },
 ];
 
 function seedDefaultSets() {
@@ -3936,6 +3989,7 @@ function seedDefaultSets() {
       id: uid(),
       name: s.name,
       icon: s.icon,
+      fixedReverse: !!s.fixedReverse,
       words: s.words.map(w => ({ id: uid(), en: w.en, pl: w.pl })),
       results: [],
       createdAt: today(),
