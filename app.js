@@ -3182,7 +3182,7 @@ function nextHangmanWord() {
 function renderHangmanWord() {
   const letters = hangmanWord.split('');
   document.getElementById('hangman-word').innerHTML = letters.map(l => {
-    if (l === ' ') return `<span class="hangman-letter space"></span>`;
+    if (l === ' ' || l === '-') return `<span class="hangman-letter space">${l === '-' ? '-' : ''}</span>`;
     const shown = hangmanGuessed.includes(l) ? l : '';
     return `<span class="hangman-letter">${shown}</span>`;
   }).join('');
@@ -3232,7 +3232,7 @@ function guessLetter(l) {
   renderHangmanKeyboard();
 
   // Check win (this word)
-  const allGuessed = hangmanWord.split('').every(l => l === ' ' || hangmanGuessed.includes(l));
+  const allGuessed = hangmanWord.split('').every(l => l === ' ' || l === '-' || hangmanGuessed.includes(l));
   if (allGuessed) {
     hangmanCorrect++;
     showHangmanResult(true);
