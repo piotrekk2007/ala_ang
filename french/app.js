@@ -2349,7 +2349,10 @@ function speakKids(text, lang) {
     const utter = new SpeechSynthesisUtterance(text);
     utter.lang = lang;
     utter.rate = 0.8;
+    const voice = pickVoice(lang);
+    if (voice) utter.voice = voice;
     window.speechSynthesis.speak(utter);
+    warnIfVoiceMissing(lang);
   } catch {}
 }
 
@@ -3079,14 +3082,52 @@ function esc(s) {
 // Escapes a string for embedding inside a single-quoted onclick="...('...')" attribute.
 function jsStr(s) { return String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'"); }
 
+// ===== SPEECH VOICES =====
+// Windows/Chrome only expose whatever TTS voices the user has installed at the
+// OS level, so a language with no installed voice falls back to a generic one
+// that mispronounces everything. We pick the best *installed* voice for a
+// language (preferring online/neural ones, which sound far more natural than
+// the default local SAPI voices), and warn once if none exists at all.
+let voiceCache = [];
+function refreshVoiceCache() {
+  try { voiceCache = window.speechSynthesis.getVoices() || []; } catch { voiceCache = []; }
+}
+if ('speechSynthesis' in window) {
+  refreshVoiceCache();
+  window.speechSynthesis.onvoiceschanged = refreshVoiceCache;
+}
+
+function pickVoice(lang) {
+  const base = lang.split('-')[0].toLowerCase();
+  const candidates = voiceCache.filter(v => v.lang && v.lang.toLowerCase().startsWith(base));
+  if (!candidates.length) return null;
+  const online  = candidates.find(v => !v.localService);
+  const natural = candidates.find(v => /natural|online|neural|google|wavenet/i.test(v.name));
+  const exact   = candidates.find(v => v.lang.toLowerCase() === lang.toLowerCase());
+  return online || natural || exact || candidates[0];
+}
+
+const voiceMissingWarned = {};
+function warnIfVoiceMissing(lang) {
+  const base = lang.split('-')[0].toLowerCase();
+  if (pickVoice(lang) || voiceMissingWarned[base]) return;
+  voiceMissingWarned[base] = true;
+  const langName = base === 'fr' ? 'francuskiego' : base === 'pl' ? 'polskiego' : base;
+  showToast(`🔈 Na tym urządzeniu brak zainstalowanego głosu ${langName} — wymowa może brzmieć słabo. Dodaj głos w ustawieniach systemu (Mowa/Text-to-speech).`);
+}
+
 function speakWord(text, lang) {
   try {
     if (!('speechSynthesis' in window) || !text) return;
+    lang = lang || 'fr-FR';
     window.speechSynthesis.cancel();
     const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = lang || 'fr-FR';
+    utter.lang = lang;
     utter.rate = 0.9;
+    const voice = pickVoice(lang);
+    if (voice) utter.voice = voice;
     window.speechSynthesis.speak(utter);
+    warnIfVoiceMissing(lang);
   } catch {}
 }
 
