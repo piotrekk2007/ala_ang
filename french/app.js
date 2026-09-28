@@ -1179,6 +1179,8 @@ function renderSetDetail(id) {
     <div class="stat-badge"><div class="stat-num">${attempts}</div><div class="stat-label">Testów</div></div>
     <div class="stat-badge"><div class="stat-num">${best !== null ? best + '%' : '—'}</div><div class="stat-label">Najlepszy wynik</div></div>`;
 
+  renderWordCountPicker();
+
   document.getElementById('set-words-preview').innerHTML = `
     <div class="words-preview-header">
       <h3>Wszystkie słówka (${set.words.length})</h3>
@@ -1186,7 +1188,10 @@ function renderSetDetail(id) {
     </div>
     <div id="words-list-body" style="display:none">
       ${set.words.map(w => `<div class="words-list-item">
-        <span class="word-en">${esc(w.en)}</span>
+        <span class="word-en-wrap">
+          <span class="word-en">${esc(w.en)}</span>
+          <button type="button" class="word-speak-btn" onclick="speakWord('${jsStr(w.en)}','fr-FR')" title="Odsłuchaj wymowę" aria-label="Odsłuchaj wymowę">🔊</button>
+        </span>
         <span class="word-pl">${esc(w.pl)}</span>
       </div>`).join('')}
     </div>`;
@@ -1208,7 +1213,7 @@ function startLearn(reverse) {
   if (!set || !set.words.length) { showToast('Brak słówek!'); return; }
   learnSetId   = currentSetId;
   learnReverse = reverse || false;
-  learnQueue   = shuffle([...set.words]);
+  learnQueue   = sampleSetWords(set);
   learnCorrect = 0;
   learnTotal   = learnQueue.length;
 
@@ -1221,7 +1226,7 @@ function startLearn(reverse) {
 function toggleLearnSwap() {
   learnReverse = !learnReverse;
   updateDirectionBadge('learn');
-  learnQueue   = shuffle([...getSets().find(s => s.id === learnSetId).words]);
+  learnQueue   = sampleSetWords(getSets().find(s => s.id === learnSetId));
   learnCorrect = 0;
   learnTotal   = learnQueue.length;
   showLearnWord();
@@ -1230,7 +1235,21 @@ function toggleLearnSwap() {
 function updateDirectionBadge(mode) {
   const id = mode === 'learn' ? 'learn-direction-badge' : 'test-direction-badge';
   const rev = mode === 'learn' ? learnReverse : testReverse;
-  document.getElementById(id).textContent = rev ? '🇵🇱 Polski → 🇬🇧 Angielski' : '🇬🇧 Angielski → 🇵🇱 Polski';
+  document.getElementById(id).textContent = rev ? '🇵🇱 Polski → 🇫🇷 Francuski' : '🇫🇷 Francuski → 🇵🇱 Polski';
+}
+
+// Speaks whatever is currently shown as the prompt (never the hidden answer),
+// in the matching language.
+function speakLearnWord() {
+  const word = learnQueue[0];
+  if (!word) return;
+  speakWord(learnReverse ? word.pl : word.en, learnReverse ? 'pl-PL' : 'fr-FR');
+}
+
+function speakTestWord() {
+  const word = testQueue[testCurrent];
+  if (!word) return;
+  speakWord(testReverse ? word.pl : word.en, testReverse ? 'pl-PL' : 'fr-FR');
 }
 
 function showLearnWord() {
@@ -1306,7 +1325,7 @@ function startTest(reverse) {
   if (!set || !set.words.length) { showToast('Brak słówek!'); return; }
   testSetId   = currentSetId;
   testReverse = reverse || false;
-  testQueue   = shuffle([...set.words]);
+  testQueue   = sampleSetWords(set);
   testResults = [];
   testCurrent = 0;
 
@@ -1319,7 +1338,7 @@ function startTest(reverse) {
 function toggleTestSwap() {
   testReverse = !testReverse;
   updateDirectionBadge('test');
-  testQueue   = shuffle([...getSets().find(s => s.id === testSetId).words]);
+  testQueue   = sampleSetWords(getSets().find(s => s.id === testSetId));
   testResults = [];
   testCurrent = 0;
   showTestWord();
@@ -3057,6 +3076,20 @@ function esc(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+// Escapes a string for embedding inside a single-quoted onclick="...('...')" attribute.
+function jsStr(s) { return String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'"); }
+
+function speakWord(text, lang) {
+  try {
+    if (!('speechSynthesis' in window) || !text) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = lang || 'fr-FR';
+    utter.rate = 0.9;
+    window.speechSynthesis.speak(utter);
+  } catch {}
+}
+
 function today() { return new Date().toISOString().slice(0, 10); }
 
 function slug(s) { return s.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,''); }
@@ -3067,6 +3100,32 @@ function shuffle(arr) {
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
+}
+
+// How many words a single Learn/Test round samples from the set's full pool.
+// User-picked (10/20/30/40/all) and remembered across sessions.
+const WORD_COUNT_OPTIONS = [10, 20, 30, 40, 'all'];
+let selectedWordCount = DB.get('wordCountPref') ?? 20;
+
+function setWordCount(val) {
+  selectedWordCount = val;
+  DB.set('wordCountPref', val);
+  renderWordCountPicker();
+}
+
+function renderWordCountPicker() {
+  const row = document.getElementById('wordcount-row');
+  if (!row) return;
+  row.innerHTML = WORD_COUNT_OPTIONS.map(opt => `
+    <button type="button" class="wordcount-btn ${selectedWordCount === opt ? 'active' : ''}"
+      onclick="setWordCount(${opt === 'all' ? "'all'" : opt})">${opt === 'all' ? 'Wszystkie' : opt}</button>
+  `).join('');
+}
+
+function sampleSetWords(set) {
+  const shuffled = shuffle([...set.words]);
+  const size = selectedWordCount === 'all' ? null : selectedWordCount;
+  return size && shuffled.length > size ? shuffled.slice(0, size) : shuffled;
 }
 
 // Accept answer against expected (which may contain variants separated by '/')

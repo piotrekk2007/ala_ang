@@ -317,8 +317,34 @@ code { background: var(--gray-light); padding: 2px 6px; border-radius: 4px; font
   font-size: 0.95rem;
 }
 .words-list-item:last-child { border-bottom: none; }
+.word-en-wrap { display: flex; align-items: center; gap: 6px; }
 .word-en { font-weight: 700; }
 .word-pl { color: var(--text-light); }
+.word-speak-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  padding: 2px 5px;
+  border-radius: 6px;
+  line-height: 1;
+}
+.word-speak-btn:hover { background: var(--gray-light); }
+
+.wordcount-picker { margin-bottom: 20px; }
+.wordcount-label { display: block; font-size: 0.9rem; color: var(--text-light); margin-bottom: 8px; }
+.wordcount-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.wordcount-btn {
+  background: var(--white);
+  border: 2px solid var(--gray-light);
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: var(--text);
+}
+.wordcount-btn.active { background: var(--purple); border-color: var(--purple); color: var(--white); }
 
 /* ===== LEARN / TEST ===== */
 .learn-progress-bar {
@@ -379,6 +405,20 @@ code { background: var(--gray-light); padding: 2px 6px; border-radius: 4px; font
   margin-bottom: 28px;
   min-height: 22px;
 }
+
+.speak-btn {
+  display: block;
+  margin: 0 auto 16px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: none;
+  background: var(--purple-light);
+  color: var(--purple);
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+.speak-btn:hover { background: var(--purple); color: var(--white); }
 
 .learn-answer-input {
   width: 100%;
