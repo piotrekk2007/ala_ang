@@ -22,6 +22,21 @@ const BADGES_DEF = [
   { id:'chat10',       icon:'🗣️', name:'Gadatliwa Ala',       desc:'Ukończ 10 rozmów w Pogadajmy' },
   { id:'chat_explorer',icon:'🗺️', name:'Odkrywczyni scenariuszy', desc:'Wypróbuj 10 różnych scenariuszy rozmów' },
   { id:'chat_flawless',icon:'🌟', name:'Bez błędu!',          desc:'Zakończ rozmowę bez żadnych błędów w analizie "Popraw razem"' },
+  { id:'streak60',     icon:'🌙', name:'Dwa miesiące!',      desc:'Ucz się 60 dni z rzędu' },
+  { id:'streak100',    icon:'🪐', name:'Setka dni!',         desc:'Ucz się 100 dni z rzędu' },
+  { id:'hundred_tests', icon:'🗂️', name:'100 testów!',        desc:'Ukończ 100 testów' },
+  { id:'perfect5',     icon:'🌠', name:'Pięć idealnych',     desc:'Zdobądź 100% pięć razy' },
+  { id:'ten_sets',     icon:'🗃️', name:'Dziesięć zestawów',  desc:'Stwórz 10 zestawów słówek' },
+  { id:'words150',     icon:'🎈', name:'150 słówek',         desc:'Miej 150 słówek w zestawach' },
+  { id:'words250',     icon:'🌌', name:'250 słówek!',        desc:'Miej 250 słówek w zestawach' },
+  { id:'songs5',       icon:'🎶', name:'Playlista',          desc:'Dodaj 5 piosenek' },
+  { id:'chat25',       icon:'🎙️', name:'Rozmówczyni',        desc:'Ukończ 25 rozmów w Pogadajmy' },
+  { id:'kids_stars10', icon:'⭐', name:'Gwiazdkowa passa',   desc:'Zdobądź 10 gwiazdek w Dla najmłodszych' },
+  { id:'kids_stars50', icon:'💫', name:'Gwiazdozbiór',       desc:'Zdobądź 50 gwiazdek w Dla najmłodszych' },
+  { id:'numbers_master', icon:'🔢', name:'Mistrzyni liczb',   desc:'Zdobądź 100% w teście "Liczby 1-100"' },
+  { id:'times_master', icon:'✖️', name:'Mistrzyni tabliczki', desc:'Zdobądź 100% w teście "Tabliczka mnożenia"' },
+  { id:'hangman_wins10', icon:'🪢', name:'Zwyciężczyni Wisielca', desc:'Odgadnij 10 słówek w Wisielcu' },
+  { id:'match_wins10', icon:'🃏', name:'Mistrzyni pamięci',  desc:'Ukończ 10 gier w Dopasuj pary' },
 ];
 
 // ===== CHAT SCENARIOS (Pogadajmy) =====
@@ -1392,7 +1407,8 @@ function finishTest() {
   const set  = getSets().find(s => s.id === testSetId);
   prog.history.unshift({ date: today(), setName: set ? set.name : '?', score: pct, correct, total, stars });
   prog.history = prog.history.slice(0, 50);
-  checkBadges(prog, pct, sets);
+  prog.totalTests = (prog.totalTests || 0) + 1;
+  checkBadges(prog, pct, sets, set);
   saveProgress(prog);
 
   // Render result
@@ -1990,6 +2006,7 @@ function checkChatBadges(prog) {
   const add = id => { if (!prog.badges.includes(id)) { prog.badges.push(id); showToast(`🎖️ Nowa odznaka: ${BADGES_DEF.find(b=>b.id===id)?.name || id}!`); } };
   if (prog.chatStats.count >= 1) add('chat_first');
   if (prog.chatStats.count >= 10) add('chat10');
+  if (prog.chatStats.count >= 25) add('chat25');
   if (prog.chatStats.scenarios.length >= 10) add('chat_explorer');
 }
 
@@ -2348,6 +2365,9 @@ function addKidsStar() {
   kidsStars++;
   localStorage.setItem('kids_stars', kidsStars);
   updateKidsStarsDisplay();
+  const prog = getProgress();
+  checkBadges(prog, null, getSets(), null);
+  saveProgress(prog);
 }
 
 function exitKids(view) {
@@ -3010,29 +3030,44 @@ function renderProgress() {
     : '<p style="color:var(--text-light)">Brak historii wypracowań. Napisz swoje pierwsze!</p>';
 }
 
-function checkBadges(prog, pct, sets) {
+function checkBadges(prog, pct, sets, set) {
   const add = id => { if (!prog.badges.includes(id)) { prog.badges.push(id); showToast(`🎖️ Nowa odznaka: ${BADGES_DEF.find(b=>b.id===id)?.name || id}!`); } };
   const history = prog.history;
   const totalWords = sets.reduce((s, set) => s + (set.words?.length || 0), 0);
   if (history.length >= 1)               add('first_test');
   if (pct === 100)                        add('perfect');
   if (history.filter(h=>h.score===100).length >= 3) add('perfect3');
+  if (history.filter(h=>h.score===100).length >= 5) add('perfect5');
   if (prog.streak.count >= 3)            add('streak3');
   if (prog.streak.count >= 7)            add('streak7');
   if (prog.streak.count >= 14)           add('streak14');
   if (prog.streak.count >= 30)           add('streak30');
+  if (prog.streak.count >= 60)           add('streak60');
+  if (prog.streak.count >= 100)          add('streak100');
   if (history.length >= 5)              add('five_tests');
   if (history.length >= 20)             add('twenty_tests');
   if (history.length >= 50)             add('fifty_tests');
+  if ((prog.totalTests || 0) >= 100)    add('hundred_tests');
   if (sets.length >= 3)                  add('all_sets');
   if (sets.length >= 5)                  add('five_sets');
+  if (sets.length >= 10)                 add('ten_sets');
   if (totalWords >= 50)                  add('words50');
   if (totalWords >= 100)                 add('words100');
+  if (totalWords >= 150)                 add('words150');
+  if (totalWords >= 250)                 add('words250');
   if (getSongs().length >= 1)            add('song_added');
   if (getSongs().length >= 3)            add('songs3');
+  if (getSongs().length >= 5)            add('songs5');
   if (pct >= 80 && history.length >= 3 && history.slice(0,3).every(h=>h.score>=80)) add('three_good');
   const setResults = sets.find(s=>s.id===testSetId)?.results || [];
   if (setResults.length >= 2 && pct > (setResults[setResults.length-2]?.score||0)) add('improved');
+  if (pct === 100 && set?.name === 'Liczby 1-100')        add('numbers_master');
+  if (pct === 100 && set?.name === 'Tabliczka mnożenia')  add('times_master');
+  const kidsStars = parseInt(localStorage.getItem('kids_stars') || '0', 10);
+  if (kidsStars >= 10)                    add('kids_stars10');
+  if (kidsStars >= 50)                    add('kids_stars50');
+  if ((prog.hangmanWordsWon || 0) >= 10)  add('hangman_wins10');
+  if ((prog.matchGamesCompleted || 0) >= 10) add('match_wins10');
 }
 
 // ===== MODAL =====
@@ -3235,6 +3270,10 @@ function guessLetter(l) {
   const allGuessed = hangmanWord.split('').every(l => l === ' ' || l === '-' || hangmanGuessed.includes(l));
   if (allGuessed) {
     hangmanCorrect++;
+    const prog = getProgress();
+    prog.hangmanWordsWon = (prog.hangmanWordsWon || 0) + 1;
+    checkBadges(prog, null, getSets(), null);
+    saveProgress(prog);
     showHangmanResult(true);
     return;
   }
@@ -3385,6 +3424,11 @@ function showMatchComplete() {
   const mins    = Math.floor(secs / 60);
   const timeStr = mins > 0 ? `${mins} min ${secs % 60} sek` : `${secs} sek`;
   const perfect = matchMoves === matchPairs;
+
+  const prog = getProgress();
+  prog.matchGamesCompleted = (prog.matchGamesCompleted || 0) + 1;
+  checkBadges(prog, null, getSets(), null);
+  saveProgress(prog);
 
   document.getElementById('match-grid').style.display = 'none';
   document.getElementById('match-complete').style.display = '';
