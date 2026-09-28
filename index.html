@@ -142,6 +142,10 @@
     </div>
   </div>
   <div class="set-stats" id="set-detail-stats"></div>
+  <div class="wordcount-picker">
+    <span class="wordcount-label">Ile słówek losować do Nauki/Testu:</span>
+    <div class="wordcount-row" id="wordcount-row"></div>
+  </div>
   <div class="set-actions">
     <button class="btn btn-large btn-purple" onclick="startLearn()">📖 Nauka</button>
     <button class="btn btn-large btn-green" onclick="startTest()">✏️ Test</button>
@@ -165,6 +169,7 @@
   <div class="learn-counter" id="learn-counter"></div>
   <div class="learn-card" id="learn-card">
     <div class="learn-word" id="learn-word"></div>
+    <button type="button" class="speak-btn" id="learn-speak-btn" onclick="speakLearnWord()" title="Odsłuchaj wymowę" aria-label="Odsłuchaj wymowę">🔊</button>
     <div class="learn-hint" id="learn-hint"></div>
     <input type="text" id="learn-input" class="learn-answer-input" placeholder="Wpisz odpowiedź..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
       />
@@ -191,6 +196,7 @@
   <div class="learn-counter" id="test-counter"></div>
   <div class="learn-card" id="test-card">
     <div class="learn-word" id="test-word"></div>
+    <button type="button" class="speak-btn" id="test-speak-btn" onclick="speakTestWord()" title="Odsłuchaj wymowę" aria-label="Odsłuchaj wymowę">🔊</button>
     <input type="text" id="test-input" class="learn-answer-input" placeholder="Wpisz odpowiedź..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
       />
     <button class="btn btn-primary btn-large" id="test-check-btn" onclick="checkTestAnswer()">Sprawdź ✓</button>

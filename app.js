@@ -1194,6 +1194,8 @@ function renderSetDetail(id) {
     <div class="stat-badge"><div class="stat-num">${attempts}</div><div class="stat-label">Testów</div></div>
     <div class="stat-badge"><div class="stat-num">${best !== null ? best + '%' : '—'}</div><div class="stat-label">Najlepszy wynik</div></div>`;
 
+  renderWordCountPicker();
+
   document.getElementById('set-words-preview').innerHTML = `
     <div class="words-preview-header">
       <h3>Wszystkie słówka (${set.words.length})</h3>
@@ -1201,7 +1203,10 @@ function renderSetDetail(id) {
     </div>
     <div id="words-list-body" style="display:none">
       ${set.words.map(w => `<div class="words-list-item">
-        <span class="word-en">${esc(w.en)}</span>
+        <span class="word-en-wrap">
+          <span class="word-en">${esc(w.en)}</span>
+          <button type="button" class="word-speak-btn" onclick="speakWord('${jsStr(w.en)}','en-US')" title="Odsłuchaj wymowę" aria-label="Odsłuchaj wymowę">🔊</button>
+        </span>
         <span class="word-pl">${esc(w.pl)}</span>
       </div>`).join('')}
     </div>`;
@@ -1249,6 +1254,20 @@ function updateDirectionBadge(mode) {
   const id = mode === 'learn' ? 'learn-direction-badge' : 'test-direction-badge';
   const rev = mode === 'learn' ? learnReverse : testReverse;
   document.getElementById(id).textContent = rev ? '🇵🇱 Polski → 🇬🇧 Angielski' : '🇬🇧 Angielski → 🇵🇱 Polski';
+}
+
+// Speaks whatever is currently shown as the prompt (never the hidden answer),
+// in the matching language.
+function speakLearnWord() {
+  const word = learnQueue[0];
+  if (!word) return;
+  speakWord(learnReverse ? word.pl : word.en, learnReverse ? 'pl-PL' : 'en-US');
+}
+
+function speakTestWord() {
+  const word = testQueue[testCurrent];
+  if (!word) return;
+  speakWord(testReverse ? word.pl : word.en, testReverse ? 'pl-PL' : 'en-US');
 }
 
 function showLearnWord() {
@@ -3098,6 +3117,20 @@ function esc(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+// Escapes a string for embedding inside a single-quoted onclick="...('...')" attribute.
+function jsStr(s) { return String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'"); }
+
+function speakWord(text, lang) {
+  try {
+    if (!('speechSynthesis' in window) || !text) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = lang || 'en-US';
+    utter.rate = 0.9;
+    window.speechSynthesis.speak(utter);
+  } catch {}
+}
+
 function today() { return new Date().toISOString().slice(0, 10); }
 
 function slug(s) { return s.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,''); }
@@ -3110,13 +3143,30 @@ function shuffle(arr) {
   return arr;
 }
 
-// Some generated sets have far more words than a single learn/test round
-// should cover, so only a random sample is drawn each time (looked up by
-// name, not stored on the set, so it applies however/whenever the set was seeded).
-const SAMPLE_SIZE_BY_SET_NAME = { 'Liczby 1-100': 40, 'Tabliczka mnożenia': 40 };
+// How many words a single Learn/Test round samples from the set's full pool.
+// User-picked (10/20/30/40/all) and remembered across sessions; defaults to
+// 20 since a full 40-word round turned out to be a lot for a kid to do at once.
+const WORD_COUNT_OPTIONS = [10, 20, 30, 40, 'all'];
+let selectedWordCount = DB.get('wordCountPref') ?? 20;
+
+function setWordCount(val) {
+  selectedWordCount = val;
+  DB.set('wordCountPref', val);
+  renderWordCountPicker();
+}
+
+function renderWordCountPicker() {
+  const row = document.getElementById('wordcount-row');
+  if (!row) return;
+  row.innerHTML = WORD_COUNT_OPTIONS.map(opt => `
+    <button type="button" class="wordcount-btn ${selectedWordCount === opt ? 'active' : ''}"
+      onclick="setWordCount(${opt === 'all' ? "'all'" : opt})">${opt === 'all' ? 'Wszystkie' : opt}</button>
+  `).join('');
+}
+
 function sampleSetWords(set) {
   const shuffled = shuffle([...set.words]);
-  const size = SAMPLE_SIZE_BY_SET_NAME[set.name];
+  const size = selectedWordCount === 'all' ? null : selectedWordCount;
   return size && shuffled.length > size ? shuffled.slice(0, size) : shuffled;
 }
 
