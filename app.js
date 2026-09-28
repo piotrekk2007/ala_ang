@@ -1244,7 +1244,7 @@ function toggleLearnSwap() {
   if (set && set.fixedReverse) return;
   learnReverse = !learnReverse;
   updateDirectionBadge('learn');
-  learnQueue   = shuffle([...getSets().find(s => s.id === learnSetId).words]);
+  learnQueue   = sampleSetWords(set);
   learnCorrect = 0;
   learnTotal   = learnQueue.length;
   showLearnWord();
@@ -1359,7 +1359,7 @@ function toggleTestSwap() {
   if (set && set.fixedReverse) return;
   testReverse = !testReverse;
   updateDirectionBadge('test');
-  testQueue   = shuffle([...getSets().find(s => s.id === testSetId).words]);
+  testQueue   = sampleSetWords(set);
   testResults = [];
   testCurrent = 0;
   showTestWord();
