@@ -192,13 +192,20 @@ body {
 .char-figure img { width: 100%; max-width: 100%; border-radius: var(--radius-sm); border: 3px solid var(--gray-light); background: var(--white); }
 .char-figure figcaption { font-size: 0.85rem; color: var(--text-light); margin-top: 6px; }
 .char-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 12px; }
+.char-name-row { margin-bottom: 18px; }
+.char-name-label { display: block; font-weight: 700; color: var(--purple); margin-bottom: 6px; }
+.char-name-row .big-input { max-width: 320px; text-align: center; font-size: 1.2rem; font-weight: 700; }
 #character-print-area { display: none; }
 @media print {
   body.print-character * { visibility: hidden; }
   body.print-character #character-print-area,
   body.print-character #character-print-area * { visibility: visible; }
-  body.print-character #character-print-area { display: block; position: absolute; left: 0; top: 0; width: 100%; text-align: center; }
-  body.print-character #character-print-img { max-width: 100%; max-height: 98vh; }
+  body.print-character #character-print-area { display: block; position: absolute; left: 0; top: 0; width: 100%; text-align: center; color: #000; }
+  body.print-character #character-print-name { font-size: 2.2rem; margin: 0 0 12px; }
+  body.print-character #character-print-img { max-width: 100%; max-height: 70vh; }
+  body.print-character #character-print-desc { text-align: left; margin: 16px 24px 0; font-size: 1.2rem; }
+  body.print-character .cpd-label { font-weight: 700; margin-bottom: 4px; }
+  body.print-character #character-print-details { margin: 8px 0 0; padding-left: 22px; }
 }
 
 .nav-btn-settings { opacity: 0.7; font-size: 1.1rem; padding: 8px 10px; }

@@ -22,6 +22,8 @@ const BADGES_DEF = [
   { id:'chat10',       icon:'🗣️', name:'Gadatliwa Ala',       desc:'Ukończ 10 rozmów w Pogadajmy' },
   { id:'chat_explorer',icon:'🗺️', name:'Odkrywczyni scenariuszy', desc:'Wypróbuj 10 różnych scenariuszy rozmów' },
   { id:'chat_flawless',icon:'🌟', name:'Bez błędu!',          desc:'Zakończ rozmowę bez żadnych błędów w analizie "Popraw razem"' },
+  { id:'character_first', icon:'🎨', name:'Artystka',         desc:'Stwórz swoją pierwszą postać' },
+  { id:'characters5',  icon:'🖼️', name:'Galeria postaci',    desc:'Stwórz 5 postaci' },
 ];
 
 // ===== CHAT SCENARIOS (Pogadajmy) =====
@@ -597,6 +599,235 @@ let essaySetupState = { level: null };
 let currentEssay = null;
 let essayVocabWords = {};
 
+// ===== CHARACTER CREATOR (Stwórz postać) =====
+const GEMINI_IMAGE_MODEL_DEFAULT = 'gemini-2.5-flash-image';
+function getImageModel() { return localStorage.getItem('gemini_image_model') || GEMINI_IMAGE_MODEL_DEFAULT; }
+
+const CHAR_CHIPS = [
+  'Il a de grands yeux.', 'Il a de grandes dents pointues.', 'Il a une longue queue.',
+  'Il a des ailes.', 'Il est très drôle.', 'Il est tout petit.', 'Il est très grand.',
+  'Il est gentil.', 'Il est vert.', 'Il peut voler.',
+];
+
+const CHAR_FALLBACK_QUESTIONS = [
+  { q: 'De quelle couleur est-il ?', pl: 'Jakiego jest koloru?', options: [
+    { emoji: '🔴', text: 'rouge' }, { emoji: '🔵', text: 'bleu' }, { emoji: '🟢', text: 'vert' }, { emoji: '🟣', text: 'violet' } ] },
+  { q: 'Est-il grand ou petit ?', pl: 'Czy jest duży czy mały?', options: [
+    { emoji: '🐘', text: 'grand' }, { emoji: '🐭', text: 'petit' } ] },
+  { q: 'Où habite-t-il ?', pl: 'Gdzie mieszka?', options: [
+    { emoji: '🌳', text: 'dans la forêt' }, { emoji: '🌊', text: 'dans la mer' }, { emoji: '☁️', text: 'dans les nuages' }, { emoji: '🏠', text: 'dans une maison' } ] },
+];
+
+let charState = { desc: '', name: '', questions: [], answers: [], qIndex: 0, colorImg: null, coloringImg: null };
+
+function renderCharacter() {
+  document.getElementById('char-chips').innerHTML = CHAR_CHIPS.map(c =>
+    `<button type="button" class="char-chip" onclick="addCharacterChip('${jsStr(c)}')">${esc(c)}</button>`).join('');
+  document.getElementById('char-name-input').value = charState.name || '';
+  showCharacterStep(charState.colorImg ? 'result' : 'describe');
+}
+
+function showCharacterStep(step) {
+  ['describe', 'questions', 'loading', 'result'].forEach(s => {
+    document.getElementById('char-step-' + s).style.display = s === step ? '' : 'none';
+  });
+}
+
+function addCharacterChip(text) {
+  const input = document.getElementById('char-input');
+  const cur = input.value.trim();
+  if (cur.includes(text)) return;
+  input.value = cur ? cur + ' ' + text : text;
+  input.focus();
+}
+
+function characterErrorMessage(e) {
+  const m = String(e && e.message || e);
+  if (m === 'no-key') return 'Najpierw wpisz klucz Gemini API (ikona ⚙️ u góry).';
+  if (m === 'http-429') return 'Za dużo rysowania naraz — odczekaj chwilę i spróbuj ponownie. 🙂';
+  if (m === 'http-403' || m === 'http-401') return 'Klucz API nie ma dostępu do rysowania obrazków (może wymagać płatnego planu w AI Studio).';
+  if (m === 'http-404') return 'Nie znaleziono modelu obrazkowego — sprawdź jego nazwę w ustawieniach ⚙️.';
+  if (m === 'no-image') return 'Nie udało się narysować tej postaci. Spróbuj opisać ją trochę inaczej. 🙂';
+  return 'Coś poszło nie tak. Spróbuj jeszcze raz za chwilę.';
+}
+
+async function startCharacterQuestions() {
+  const desc = document.getElementById('char-input').value.trim();
+  if (desc.length < 5) { showToast('Opisz postać trochę dokładniej! ✏️'); return; }
+  if (!getGeminiKey()) { showToast(characterErrorMessage(new Error('no-key'))); openApiSettings(); return; }
+  charState = { desc, name: '', questions: [], answers: [], qIndex: 0, colorImg: null, coloringImg: null };
+  document.getElementById('char-loading-text').textContent = 'Zastanawiam się nad pytaniami...';
+  showCharacterStep('loading');
+  try {
+    charState.questions = await fetchCharacterQuestions(desc);
+  } catch {
+    charState.questions = CHAR_FALLBACK_QUESTIONS;
+  }
+  charState.qIndex = 0;
+  renderCharacterQuestion();
+  showCharacterStep('questions');
+}
+
+async function fetchCharacterQuestions(desc) {
+  const system = 'You help a Polish child (age 8-10) learning French invent a cartoon character. ' +
+    'Given the child\'s description, ask exactly 3 SHORT, SIMPLE clarifying questions in very easy French (A1 level) ' +
+    'about details that the description does NOT already say (e.g. colour, size, mood, where it lives, what it likes). ' +
+    'Each question has 3-4 answer options with one fitting emoji and a 1-3 word French answer. ' +
+    'Also give a Polish translation of each question. Everything must be friendly and child-safe. ' +
+    'Reply ONLY with JSON, no markdown: {"questions":[{"q":"...","pl":"...","options":[{"emoji":"...","text":"..."}]}]}';
+  const raw = await callGemini(system, [{ role: 'user', parts: [{ text: 'Description (French): ' + desc }] }]);
+  const data = JSON.parse(raw.replace(/```json/gi, '').replace(/```/g, '').trim());
+  const qs = (data.questions || []).slice(0, 3).filter(q =>
+    q && typeof q.q === 'string' && Array.isArray(q.options) && q.options.length >= 2 &&
+    q.options.every(o => o && typeof o.text === 'string'));
+  if (qs.length < 2) throw new Error('bad-questions');
+  return qs.map(q => ({ q: q.q, pl: q.pl || '', options: q.options.slice(0, 4).map(o => ({ emoji: o.emoji || '⭐', text: o.text })) }));
+}
+
+function renderCharacterQuestion() {
+  const q = charState.questions[charState.qIndex];
+  document.getElementById('char-q-progress').textContent = `Pytanie ${charState.qIndex + 1} z ${charState.questions.length}`;
+  document.getElementById('char-q-text').textContent = q.q;
+  document.getElementById('char-q-pl').textContent = q.pl;
+  document.getElementById('char-q-options').innerHTML = q.options.map((o, i) =>
+    `<button type="button" class="char-option" onclick="pickCharacterAnswer(${i})"><span class="char-option-emoji">${esc(o.emoji)}</span>${esc(o.text)}</button>`).join('');
+}
+
+function pickCharacterAnswer(i) {
+  const q = charState.questions[charState.qIndex];
+  charState.answers.push({ q: q.q, a: q.options[i].text });
+  charState.qIndex++;
+  if (charState.qIndex < charState.questions.length) renderCharacterQuestion();
+  else generateCharacterColorImage();
+}
+
+function buildCharacterPrompt() {
+  const details = charState.answers.map(a => `- ${a.q} ${a.a}`).join('\n');
+  return 'A child is using a language-learning app and is creating a drawn cartoon character. ' +
+    'Draw the character described by the child (in French): "' + charState.desc + '".\n' +
+    'Extra details the child chose:\n' + details + '\n' +
+    'Style: a fun, cheerful, friendly children\'s-book illustration with bright colours, simple rounded shapes and a big smile. ' +
+    'Always make it cute and funny, never scary, violent or creepy (even if the description mentions teeth or claws). ' +
+    'Show the whole character on a plain light background. Do not put any text or letters in the image.';
+}
+
+function extractImagePart(data) {
+  const parts = data?.candidates?.[0]?.content?.parts || [];
+  const p = parts.find(x => (x.inlineData || x.inline_data));
+  const inline = p && (p.inlineData || p.inline_data);
+  if (!inline || !inline.data) return null;
+  return { mime: inline.mimeType || inline.mime_type || 'image/png', data: inline.data };
+}
+
+async function callGeminiImage(parts) {
+  const key = getGeminiKey();
+  if (!key) throw new Error('no-key');
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(getImageModel())}:generateContent?key=${key}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ parts }], generationConfig: { responseModalities: ['TEXT', 'IMAGE'] } }),
+    }
+  );
+  if (!res.ok) throw new Error('http-' + res.status);
+  const img = extractImagePart(await res.json());
+  if (!img) throw new Error('no-image');
+  return img;
+}
+
+async function generateCharacterColorImage() {
+  document.getElementById('char-loading-text').textContent = 'Rysuję Twoją postać... 🖍️ (to może potrwać chwilę)';
+  showCharacterStep('loading');
+  try {
+    charState.colorImg = await callGeminiImage([{ text: buildCharacterPrompt() }]);
+    charState.coloringImg = null;
+    document.getElementById('char-color-img').src = `data:${charState.colorImg.mime};base64,${charState.colorImg.data}`;
+    document.getElementById('char-name-input').value = '';
+    document.getElementById('char-coloring-figure').style.display = 'none';
+    document.getElementById('char-make-coloring-btn').style.display = '';
+    document.getElementById('char-make-coloring-btn').disabled = false;
+    document.getElementById('char-print-btn').style.display = 'none';
+    document.getElementById('char-dl-coloring-btn').style.display = 'none';
+    showCharacterStep('result');
+    const prog = getProgress();
+    prog.charactersCreated = (prog.charactersCreated || 0) + 1;
+    checkBadges(prog, null, getSets(), null);
+    saveProgress(prog);
+  } catch (e) {
+    showToast(characterErrorMessage(e));
+    showCharacterStep('describe');
+  }
+}
+
+async function makeCharacterColoring() {
+  if (!charState.colorImg) return;
+  const btn = document.getElementById('char-make-coloring-btn');
+  btn.disabled = true;
+  btn.textContent = '🖍️ Rysuję kolorowankę...';
+  try {
+    charState.coloringImg = await callGeminiImage([
+      { inlineData: { mimeType: charState.colorImg.mime, data: charState.colorImg.data } },
+      { text: 'Turn this character into a printable colouring page for children: clean, thick black outlines only on a pure white background, ' +
+              'no filled areas, no shading, no grey, no text or letters. Keep exactly the same character, pose and cheerful look.' },
+    ]);
+    document.getElementById('char-coloring-img').src = `data:${charState.coloringImg.mime};base64,${charState.coloringImg.data}`;
+    document.getElementById('char-coloring-figure').style.display = '';
+    btn.style.display = 'none';
+    document.getElementById('char-print-btn').style.display = '';
+    document.getElementById('char-dl-coloring-btn').style.display = '';
+  } catch (e) {
+    showToast(characterErrorMessage(e));
+    btn.disabled = false;
+  }
+  btn.textContent = '🖨️ Zrób kolorowankę';
+}
+
+function characterImageBlob(img) {
+  const bin = atob(img.data);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new Blob([bytes], { type: img.mime });
+}
+
+function downloadCharacterImage(kind) {
+  const img = kind === 'coloring' ? charState.coloringImg : charState.colorImg;
+  if (!img) return;
+  const ext = img.mime.includes('jpeg') ? 'jpg' : 'png';
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(characterImageBlob(img));
+  a.download = `${slug(charState.name) || 'postac'}_${kind === 'coloring' ? 'kolorowanka' : 'kolorowa'}.${ext}`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+function setCharacterName(v) { charState.name = v.trim(); }
+
+// 'coloring' = just the colouring page (with the name on top); 'card' = name, picture and the description that created it.
+function printCharacter(mode) {
+  const withText = mode === 'card';
+  const img = mode === 'coloring' ? charState.coloringImg : (charState.coloringImg || charState.colorImg);
+  if (!img) return;
+  const nameEl = document.getElementById('character-print-name');
+  nameEl.textContent = charState.name;
+  nameEl.style.display = charState.name ? '' : 'none';
+  document.getElementById('character-print-img').src = `data:${img.mime};base64,${img.data}`;
+  document.getElementById('character-print-desc').style.display = withText ? '' : 'none';
+  document.getElementById('character-print-text').textContent = charState.desc;
+  document.getElementById('character-print-details').innerHTML =
+    charState.answers.map(a => `<li>${esc(a.q)} <b>${esc(a.a)}</b></li>`).join('');
+  document.body.classList.add('print-character');
+  window.addEventListener('afterprint', () => document.body.classList.remove('print-character'), { once: true });
+  setTimeout(() => window.print(), 100);
+}
+
+function resetCharacter() {
+  charState = { desc: '', name: '', questions: [], answers: [], qIndex: 0, colorImg: null, coloringImg: null };
+  document.getElementById('char-input').value = '';
+  document.getElementById('char-name-input').value = '';
+  showCharacterStep('describe');
+}
+
 // ===== KIDS MODE (Dla najmłodszych) =====
 const KIDS_CATEGORIES = [
   { id: 'colors', icon: '🎨', title: 'Kolory', words: [
@@ -928,6 +1159,7 @@ function showView(name, params = {}) {
   if (name === 'essay-setup') renderEssaySetup();
   if (name === 'essay-write') {} // initialized by startEssay()
   if (name === 'essay-result'){} // initialized by submitEssayForCheck()
+  if (name === 'character')   renderCharacter();
   if (name === 'kids-home')       renderKidsHome();
   if (name === 'kids-category')   {} // initialized by pickKidsCategory()
   if (name === 'kids-flashcards') {} // initialized by startKidsFlashcards()
@@ -1679,6 +1911,12 @@ function openApiSettings() {
         saveGeminiKey(input.value);
         showToast(input.value.trim() ? '✅ Klucz Gemini zapisany!' : 'Klucz usunięty.');
       }
+      const modelInput = document.getElementById('gemini-image-model-input');
+      if (modelInput) {
+        const m = modelInput.value.trim();
+        if (m && m !== GEMINI_IMAGE_MODEL_DEFAULT) localStorage.setItem('gemini_image_model', m);
+        else localStorage.removeItem('gemini_image_model');
+      }
       closeModal();
     }},
     { label: 'Anuluj', cls: 'btn-secondary', action: closeModal },
@@ -1693,6 +1931,12 @@ function openApiSettings() {
         placeholder="AIza..." value="${esc(currentKey)}"
         style="font-family:monospace;font-size:0.9rem" />
       ${currentKey ? `<div style="font-size:0.8rem;color:var(--text-light);margin-top:6px">Aktualny klucz: ${esc(masked)}</div>` : ''}
+      <p style="margin:16px 0 6px;font-size:0.9rem;color:var(--text-light)">
+        Model obrazkowy do ćwiczenia "Stwórz postać" (zostaw domyślny, jeśli nie wiesz):
+      </p>
+      <input id="gemini-image-model-input" type="text" class="big-input"
+        placeholder="${esc(GEMINI_IMAGE_MODEL_DEFAULT)}" value="${esc(getImageModel())}"
+        style="font-family:monospace;font-size:0.9rem" />
     `;
   }, 0);
 }
@@ -3049,6 +3293,8 @@ function checkBadges(prog, pct, sets) {
   if (pct >= 80 && history.length >= 3 && history.slice(0,3).every(h=>h.score>=80)) add('three_good');
   const setResults = sets.find(s=>s.id===testSetId)?.results || [];
   if (setResults.length >= 2 && pct > (setResults[setResults.length-2]?.score||0)) add('improved');
+  if ((prog.charactersCreated || 0) >= 1) add('character_first');
+  if ((prog.charactersCreated || 0) >= 5) add('characters5');
 }
 
 // ===== MODAL =====

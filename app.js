@@ -2398,11 +2398,12 @@ const CHAR_FALLBACK_QUESTIONS = [
     { emoji: '🌳', text: 'in a forest' }, { emoji: '🌊', text: 'in the sea' }, { emoji: '☁️', text: 'in the clouds' }, { emoji: '🏠', text: 'in a house' } ] },
 ];
 
-let charState = { desc: '', questions: [], answers: [], qIndex: 0, colorImg: null, coloringImg: null };
+let charState = { desc: '', name: '', questions: [], answers: [], qIndex: 0, colorImg: null, coloringImg: null };
 
 function renderCharacter() {
   document.getElementById('char-chips').innerHTML = CHAR_CHIPS.map(c =>
     `<button type="button" class="char-chip" onclick="addCharacterChip('${jsStr(c)}')">${esc(c)}</button>`).join('');
+  document.getElementById('char-name-input').value = charState.name || '';
   showCharacterStep(charState.colorImg ? 'result' : 'describe');
 }
 
@@ -2434,7 +2435,7 @@ async function startCharacterQuestions() {
   const desc = document.getElementById('char-input').value.trim();
   if (desc.length < 5) { showToast('Opisz postać trochę dokładniej! ✏️'); return; }
   if (!getGeminiKey()) { showToast(characterErrorMessage(new Error('no-key'))); openApiSettings(); return; }
-  charState = { desc, questions: [], answers: [], qIndex: 0, colorImg: null, coloringImg: null };
+  charState = { desc, name: '', questions: [], answers: [], qIndex: 0, colorImg: null, coloringImg: null };
   document.getElementById('char-loading-text').textContent = 'Zastanawiam się nad pytaniami...';
   showCharacterStep('loading');
   try {
@@ -2522,6 +2523,7 @@ async function generateCharacterColorImage() {
     charState.colorImg = await callGeminiImage([{ text: buildCharacterPrompt() }]);
     charState.coloringImg = null;
     document.getElementById('char-color-img').src = `data:${charState.colorImg.mime};base64,${charState.colorImg.data}`;
+    document.getElementById('char-name-input').value = '';
     document.getElementById('char-coloring-figure').style.display = 'none';
     document.getElementById('char-make-coloring-btn').style.display = '';
     document.getElementById('char-make-coloring-btn').disabled = false;
@@ -2574,23 +2576,35 @@ function downloadCharacterImage(kind) {
   const ext = img.mime.includes('jpeg') ? 'jpg' : 'png';
   const a = document.createElement('a');
   a.href = URL.createObjectURL(characterImageBlob(img));
-  a.download = `postac_${kind === 'coloring' ? 'kolorowanka' : 'kolorowa'}.${ext}`;
+  a.download = `${slug(charState.name) || 'postac'}_${kind === 'coloring' ? 'kolorowanka' : 'kolorowa'}.${ext}`;
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
-function printCharacterColoring() {
-  if (!charState.coloringImg) return;
-  const img = document.getElementById('character-print-img');
-  img.src = `data:${charState.coloringImg.mime};base64,${charState.coloringImg.data}`;
+function setCharacterName(v) { charState.name = v.trim(); }
+
+// 'coloring' = just the colouring page (with the name on top); 'card' = name, picture and the description that created it.
+function printCharacter(mode) {
+  const withText = mode === 'card';
+  const img = mode === 'coloring' ? charState.coloringImg : (charState.coloringImg || charState.colorImg);
+  if (!img) return;
+  const nameEl = document.getElementById('character-print-name');
+  nameEl.textContent = charState.name;
+  nameEl.style.display = charState.name ? '' : 'none';
+  document.getElementById('character-print-img').src = `data:${img.mime};base64,${img.data}`;
+  document.getElementById('character-print-desc').style.display = withText ? '' : 'none';
+  document.getElementById('character-print-text').textContent = charState.desc;
+  document.getElementById('character-print-details').innerHTML =
+    charState.answers.map(a => `<li>${esc(a.q)} <b>${esc(a.a)}</b></li>`).join('');
   document.body.classList.add('print-character');
   window.addEventListener('afterprint', () => document.body.classList.remove('print-character'), { once: true });
   setTimeout(() => window.print(), 100);
 }
 
 function resetCharacter() {
-  charState = { desc: '', questions: [], answers: [], qIndex: 0, colorImg: null, coloringImg: null };
+  charState = { desc: '', name: '', questions: [], answers: [], qIndex: 0, colorImg: null, coloringImg: null };
   document.getElementById('char-input').value = '';
+  document.getElementById('char-name-input').value = '';
   showCharacterStep('describe');
 }
 

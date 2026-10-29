@@ -861,6 +861,11 @@
   </div>
 
   <div id="char-step-result" class="char-card" style="display:none">
+    <div class="char-name-row">
+      <label for="char-name-input" class="char-name-label">Jak ma na imię Twoja postać?</label>
+      <input type="text" id="char-name-input" class="big-input" maxlength="30" autocomplete="off"
+        placeholder="np. Fluffy" oninput="setCharacterName(this.value)" />
+    </div>
     <div class="char-images">
       <figure class="char-figure">
         <img id="char-color-img" alt="Kolorowa postać" />
@@ -874,13 +879,22 @@
     <div class="char-actions">
       <button class="btn btn-secondary" onclick="downloadCharacterImage('color')">⬇️ Pobierz kolorową</button>
       <button class="btn btn-primary" id="char-make-coloring-btn" onclick="makeCharacterColoring()">🖨️ Zrób kolorowankę</button>
-      <button class="btn btn-secondary" id="char-print-btn" style="display:none" onclick="printCharacterColoring()">🖨️ Drukuj</button>
+      <button class="btn btn-secondary" id="char-print-btn" style="display:none" onclick="printCharacter('coloring')">🖨️ Drukuj kolorowankę</button>
       <button class="btn btn-secondary" id="char-dl-coloring-btn" style="display:none" onclick="downloadCharacterImage('coloring')">⬇️ Pobierz kolorowankę</button>
+      <button class="btn btn-secondary" onclick="printCharacter('card')">📄 Drukuj kartę z opisem</button>
     </div>
     <button class="btn btn-ghost" onclick="resetCharacter()">✨ Nowa postać</button>
   </div>
 </div>
-<div id="character-print-area"><img id="character-print-img" alt="" /></div>
+<div id="character-print-area">
+  <h1 id="character-print-name"></h1>
+  <img id="character-print-img" alt="" />
+  <div id="character-print-desc">
+    <div class="cpd-label">Opis:</div>
+    <div id="character-print-text"></div>
+    <ul id="character-print-details"></ul>
+  </div>
+</div>
 
 <!-- ========== WIDOK: POSTĘPY ========== -->
 <div id="view-progress" class="view" style="display:none">

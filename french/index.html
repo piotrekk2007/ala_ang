@@ -25,6 +25,7 @@
     <button onclick="showView('songs-list')" class="nav-btn">🎵 Piosenki</button>
     <button onclick="showView('chat-setup')" class="nav-btn">💬 Pogadajmy</button>
     <button onclick="showView('essay-setup')" class="nav-btn">📝 Wypracowania</button>
+    <button onclick="showView('character')" class="nav-btn">🎨 Postać</button>
     <button onclick="showView('progress')" class="nav-btn">🏆 Postępy</button>
     <button onclick="showView('kids-home')" class="nav-btn">🧸 Dla najmłodszych</button>
     <button onclick="saveAll()" class="nav-btn nav-btn-save">💾 Zapisz wszystko</button>
@@ -60,6 +61,11 @@
       <div class="tile-icon">📝</div>
       <div class="tile-title">Wypracowania</div>
       <div class="tile-desc">Napisz i sprawdź z AI</div>
+    </div>
+    <div class="tile tile-lime" onclick="showView('character')">
+      <div class="tile-icon">🎨</div>
+      <div class="tile-title">Stwórz postać</div>
+      <div class="tile-desc">Opisz, a AI narysuje</div>
     </div>
     <div class="tile tile-yellow" onclick="showView('progress')">
       <div class="tile-icon">🏆</div>
@@ -818,6 +824,71 @@
   </div>
   <div class="kids-quiz-options" id="kids-sentence-quiz-options"></div>
   <div class="kids-quiz-feedback" id="kids-sentence-quiz-feedback" style="display:none"></div>
+</div>
+
+<!-- ========== WIDOK: STWÓRZ POSTAĆ ========== -->
+<div id="view-character" class="view" style="display:none">
+  <div class="view-header">
+    <button class="btn btn-ghost" onclick="showView('home')">← Wróć</button>
+    <h1>🎨 Stwórz postać</h1>
+  </div>
+
+  <div id="char-step-describe" class="char-card">
+    <p class="char-intro">Opisz po francusku, jak ma wyglądać Twoja postać. Kliknij podpowiedzi albo pisz sama!</p>
+    <div class="char-chips" id="char-chips"></div>
+    <textarea id="char-input" class="char-textarea" rows="4" maxlength="300"
+      placeholder="Il a de grands yeux, il est très drôle et il a de grandes dents..."></textarea>
+    <p class="char-hint">Nie wpisuj imion ani danych osobowych. 🙂</p>
+    <button class="btn btn-primary btn-large" id="char-next-btn" onclick="startCharacterQuestions()">Dalej ➜</button>
+  </div>
+
+  <div id="char-step-questions" class="char-card" style="display:none">
+    <div class="char-progress" id="char-q-progress"></div>
+    <div class="char-question" id="char-q-text"></div>
+    <div class="char-question-pl" id="char-q-pl"></div>
+    <div class="char-options" id="char-q-options"></div>
+    <button class="btn btn-ghost" onclick="showCharacterStep('describe')">← Zmień opis</button>
+  </div>
+
+  <div id="char-step-loading" class="char-card" style="display:none">
+    <div class="char-loading-emoji">🖍️</div>
+    <div id="char-loading-text" class="char-loading-text">Rysuję Twoją postać...</div>
+  </div>
+
+  <div id="char-step-result" class="char-card" style="display:none">
+    <div class="char-name-row">
+      <label for="char-name-input" class="char-name-label">Jak ma na imię Twoja postać?</label>
+      <input type="text" id="char-name-input" class="big-input" maxlength="30" autocomplete="off"
+        placeholder="np. Fluffy" oninput="setCharacterName(this.value)" />
+    </div>
+    <div class="char-images">
+      <figure class="char-figure">
+        <img id="char-color-img" alt="Kolorowa postać" />
+        <figcaption>Kolorowa wersja</figcaption>
+      </figure>
+      <figure class="char-figure" id="char-coloring-figure" style="display:none">
+        <img id="char-coloring-img" alt="Kolorowanka do druku" />
+        <figcaption>Kolorowanka</figcaption>
+      </figure>
+    </div>
+    <div class="char-actions">
+      <button class="btn btn-secondary" onclick="downloadCharacterImage('color')">⬇️ Pobierz kolorową</button>
+      <button class="btn btn-primary" id="char-make-coloring-btn" onclick="makeCharacterColoring()">🖨️ Zrób kolorowankę</button>
+      <button class="btn btn-secondary" id="char-print-btn" style="display:none" onclick="printCharacter('coloring')">🖨️ Drukuj kolorowankę</button>
+      <button class="btn btn-secondary" id="char-dl-coloring-btn" style="display:none" onclick="downloadCharacterImage('coloring')">⬇️ Pobierz kolorowankę</button>
+      <button class="btn btn-secondary" onclick="printCharacter('card')">📄 Drukuj kartę z opisem</button>
+    </div>
+    <button class="btn btn-ghost" onclick="resetCharacter()">✨ Nowa postać</button>
+  </div>
+</div>
+<div id="character-print-area">
+  <h1 id="character-print-name"></h1>
+  <img id="character-print-img" alt="" />
+  <div id="character-print-desc">
+    <div class="cpd-label">Opis:</div>
+    <div id="character-print-text"></div>
+    <ul id="character-print-details"></ul>
+  </div>
 </div>
 
 <!-- ========== WIDOK: POSTĘPY ========== -->
