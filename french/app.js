@@ -609,15 +609,6 @@ const CHAR_CHIPS = [
   'Il est gentil.', 'Il est vert.', 'Il peut voler.',
 ];
 
-const CHAR_FALLBACK_QUESTIONS = [
-  { q: 'De quelle couleur est-il ?', pl: 'Jakiego jest koloru?', options: [
-    { emoji: '🔴', text: 'rouge' }, { emoji: '🔵', text: 'bleu' }, { emoji: '🟢', text: 'vert' }, { emoji: '🟣', text: 'violet' } ] },
-  { q: 'Est-il grand ou petit ?', pl: 'Czy jest duży czy mały?', options: [
-    { emoji: '🐘', text: 'grand' }, { emoji: '🐭', text: 'petit' } ] },
-  { q: 'Où habite-t-il ?', pl: 'Gdzie mieszka?', options: [
-    { emoji: '🌳', text: 'dans la forêt' }, { emoji: '🌊', text: 'dans la mer' }, { emoji: '☁️', text: 'dans les nuages' }, { emoji: '🏠', text: 'dans une maison' } ] },
-];
-
 let charState = { desc: '', name: '', questions: [], answers: [], qIndex: 0, colorImg: null, coloringImg: null };
 
 function renderCharacter() {
@@ -658,30 +649,44 @@ async function startCharacterQuestions() {
   charState = { desc, name: '', questions: [], answers: [], qIndex: 0, colorImg: null, coloringImg: null };
   document.getElementById('char-loading-text').textContent = 'Zastanawiam się nad pytaniami...';
   showCharacterStep('loading');
-  try {
-    charState.questions = await fetchCharacterQuestions(desc);
-  } catch {
-    charState.questions = CHAR_FALLBACK_QUESTIONS;
+  let qs = null;
+  for (let attempt = 0; attempt < 2 && !qs; attempt++) {
+    try { qs = await fetchCharacterQuestions(desc); } catch {}
   }
+  if (!qs) {
+    showToast('Nie udało się ułożyć pytań — rysuję na podstawie samego opisu. 🙂');
+    await generateCharacterColorImage();
+    return;
+  }
+  charState.questions = qs;
   charState.qIndex = 0;
   renderCharacterQuestion();
   showCharacterStep('questions');
 }
 
 async function fetchCharacterQuestions(desc) {
-  const system = 'You help a Polish child (age 8-10) learning French invent a cartoon character. ' +
-    'Given the child\'s description, ask exactly 3 SHORT, SIMPLE clarifying questions in very easy French (A1 level) ' +
-    'about details that the description does NOT already say (e.g. colour, size, mood, where it lives, what it likes). ' +
-    'Each question has 3-4 answer options with one fitting emoji and a 1-3 word French answer. ' +
-    'Also give a Polish translation of each question. Everything must be friendly and child-safe. ' +
-    'Reply ONLY with JSON, no markdown: {"questions":[{"q":"...","pl":"...","options":[{"emoji":"...","text":"..."}]}]}';
-  const raw = await callGemini(system, [{ role: 'user', parts: [{ text: 'Description (French): ' + desc }] }]);
+  const system = 'You help a Polish child (age 8-10) who is learning French invent a cartoon character. You get the description written by the child. ' +
+    'Step 1: in the "subject" field state in a few words WHAT the character is (e.g. "tall middle-aged man", "small green monster"), using ONLY what the description says. ' +
+    'Step 2: ask exactly 3 SHORT clarifying questions in very easy French (A1 level) about details the description does NOT say yet and that make sense for that kind of subject ' +
+    '(a person: hair, clothes, glasses or beard, mood, hobby; an animal: fur or colour, where it lives, what it likes; a monster or robot: colour, special power, mood). ' +
+    'HARD RULES: never ask about anything the description already states (height, size, age, gender, colour...); ' +
+    'never offer options that contradict the description or the kind of subject (for an ordinary person do not ask about skin colour or offer blue/green); ' +
+    'questions must clearly relate to the described character. ' +
+    'Each question has exactly 3 answer options, each with one fitting emoji and a 1-3 word French answer. Add a Polish translation of every question. Keep everything friendly and child-safe. ' +
+    'Reply ONLY with JSON, no markdown: {"subject":"...","questions":[{"q":"...","pl":"...","options":[{"emoji":"...","text":"..."}]}]}';
+  const raw = await callGemini(system, [{ role: 'user', parts: [{ text: 'Description: ' + desc }] }], { responseMimeType: 'application/json' });
   const data = JSON.parse(raw.replace(/```json/gi, '').replace(/```/g, '').trim());
   const qs = (data.questions || []).slice(0, 3).filter(q =>
     q && typeof q.q === 'string' && Array.isArray(q.options) && q.options.length >= 2 &&
     q.options.every(o => o && typeof o.text === 'string'));
   if (qs.length < 2) throw new Error('bad-questions');
-  return qs.map(q => ({ q: q.q, pl: q.pl || '', options: q.options.slice(0, 4).map(o => ({ emoji: o.emoji || '⭐', text: o.text })) }));
+  return qs.map(q => ({
+    q: q.q, pl: q.pl || '',
+    options: [
+      ...q.options.slice(0, 4).map(o => ({ emoji: o.emoji || '⭐', text: o.text })),
+      { emoji: '🎲', text: 'surprends-moi', surprise: true },
+    ],
+  }));
 }
 
 function renderCharacterQuestion() {
@@ -695,20 +700,25 @@ function renderCharacterQuestion() {
 
 function pickCharacterAnswer(i) {
   const q = charState.questions[charState.qIndex];
-  charState.answers.push({ q: q.q, a: q.options[i].text });
+  const opt = q.options[i];
+  if (!opt.surprise) charState.answers.push({ q: q.q, a: opt.text });
   charState.qIndex++;
   if (charState.qIndex < charState.questions.length) renderCharacterQuestion();
   else generateCharacterColorImage();
 }
 
 function buildCharacterPrompt() {
-  const details = charState.answers.map(a => `- ${a.q} ${a.a}`).join('\n');
-  return 'A child is using a language-learning app and is creating a drawn cartoon character. ' +
-    'Draw the character described by the child (in French): "' + charState.desc + '".\n' +
-    'Extra details the child chose:\n' + details + '\n' +
-    'Style: a fun, cheerful, friendly children\'s-book illustration with bright colours, simple rounded shapes and a big smile. ' +
-    'Always make it cute and funny, never scary, violent or creepy (even if the description mentions teeth or claws). ' +
-    'Show the whole character on a plain light background. Do not put any text or letters in the image.';
+  const lines = charState.answers.map(a => `- ${a.q} ${a.a}`).join('\n');
+  const details = lines
+    ? `Extra details the child chose (use them only to fill in what the description leaves open):\n${lines}\n`
+    : '';
+  return `A child is using a language-learning app and is creating a drawn cartoon character. ` +
+    `Draw the character described by the child (in French): "${charState.desc}".\n` +
+    `The description is the most important thing: keep exactly what it says (kind of character, age, height, build, gender, colours). ` +
+    `If any detail conflicts with the description, ignore the detail.\n${details}` +
+    `Style: a fun, cheerful, friendly children's-book illustration with bright colours, simple rounded shapes and a big smile. ` +
+    `Always make it cute and funny, never scary, violent or creepy (even if the description mentions teeth or claws). ` +
+    `Show the whole character on a plain light background. Do not put any text or letters in the image.`;
 }
 
 function extractImagePart(data) {
@@ -2095,7 +2105,7 @@ function startChat(roleIdx) {
   requestFirstChatMessage();
 }
 
-async function callGemini(systemInstruction, contents) {
+async function callGemini(systemInstruction, contents, generationConfig) {
   const key = getGeminiKey();
   if (!key) throw new Error('no-key');
   const res = await fetch(
@@ -2106,6 +2116,7 @@ async function callGemini(systemInstruction, contents) {
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: systemInstruction }] },
         contents,
+        ...(generationConfig ? { generationConfig } : {}),
       }),
     }
   );
